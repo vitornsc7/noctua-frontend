@@ -1,0 +1,33 @@
+/* Padrão neutro: mantém tons discretos */
+:root,
+body.theme-default {
+  --color-primary: #222222;
+  --color-secondary: #454F5E;
+  --color-bg: #F6F7F9;
+  --color-accent: #4BA3DA;
+  --color-accent-light: #D6F0FF;
+  --color-accent-dark: #26547C;
+  --color-bg-light: #ECEFF4;
+}
+
+/* Tema claro sóbrio */
+body.theme-light {
+  --color-primary: #16181d;
+  --color-secondary: #5C6673;
+  --color-bg: #F6F7F9;
+  --color-accent: #4BA3DA;
+  --color-accent-light: #D6F0FF;
+  --color-accent-dark: #26547C;
+  --color-bg-light: #ECEFF4;
+}
+
+/* Tema escuro sóbrio */
+body.theme-dark {
+  --color-primary: #ECEFF4;
+  --color-secondary: #9AA7BF;
+  --color-bg: #23272F;
+  --color-accent: #4BA3DA;
+  --color-accent-light: #26547C;
+  --color-accent-dark: #11324D;
+  --color-bg-light: #23272F;
+}
