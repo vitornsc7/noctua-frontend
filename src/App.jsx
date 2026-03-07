@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Button, Input, Select, Card, Tag, ToastProvider, useToast } from "./components/UI";
+import { Button, Input, Select, Card, Tag, Header, ToastProvider, useToast } from "./components/UI";
 
 function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -13,8 +13,28 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gray-50">
+      <Header
+        logo={
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-semibold text-gray-800">Noctua</span>
+          </div>
+        }
+        actions={
+          <div className="text-sm text-gray-600 flex items-center gap-6">
+            <p className="hover:cursor-pointer">Dashboard</p>
+            <p className="hover:cursor-pointer">Turmas</p>
+            <p className="hover:cursor-pointer">Ajuda</p>
+            <p className="hover:cursor-pointer">Configurações</p>
+            <div className="border-l border-gray-300 h-6"></div>
+            <p>Administrador</p>
+            <i className="pi pi-sign-out text-xs hover:cursor-pointer"></i>
+          </div>
+        }
+        fixed
+      />
+
+      <div className="max-w-6xl mx-auto p-8 space-y-8">
 
         <div className="text-center">
           <h1 className="text-4xl font-semibold text-gray-800 mb-2">Noctua - Componentes UI</h1>
