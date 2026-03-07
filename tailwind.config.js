@@ -9,14 +9,12 @@ export default {
       colors: {
         primary: "var(--color-primary)",
         secondary: "var(--color-secondary)",
-        bg: "var(--color-bg)",
-        accent: "var(--color-accent)",
-        accentLight: "var(--color-accent-light)",
-        accentDark: "var(--color-accent-dark)",
-        bgLight: "var(--color-bg-light)",
+        success: "var(--color-success)",
+        warning: "var(--color-warning)",
+        error: "var(--color-error)",
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['DM Sans', 'sans-serif'],
       },
     },
   },
