@@ -29,14 +29,14 @@ const HomePage = () => {
                     <div className="flex flex-wrap gap-3">
                         <Button variant="primary">
                             <i className="pi pi-check text-sm"></i>
-                            Primary
+                            Confirmar
                         </Button>
-                        <Button variant="outline">Outline</Button>
+                        <Button variant="outline">Cancelar</Button>
                         <Button
                             variant="primary"
                             leftIcon={<i className="pi pi-search text-sm"></i>}
                         >
-                            Com Ícone
+                            Buscar
                         </Button>
                     </div>
                 </div>
@@ -45,9 +45,8 @@ const HomePage = () => {
             <Card header={<h2 className="text-xl font-semibold text-gray-800">Tags</h2>}>
                 <div className="space-y-4">
                     <div className="flex flex-wrap gap-2">
-                        <Tag>Outlined Primary</Tag>
-                        <Tag leftIcon={<i className="pi pi-tag"></i>}>Com Ícone</Tag>
-                        <Tag rightIcon={<i className="pi pi-times"></i>}>Removível</Tag>
+                        <Tag>Bimestral</Tag>
+                        <Tag leftIcon={<i className="pi pi-sun text-xs"></i>}>Matutino</Tag>
                     </div>
                 </div>
             </Card>
@@ -131,25 +130,25 @@ const HomePage = () => {
                         variant="primary"
                         onClick={() => showSuccess('Sucesso!', 'Operação concluída com êxito.')}
                     >
-                        Success Toast
+                        Sucesso
                     </Button>
                     <Button
                         variant="outline"
                         onClick={() => showError('Erro!', 'Algo deu errado.')}
                     >
-                        Error Toast
+                        Erro
                     </Button>
                     <Button
                         variant="outline"
                         onClick={() => showWarning('Atenção!', 'Verifique os dados.')}
                     >
-                        Warning Toast
+                        Aviso
                     </Button>
                     <Button
                         variant="outline"
                         onClick={() => showInfo('Informação', 'Dados atualizados.')}
                     >
-                        Info Toast
+                        Informação
                     </Button>
                 </div>
             </Card>
