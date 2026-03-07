@@ -4,4 +4,5 @@ export { default as Select } from './Select';
 export { default as Card } from './Card';
 export { default as Tag } from './Tag';
 export { default as Toast } from './Toast';
+export { default as Header } from './Header';
 export { ToastProvider, useToast } from './ToastContainer';
