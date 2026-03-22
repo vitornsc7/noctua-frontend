@@ -27,9 +27,18 @@ const TurmasPage = () => {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-semibold text-gray-800 mb-2">Turmas</h1>
-                <p className="text-gray-600">Gerencie suas turmas</p>
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-semibold text-gray-800 mb-2">Turmas</h1>
+                    <p className="text-gray-600">Gerencie suas turmas</p>
+                </div>
+
+                <button
+                    onClick={() => alert("Usuário direcionado para cadastro de turma")}
+                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-800 transition"
+                >
+                    Nova turma
+                </button>
             </div>
 
             <div className="flex flex-col md:flex-row md:gap-2 gap-4">
@@ -64,7 +73,7 @@ const TurmasPage = () => {
                     value={anoSelecionado}
                     onChange={(e) => setAnoSelecionado(e.target.value)}
                     leftIcon={
-                        <img src={calendarIcon} alt="" className="w-4 h-4 text-gray-500" />
+                        <img src={calendarIcon} alt="" className="w-4 h-4" />
                     }
                     fullWidth
                 >
