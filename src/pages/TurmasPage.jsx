@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, Tag, Select } from '../components/UI';
-import calendarIcon from '../assets/calendar.svg';
 
 const TurmasPage = () => {
     const instituicoes = [
@@ -72,9 +71,7 @@ const TurmasPage = () => {
                     label="Filtrar por ano"
                     value={anoSelecionado}
                     onChange={(e) => setAnoSelecionado(e.target.value)}
-                    leftIcon={
-                        <img src={calendarIcon} alt="" className="w-4 h-4" />
-                    }
+                    leftIcon={<i className="pi pi-calendar text-sm"></i>}
                     fullWidth
                 >
                     <Select.Option value="todos">Todos os anos</Select.Option>
@@ -96,7 +93,7 @@ const TurmasPage = () => {
                         <div className="flex items-center gap-2">
                             <Tag>{instituicoes.find(inst => inst.id === turma.instituicaoId)?.nome}</Tag>
                             <Tag><i className="pi pi-clock text-xs mr-2"></i>{turma.turno}</Tag>
-                            <Tag><img src={calendarIcon} alt="" className="w-3 h-3 inline mr-2" />2026</Tag>
+                            <Tag><i className="pi pi-calendar text-xs mr-2"></i>2026</Tag>
                         </div>
                     </Card>
                 ))}
