@@ -10,4 +10,5 @@ export { default as Modal } from './Modal';
 export { default as Table } from './Table';
 export { default as Pageable } from './Pageable';
 export { default as Tooltip } from './Tooltip';
+export { default as Stepper } from './Stepper';
 export { ToastProvider, useToast } from './ToastContainer';
