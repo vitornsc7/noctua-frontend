@@ -3,7 +3,7 @@ import { Card, Tag, Select } from '../components/UI';
 
 const TurmasPage = () => {
     const instituicoes = [
-        { id: 'todas', nome: 'Todas as Instituições' },
+        { id: 'todas', nome: 'Todas as instituições' },
         { id: 'inst1', nome: 'Colégio São Paulo' },
         { id: 'inst2', nome: 'Escola Municipal Centro' },
         { id: 'inst3', nome: 'Instituto Educacional Norte' },
@@ -11,6 +11,7 @@ const TurmasPage = () => {
 
     const [instituicaoSelecionada, setInstituicaoSelecionada] = useState('todas');
     const [periodoSelecionado, setPeriodoSelecionado] = useState('todos');
+    const [anoSelecionado, setAnoSelecionado] = useState('todos');
 
     const turmas = [
         { id: 1, nome: '1º Ano - A', alunos: 28, status: 'Ativa', instituicaoId: 'inst1', turno: 'Matutino' },
@@ -25,14 +26,23 @@ const TurmasPage = () => {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-semibold text-gray-800 mb-2">Turmas</h1>
-                <p className="text-gray-600">Gerencie suas turmas</p>
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-semibold text-gray-800 mb-2">Turmas</h1>
+                    <p className="text-gray-600">Gerencie suas turmas</p>
+                </div>
+
+                <button
+                    onClick={() => alert("Usuário direcionado para cadastro de turma")}
+                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-800 transition"
+                >
+                    Nova turma
+                </button>
             </div>
 
-            <div className='flex flex-col md:flex-row md:gap-2 gap-4'>
+            <div className="flex flex-col md:flex-row md:gap-2 gap-4">
                 <Select
-                    label="Filtrar por Instituição"
+                    label="Filtrar por instituição"
                     value={instituicaoSelecionada}
                     onChange={(e) => setInstituicaoSelecionada(e.target.value)}
                     leftIcon={<i className="pi pi-building text-sm"></i>}
@@ -44,8 +54,9 @@ const TurmasPage = () => {
                         </Select.Option>
                     ))}
                 </Select>
+
                 <Select
-                    label="Filtrar por Período"
+                    label="Filtrar por período"
                     value={periodoSelecionado}
                     onChange={(e) => setPeriodoSelecionado(e.target.value)}
                     leftIcon={<i className="pi pi-clock text-sm"></i>}
@@ -54,6 +65,18 @@ const TurmasPage = () => {
                     <Select.Option value="todos">Todos os períodos</Select.Option>
                     <Select.Option value="matutino">Matutino</Select.Option>
                     <Select.Option value="vespertino">Vespertino</Select.Option>
+                </Select>
+
+                <Select
+                    label="Filtrar por ano"
+                    value={anoSelecionado}
+                    onChange={(e) => setAnoSelecionado(e.target.value)}
+                    leftIcon={<i className="pi pi-calendar text-sm"></i>}
+                    fullWidth
+                >
+                    <Select.Option value="todos">Todos os anos</Select.Option>
+                    <Select.Option value="2025">2025</Select.Option>
+                    <Select.Option value="2026">2026</Select.Option>
                 </Select>
             </div>
 
@@ -67,9 +90,10 @@ const TurmasPage = () => {
                                 {turma.alunos} alunos
                             </p>
                         </div>
-                        <div className='flex items-center gap-2'>
+                        <div className="flex items-center gap-2">
                             <Tag>{instituicoes.find(inst => inst.id === turma.instituicaoId)?.nome}</Tag>
                             <Tag><i className="pi pi-clock text-xs mr-2"></i>{turma.turno}</Tag>
+                            <Tag><i className="pi pi-calendar text-xs mr-2"></i>2026</Tag>
                         </div>
                     </Card>
                 ))}
