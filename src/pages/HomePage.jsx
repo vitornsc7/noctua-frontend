@@ -1,156 +1,154 @@
-import React, { useState } from "react";
-import { Button, Input, Select, Card, Tag, useToast } from "../components/UI";
+import React, { useEffect, useState } from "react";
+import { Button, Input, Card, Modal, Table, Tooltip, useToast } from "../components/UI";
+
+const demoRows = [
+    {
+        id: 1,
+        turma: 'Matematica 101',
+        professor: 'Julio Cesar',
+        turno: 'Matutino',
+        alunos: 32,
+        observacao: 'Turma com reforco aos sabados para alunos com dificuldade em algebra.',
+    },
+    {
+        id: 2,
+        turma: 'Fisica Basica',
+        professor: 'Ana Luiza',
+        turno: 'Vespertino',
+        alunos: 26,
+        observacao: 'Conteudo focado em mecanica e revisao semanal com lista comentada.',
+    },
+    {
+        id: 3,
+        turma: 'Historia Geral',
+        professor: 'Ricardo Nunes',
+        turno: 'Noturno',
+        alunos: 28,
+        observacao: 'Turma com projetos interdisciplinares e debates guiados em sala.',
+    },
+];
 
 const HomePage = () => {
-    const [inputValue, setInputValue] = useState("");
-    const [selectValue, setSelectValue] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [tablePage, setTablePage] = useState(0);
+    const [isTableLoading, setIsTableLoading] = useState(true);
+    const [tableRows, setTableRows] = useState([]);
     const { showSuccess, showError, showWarning, showInfo } = useToast();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        showSuccess('Formulário enviado!', 'Seus dados foram processados corretamente.');
+    const pageSize = 2;
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            const tableStart = tablePage * pageSize;
+            setTableRows(demoRows.slice(tableStart, tableStart + pageSize));
+            setIsTableLoading(false);
+        }, 450);
+
+        return () => {
+            window.clearTimeout(timer);
+        };
+    }, [tablePage, pageSize]);
+
+    const handleTablePageChange = (nextPage) => {
+        if (nextPage === tablePage) {
+            return;
+        }
+
+        setIsTableLoading(true);
+        setTablePage(nextPage);
     };
 
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl font-semibold text-gray-800 mb-2">Noctua - Componentes UI</h1>
-                <p className="text-gray-600">Biblioteca de componentes reutilizáveis com Tailwind CSS</p>
+                <h1 className="text-4xl font-semibold text-gray-700 mb-2">Noctua - Componentes UI</h1>
+                <p className="text-gray-600">Exemplos mínimos de Modal, Table e Pageable</p>
             </div>
 
             <Card
                 header={
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-800">Botões</h2>
-                        <p className="text-gray-600">Demonstração de diferentes estilos de botões</p>
-                    </div>
-                }>
-                <div className="space-y-4">
-                    <div className="flex flex-wrap gap-3">
-                        <Button variant="primary">
-                            <i className="pi pi-check text-sm"></i>
-                            Confirmar
-                        </Button>
-                        <Button variant="outline">Cancelar</Button>
-                        <Button
-                            variant="primary"
-                            leftIcon={<i className="pi pi-search text-sm"></i>}
-                        >
-                            Buscar
-                        </Button>
-                    </div>
-                </div>
-            </Card>
-
-            <Card header={<h2 className="text-xl font-semibold text-gray-800">Tags</h2>}>
-                <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                        <Tag>Bimestral</Tag>
-                        <Tag leftIcon={<i className="pi pi-sun text-xs"></i>}>Matutino</Tag>
-                    </div>
-                </div>
-            </Card>
-
-            <Card
-                header={<h2 className="text-xl font-semibold text-gray-800">Formulário</h2>}
-                footer={
-                    <div className="flex justify-end gap-3">
-                        <Button variant="outline" type="button">Cancelar</Button>
-                        <Button variant="primary" type="submit" form="demo-form">
-                            Enviar
-                        </Button>
+                        <h2 className="text-xl font-semibold text-gray-700">Modal</h2>
+                        <p className="text-gray-600">Modal reutilizando o Card com fundo desfocado</p>
                     </div>
                 }
             >
-                <form id="demo-form" onSubmit={handleSubmit} className="space-y-4">
-                    <Input
-                        label="Nome completo"
-                        placeholder="Digite seu nome"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        leftIcon={<i className="pi pi-user text-sm"></i>}
-                        required
-                    />
+                <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+                    Abrir modal
+                </Button>
 
-                    <Input
-                        label="Email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        leftIcon={<i className="pi pi-envelope text-sm"></i>}
-                        helperText="Nunca compartilharemos seu email"
-                        required
-                    />
-
-                    <Input
-                        label="Senha"
-                        type="password"
-                        placeholder="Digite sua senha"
-                        leftIcon={<i className="pi pi-lock text-sm"></i>}
-                        required
-                    />
-
-                    <Select
-                        label="Categoria"
-                        placeholder="Selecione uma categoria"
-                        value={selectValue}
-                        onChange={(e) => setSelectValue(e.target.value)}
-                        leftIcon={<i className="pi pi-list text-sm"></i>}
-                        required
-                    >
-                        <Select.Option value="tecnologia">Tecnologia</Select.Option>
-                        <Select.Option value="design">Design</Select.Option>
-                        <Select.Option value="marketing">Marketing</Select.Option>
-                        <Select.Option value="vendas">Vendas</Select.Option>
-                    </Select>
-
-                    <Input
-                        label="Campo com erro"
-                        placeholder="Demonstração de erro"
-                        error="Este campo contém um erro de validação"
-                        leftIcon={<i className="pi pi-exclamation-circle text-sm"></i>}
-                    />
-                </form>
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    title="Criar nova turma"
+                    footer={
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                                Cancelar
+                            </Button>
+                            <Button
+                                variant="primary"
+                                onClick={() => {
+                                    showSuccess('Turma criada!', 'A turma foi criada com sucesso.');
+                                    setIsModalOpen(false);
+                                }}
+                            >
+                                Salvar
+                            </Button>
+                        </div>
+                    }
+                >
+                    <div className="space-y-3">
+                        <p className="text-gray-700">Arraste pelo cabeçalho para mover.</p>
+                        <Input label="Nome da turma" placeholder="Ex: Matemática 2026" />
+                    </div>
+                </Modal>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card variant="default">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Card Padrão</h3>
-                    <p className="text-gray-600">Card normal com borda</p>
-                </Card>
-
-                <Card variant="flat">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Card Plano</h3>
-                    <p className="text-gray-600">Card sem borda</p>
-                </Card>
+            <div className="space-y-4">
+                <Table
+                    data={tableRows}
+                    loading={isTableLoading}
+                    loadingRows={pageSize}
+                    rowKey="id"
+                    onView={(row) => showInfo('Visualizar', `Turma: ${row.turma}`)}
+                    onEdit={(row) => showWarning('Editar', `Editar ${row.turma}`)}
+                    onDelete={(row) => showError('Excluir', `Excluindo ${row.turma}`)}
+                    actionTooltips={{ view: 'Exibir', edit: 'Editar', delete: 'Excluir' }}
+                    pageable={{
+                        page: tablePage,
+                        pageSize,
+                        totalItems: demoRows.length,
+                        currentItemsCount: tableRows.length,
+                        onPageChange: handleTablePageChange,
+                    }}
+                >
+                    <Table.Column header="Turma" accessor="turma" />
+                    <Table.Column header="Professor" accessor="professor" />
+                    <Table.Column header="Turno" accessor="turno" />
+                    <Table.Column header="Alunos" accessor="alunos" />
+                    <Table.Column
+                        header="Observação"
+                        render={(row) => (
+                            <Tooltip content={row.observacao}>
+                                <span className="inline-block max-w-[200px] truncate text-gray-600">
+                                    {row.observacao}
+                                </span>
+                            </Tooltip>
+                        )}
+                    />
+                </Table>
             </div>
 
-            <Card header={<h2 className="text-xl font-semibold text-gray-800">Toast Notifications</h2>}>
-                <div className="flex flex-wrap gap-3">
-                    <Button
-                        variant="primary"
-                        onClick={() => showSuccess('Sucesso!', 'Operação concluída com êxito.')}
-                    >
-                        Sucesso
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => showError('Erro!', 'Algo deu errado.')}
-                    >
-                        Erro
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => showWarning('Atenção!', 'Verifique os dados.')}
-                    >
-                        Aviso
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => showInfo('Informação', 'Dados atualizados.')}
-                    >
-                        Informação
-                    </Button>
-                </div>
+            <Card
+                header={<h2 className="text-xl font-semibold text-gray-700">Tooltip</h2>}
+            >
+                <Tooltip content="Esse texto aparece abaixo ao passar o mouse.">
+                    <span className="inline-flex items-center gap-2 text-sm text-gray-700">
+                        <i className="pi pi-info-circle text-sm"></i>
+                        Teste passar o mouse em cima
+                    </span>
+                </Tooltip>
             </Card>
         </div>
     );
