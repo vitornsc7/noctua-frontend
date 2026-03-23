@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -26,26 +26,33 @@ const Select = forwardRef(({
     required = false,
     value,
     onChange,
+    onBlur,
+    onFocus,
     ...rest
 }, ref) => {
     const hasError = Boolean(error);
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedLabel, setSelectedLabel] = useState('');
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const selectAreaRef = useRef(null);
     const buttonRef = useRef(ref);
     const dropdownRef = useRef(null);
+    const blurTimeoutRef = useRef(null);
 
-    useEffect(() => {
-        if (value && children) {
-            const childrenArray = React.Children.toArray(children);
-            const selected = childrenArray.find(child => child.props.value === value);
-            if (selected) {
-                setSelectedLabel(selected.props.children);
-            }
-        } else {
-            setSelectedLabel('');
+    const clearBlurTimeout = () => {
+        if (blurTimeoutRef.current) {
+            window.clearTimeout(blurTimeoutRef.current);
+            blurTimeoutRef.current = null;
         }
+    };
+
+    const selectedLabel = useMemo(() => {
+        if (!children) {
+            return '';
+        }
+
+        const childrenArray = React.Children.toArray(children);
+        const selected = childrenArray.find((child) => child?.props?.value === value);
+        return selected?.props?.children ?? '';
     }, [value, children]);
 
     useEffect(() => {
@@ -65,7 +72,12 @@ const Select = forwardRef(({
         };
     }, [isOpen]);
 
-    // Scroll para a opção focada
+    useEffect(() => {
+        return () => {
+            clearBlurTimeout();
+        };
+    }, []);
+
     useEffect(() => {
         if (focusedIndex >= 0 && dropdownRef.current) {
             const options = dropdownRef.current.children;
@@ -77,8 +89,25 @@ const Select = forwardRef(({
 
     const handleToggle = () => {
         if (!disabled) {
+            clearBlurTimeout();
             setIsOpen(!isOpen);
         }
+    };
+
+    const handleBlur = (event) => {
+        if (!onBlur) {
+            return;
+        }
+
+        clearBlurTimeout();
+        blurTimeoutRef.current = window.setTimeout(() => {
+            onBlur(event);
+        }, 150);
+    };
+
+    const handleFocus = (event) => {
+        clearBlurTimeout();
+        onFocus?.(event);
     };
 
     const handleKeyDown = (e) => {
@@ -96,7 +125,7 @@ const Select = forwardRef(({
                     setFocusedIndex(0);
                 } else if (focusedIndex >= 0) {
                     const option = childrenArray[focusedIndex];
-                    handleOptionClick(option.props.value, option.props.children);
+                    handleOptionClick(option.props.value);
                 }
                 break;
 
@@ -145,11 +174,12 @@ const Select = forwardRef(({
         }
     };
 
-    const handleOptionClick = (optionValue, optionLabel) => {
+    const handleOptionClick = (optionValue) => {
+        clearBlurTimeout();
+
         if (onChange) {
             onChange({ target: { value: optionValue } });
         }
-        setSelectedLabel(optionLabel);
         setIsOpen(false);
         setFocusedIndex(-1);
         buttonRef.current?.focus();
@@ -202,6 +232,8 @@ const Select = forwardRef(({
                     className={buttonClasses}
                     onClick={handleToggle}
                     onKeyDown={handleKeyDown}
+                    onBlur={handleBlur}
+                    onFocus={handleFocus}
                     {...rest}
                 >
                     <span className="truncate">{selectedLabel || placeholder}</span>
@@ -222,7 +254,8 @@ const Select = forwardRef(({
 
                             return (
                                 <div
-                                    onClick={() => !isDisabled && handleOptionClick(child.props.value, child.props.children)}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                    onClick={() => !isDisabled && handleOptionClick(child.props.value)}
                                     className={`
                                         px-4 py-2.5 cursor-pointer transition-colors text-sm outline-none
                                         ${isSelected ? 'bg-primary/10 text-primary font-medium border-l-2 border-primary' : 'text-gray-700 hover:bg-gray-50'}
@@ -254,7 +287,7 @@ const Select = forwardRef(({
 
 Select.displayName = 'Select';
 
-Select.Option = ({ value, children, disabled = false }) => null;
+Select.Option = () => null;
 
 Select.Option.propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -275,6 +308,8 @@ Select.propTypes = {
     required: PropTypes.bool,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func,
 };
 
 export default Select;
