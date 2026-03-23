@@ -16,7 +16,6 @@ import PropTypes from 'prop-types';
  */
 const Button = ({
     variant = 'primary',
-    size = 'sm',
     disabled = false,
     fullWidth = false,
     leftIcon,
