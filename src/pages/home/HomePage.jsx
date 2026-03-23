@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Table, Tooltip, useToast } from '../../components/UI';
-import HomeCreateTurmaModal from './components/HomeCreateTurmaModal';
+import HomeCreateTurmaModal from './components/CreateTurmaModal';
 
 const demoRows = [
     {
@@ -123,7 +123,7 @@ const HomePage = () => {
                 <Tooltip content="Esse texto aparece abaixo ao passar o mouse.">
                     <span className="inline-flex items-center gap-2 text-sm text-gray-700">
                         <i className="pi pi-info-circle text-sm"></i>
-                        Teste passar o mouse em cima
+                        Passar o mouse em cima
                     </span>
                 </Tooltip>
             </Card>
