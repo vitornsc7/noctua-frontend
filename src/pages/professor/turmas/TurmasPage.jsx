@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Tag, Select } from '../../components/UI';
+import { Link } from 'react-router-dom';
+import { Card, Tag, Select } from '../../../components/UI';
 
 const TurmasPage = () => {
     const instituicoes = [
@@ -32,12 +33,12 @@ const TurmasPage = () => {
                     <p className="text-gray-600">Gerencie suas turmas</p>
                 </div>
 
-                <button
-                    onClick={() => alert("Usuário direcionado para cadastro de turma")}
+                <Link
+                    to="/turmas/cadastro"
                     className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
                 >
                     Nova turma
-                </button>
+                </Link>
             </div>
 
             <div className="flex flex-col md:flex-row md:gap-2 gap-4">
