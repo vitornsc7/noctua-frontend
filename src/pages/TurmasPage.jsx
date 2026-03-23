@@ -28,13 +28,13 @@ const TurmasPage = () => {
         <div className="space-y-8">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-semibold text-gray-800 mb-2">Turmas</h1>
+                    <h1 className="text-3xl font-semibold text-gray-700 mb-2">Turmas</h1>
                     <p className="text-gray-600">Gerencie suas turmas</p>
                 </div>
 
                 <button
                     onClick={() => alert("Usuário direcionado para cadastro de turma")}
-                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-800 transition"
+                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
                 >
                     Nova turma
                 </button>
@@ -84,7 +84,7 @@ const TurmasPage = () => {
                 {turmasFiltradas.map((turma) => (
                     <Card key={turma.id}>
                         <div className="flex items-start justify-between mb-3">
-                            <h3 className="text-lg font-semibold text-gray-800">{turma.nome}</h3>
+                            <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>
                             <p className="text-gray-600 text-sm">
                                 <i className="pi pi-users text-xs mr-2"></i>
                                 {turma.alunos} alunos

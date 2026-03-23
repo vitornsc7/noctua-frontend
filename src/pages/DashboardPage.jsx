@@ -5,7 +5,7 @@ const DashboardPage = () => {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-3xl font-semibold text-gray-800 mb-2">Dashboard</h1>
+                <h1 className="text-3xl font-semibold text-gray-700 mb-2">Dashboard</h1>
                 <p className="text-gray-600">Visão geral do sistema</p>
             </div>
 
@@ -32,7 +32,7 @@ const DashboardPage = () => {
                 </Card>
             </div>
 
-            <Card header={<h2 className="text-xl font-semibold text-gray-800">Atividade Recente</h2>}>
+            <Card header={<h2 className="text-xl font-semibold text-gray-700">Atividade Recente</h2>}>
                 <div className="space-y-4">
                     <p className="text-gray-600">Nenhuma atividade recente</p>
                 </div>
