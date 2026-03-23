@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Button, Input, Card, Modal, Table, Tooltip, useToast } from "../components/UI";
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Table, Tooltip, useToast } from '../../components/UI';
+import HomeCreateTurmaModal from './components/HomeCreateTurmaModal';
 
 const demoRows = [
     {
@@ -33,7 +34,7 @@ const HomePage = () => {
     const [tablePage, setTablePage] = useState(0);
     const [isTableLoading, setIsTableLoading] = useState(true);
     const [tableRows, setTableRows] = useState([]);
-    const { showSuccess, showError, showWarning, showInfo } = useToast();
+    const { showError, showWarning, showInfo } = useToast();
 
     const pageSize = 2;
 
@@ -62,7 +63,7 @@ const HomePage = () => {
         <div className="space-y-8">
             <div className="text-center">
                 <h1 className="text-4xl font-semibold text-gray-700 mb-2">Noctua - Componentes UI</h1>
-                <p className="text-gray-600">Exemplos mínimos de Modal, Table e Pageable</p>
+                <p className="text-gray-600">Exemplos minimos de Modal, Table e Pageable</p>
             </div>
 
             <Card
@@ -77,32 +78,10 @@ const HomePage = () => {
                     Abrir modal
                 </Button>
 
-                <Modal
+                <HomeCreateTurmaModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
-                    title="Criar nova turma"
-                    footer={
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                                Cancelar
-                            </Button>
-                            <Button
-                                variant="primary"
-                                onClick={() => {
-                                    showSuccess('Turma criada!', 'A turma foi criada com sucesso.');
-                                    setIsModalOpen(false);
-                                }}
-                            >
-                                Salvar
-                            </Button>
-                        </div>
-                    }
-                >
-                    <div className="space-y-3">
-                        <p className="text-gray-700">Arraste pelo cabeçalho para mover.</p>
-                        <Input label="Nome da turma" placeholder="Ex: Matemática 2026" />
-                    </div>
-                </Modal>
+                />
             </Card>
 
             <div className="space-y-4">
@@ -128,7 +107,7 @@ const HomePage = () => {
                     <Table.Column header="Turno" accessor="turno" />
                     <Table.Column header="Alunos" accessor="alunos" />
                     <Table.Column
-                        header="Observação"
+                        header="Observacao"
                         render={(row) => (
                             <Tooltip content={row.observacao}>
                                 <span className="inline-block max-w-[200px] truncate text-gray-600">
@@ -140,9 +119,7 @@ const HomePage = () => {
                 </Table>
             </div>
 
-            <Card
-                header={<h2 className="text-xl font-semibold text-gray-700">Tooltip</h2>}
-            >
+            <Card header={<h2 className="text-xl font-semibold text-gray-700">Tooltip</h2>}>
                 <Tooltip content="Esse texto aparece abaixo ao passar o mouse.">
                     <span className="inline-flex items-center gap-2 text-sm text-gray-700">
                         <i className="pi pi-info-circle text-sm"></i>

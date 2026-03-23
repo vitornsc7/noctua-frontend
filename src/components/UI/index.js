@@ -5,6 +5,7 @@ export { default as Card } from './Card';
 export { default as Tag } from './Tag';
 export { default as Toast } from './Toast';
 export { default as Header } from './Header';
+export { default as Footer } from './Footer';
 export { default as Modal } from './Modal';
 export { default as Table } from './Table';
 export { default as Pageable } from './Pageable';

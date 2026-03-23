@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card, Tag, Select } from '../components/UI';
+import { Card, Tag, Select } from '../../components/UI';
 
 const TurmasPage = () => {
     const instituicoes = [
-        { id: 'todas', nome: 'Todas as instituições' },
-        { id: 'inst1', nome: 'Colégio São Paulo' },
+        { id: 'todas', nome: 'Todas as instituicoes' },
+        { id: 'inst1', nome: 'Colegio Sao Paulo' },
         { id: 'inst2', nome: 'Escola Municipal Centro' },
         { id: 'inst3', nome: 'Instituto Educacional Norte' },
     ];
@@ -14,15 +14,15 @@ const TurmasPage = () => {
     const [anoSelecionado, setAnoSelecionado] = useState('todos');
 
     const turmas = [
-        { id: 1, nome: '1º Ano - A', alunos: 28, status: 'Ativa', instituicaoId: 'inst1', turno: 'Matutino' },
-        { id: 2, nome: '1º Ano - B', alunos: 32, status: 'Ativa', instituicaoId: 'inst1', turno: 'Vespertino' },
-        { id: 3, nome: '2º Ano - A', alunos: 25, status: 'Ativa', instituicaoId: 'inst2', turno: 'Matutino' },
-        { id: 4, nome: '2º Ano - B', alunos: 18, status: 'Inativa', instituicaoId: 'inst3', turno: 'Vespertino' },
+        { id: 1, nome: '1o Ano - A', alunos: 28, status: 'Ativa', instituicaoId: 'inst1', turno: 'Matutino' },
+        { id: 2, nome: '1o Ano - B', alunos: 32, status: 'Ativa', instituicaoId: 'inst1', turno: 'Vespertino' },
+        { id: 3, nome: '2o Ano - A', alunos: 25, status: 'Ativa', instituicaoId: 'inst2', turno: 'Matutino' },
+        { id: 4, nome: '2o Ano - B', alunos: 18, status: 'Inativa', instituicaoId: 'inst3', turno: 'Vespertino' },
     ];
 
     const turmasFiltradas = instituicaoSelecionada === 'todas'
         ? turmas
-        : turmas.filter(turma => turma.instituicaoId === instituicaoSelecionada);
+        : turmas.filter((turma) => turma.instituicaoId === instituicaoSelecionada);
 
     return (
         <div className="space-y-8">
@@ -42,7 +42,7 @@ const TurmasPage = () => {
 
             <div className="flex flex-col md:flex-row md:gap-2 gap-4">
                 <Select
-                    label="Filtrar por instituição"
+                    label="Filtrar por instituicao"
                     value={instituicaoSelecionada}
                     onChange={(e) => setInstituicaoSelecionada(e.target.value)}
                     leftIcon={<i className="pi pi-building text-sm"></i>}
@@ -56,13 +56,13 @@ const TurmasPage = () => {
                 </Select>
 
                 <Select
-                    label="Filtrar por período"
+                    label="Filtrar por periodo"
                     value={periodoSelecionado}
                     onChange={(e) => setPeriodoSelecionado(e.target.value)}
                     leftIcon={<i className="pi pi-clock text-sm"></i>}
                     fullWidth
                 >
-                    <Select.Option value="todos">Todos os períodos</Select.Option>
+                    <Select.Option value="todos">Todos os periodos</Select.Option>
                     <Select.Option value="matutino">Matutino</Select.Option>
                     <Select.Option value="vespertino">Vespertino</Select.Option>
                 </Select>
@@ -91,7 +91,7 @@ const TurmasPage = () => {
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Tag>{instituicoes.find(inst => inst.id === turma.instituicaoId)?.nome}</Tag>
+                            <Tag>{instituicoes.find((inst) => inst.id === turma.instituicaoId)?.nome}</Tag>
                             <Tag><i className="pi pi-clock text-xs mr-2"></i>{turma.turno}</Tag>
                             <Tag><i className="pi pi-calendar text-xs mr-2"></i>2026</Tag>
                         </div>

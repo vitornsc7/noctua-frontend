@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../components/UI';
+import { Card } from '../../components/UI';
 
 const DashboardPage = () => {
     return (
@@ -12,7 +12,7 @@ const DashboardPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
                     <div className="text-center">
-                        <p className="text-gray-600 text-sm mb-2">Total de Usuários</p>
+                        <p className="text-gray-600 text-sm mb-2">Total de Usuarios</p>
                         <p className="text-4xl font-bold text-primary">1.234</p>
                     </div>
                 </Card>
@@ -26,7 +26,7 @@ const DashboardPage = () => {
 
                 <Card>
                     <div className="text-center">
-                        <p className="text-gray-600 text-sm mb-2">Taxa de Conclusão</p>
+                        <p className="text-gray-600 text-sm mb-2">Taxa de Conclusao</p>
                         <p className="text-4xl font-bold text-primary">87%</p>
                     </div>
                 </Card>
