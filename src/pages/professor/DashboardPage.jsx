@@ -6,7 +6,7 @@ const DashboardPage = () => {
         <div className="space-y-8">
             <div>
                 <h1 className="text-3xl font-semibold text-gray-700 mb-2">Dashboard</h1>
-                <p className="text-gray-600">Visao geral do sistema</p>
+                <p className="text-gray-600">Visão geral do sistema</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

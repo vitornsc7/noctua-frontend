@@ -33,7 +33,7 @@ const TurmasPage = () => {
                 </div>
 
                 <button
-                    onClick={() => alert('Usuario direcionado para cadastro de turma')}
+                    onClick={() => alert("Usuário direcionado para cadastro de turma")}
                     className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
                 >
                     Nova turma
