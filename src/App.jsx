@@ -3,7 +3,8 @@ import { ToastProvider } from "./components/UI";
 import MainLayout from "./pages/layouts/MainLayout";
 import HomePage from "./pages/home/HomePage";
 import DashboardPage from "./pages/professor/DashboardPage";
-import TurmasPage from "./pages/professor/TurmasPage";
+import TurmasPage from "./pages/professor/turmas/TurmasPage";
+import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
             <Route index element={<HomePage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="turmas" element={<TurmasPage />} />
+            <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
           </Route>
         </Routes>
       </Router>
