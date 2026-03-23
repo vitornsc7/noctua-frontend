@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastProvider } from "./components/UI";
 import MainLayout from "./pages/layouts/MainLayout";
 import HomePage from "./pages/home/HomePage";
-import DashboardPage from "./pages/admin/DashboardPage";
+import DashboardPage from "./pages/professor/DashboardPage";
 import TurmasPage from "./pages/professor/TurmasPage";
 
 export default function App() {
