@@ -98,7 +98,7 @@ const Table = ({
         <div className={`w-full overflow-hidden rounded-lg border border-gray-200 ${className}`.trim()}>
             <div className="overflow-x-auto overflow-y-visible">
                 <table className="min-w-full text-sm text-gray-700">
-                <thead className="bg-gray-100 text-gray-700">
+                <thead className="bg-gray-100 border-b text-gray-700">
                     <tr>
                         {columns.map((column) => (
                             <th
@@ -113,7 +113,7 @@ const Table = ({
                         {hasActions && (
                             <th
                                 scope="col"
-                                className="sticky right-0 z-10 w-px whitespace-nowrap border-l border-gray-200 uppercase bg-gray-100 px-4 py-3 text-center font-medium text-xs"
+                                className="sticky right-0 z-10 w-px whitespace-nowrap border-l border-b border-gray-200 uppercase bg-gray-100 px-4 py-3 text-center font-medium text-xs"
                             >
                                 {actionsHeader}
                             </th>
@@ -172,7 +172,7 @@ const Table = ({
             </div>
 
             {shouldRenderPageable && (
-                <div className="border-t border-gray-200 px-4 py-3">
+                <div className="border-t bg-white border-gray-200 px-4 py-3">
                     <Pageable
                         page={pageable.page}
                         pageSize={pageable.pageSize}
