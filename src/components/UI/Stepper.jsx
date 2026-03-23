@@ -15,6 +15,7 @@ const Stepper = ({
     prevLabel = 'Voltar',
     finishLabel = 'Concluir',
     onFinish,
+    onBeforeNext,
     className = '',
 }) => {
     const steps = useMemo(
@@ -44,7 +45,17 @@ const Stepper = ({
         onStepChange?.(normalized);
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
+        const canContinue = await onBeforeNext?.({
+            currentStep: clampedStep,
+            isLastStep,
+            totalSteps,
+        });
+
+        if (canContinue === false) {
+            return;
+        }
+
         if (isLastStep) {
             onFinish?.();
             return;
@@ -130,6 +141,7 @@ Stepper.propTypes = {
     prevLabel: PropTypes.string,
     finishLabel: PropTypes.string,
     onFinish: PropTypes.func,
+    onBeforeNext: PropTypes.func,
     className: PropTypes.string,
 };
 
