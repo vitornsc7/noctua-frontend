@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastProvider } from "./components/UI";
 import MainLayout from "./pages/MainLayout";
@@ -7,12 +6,6 @@ import DashboardPage from "./pages/DashboardPage";
 import TurmasPage from "./pages/TurmasPage";
 
 export default function App() {
-  const [theme, setTheme] = useState("theme-default");
-
-  useEffect(() => {
-    document.body.classList.add(theme);
-  }, [theme]);
-
   return (
     <ToastProvider>
       <Router>
