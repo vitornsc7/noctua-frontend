@@ -30,7 +30,7 @@ const Button = ({
 
     const variantClasses = {
         primary: 'bg-primary text-white disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 focus:bg-secondary hover:bg-secondary',
-        outline: 'border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:border-gray-200 disabled:text-gray-400 focus:bg-gray-100',
+        outline: 'border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:border-gray-200 disabled:text-gray-400 focus:bg-gray-100',
     };
 
     const widthClass = fullWidth ? 'w-full' : '';
