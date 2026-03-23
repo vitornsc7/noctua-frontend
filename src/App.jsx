@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastProvider } from "./components/UI";
-import MainLayout from "./pages/MainLayout";
-import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/DashboardPage";
-import TurmasPage from "./pages/TurmasPage";
+import MainLayout from "./pages/layouts/MainLayout";
+import HomePage from "./pages/home/HomePage";
+import DashboardPage from "./pages/admin/DashboardPage";
+import TurmasPage from "./pages/professor/TurmasPage";
 
 export default function App() {
   return (

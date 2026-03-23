@@ -1,10 +1,10 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Header } from '../components/UI';
+import { Header, Footer } from '../../components/UI';
 
 const MainLayout = () => {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="flex min-h-screen flex-col bg-[#F6F6F8]">
             <Header
                 logo={
                     <Link to="/">
@@ -18,18 +18,22 @@ const MainLayout = () => {
                         <Link to="/dashboard" className="hover:text-gray-800 transition-colors">Dashboard</Link>
                         <Link to="/turmas" className="hover:text-gray-800 transition-colors">Turmas</Link>
                         <p className="hover:cursor-pointer hover:text-gray-800 transition-colors">Ajuda</p>
-                        <p className="hover:cursor-pointer hover:text-gray-800 transition-colors">Configurações</p>
+                        <p className="hover:cursor-pointer hover:text-gray-800 transition-colors">Configuracoes</p>
                         <div className="border-l border-gray-300 h-6"></div>
-                        <p>Prof. Júlio</p>
+                        <p>Prof. Julio</p>
                         <i className="pi pi-sign-out text-xs hover:cursor-pointer hover:text-gray-800 transition-colors"></i>
                     </div>
                 }
                 fixed
             />
 
-            <div className="max-w-6xl mx-auto p-8">
-                <Outlet />
-            </div>
+            <main className="flex-1">
+                <div className="max-w-6xl mx-auto p-8">
+                    <Outlet />
+                </div>
+            </main>
+
+            <Footer />
         </div>
     );
 };
