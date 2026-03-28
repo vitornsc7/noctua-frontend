@@ -32,7 +32,7 @@ const AddAlunoModal = ({
     const onSubmit = (values) => {
         onSave?.({
             nome: values.nome?.trim() || '',
-            descricao: values.descricao?.trim() || '',
+            observacao: values.observacao?.trim() || '',
         });
     };
 
@@ -65,17 +65,17 @@ const AddAlunoModal = ({
 
                 <div className="flex flex-col gap-1.5">
                     <label className="text-sm font-medium text-gray-700">
-                        Descrição
+                        Observação
                     </label>
                     <textarea
                         rows={3}
                         placeholder="Observações sobre o aluno..."
                         className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-primary focus:outline-none"
-                        {...register('descricao')}
+                        {...register('observacao')}
                     />
-                    {errors.descricao?.message && (
+                    {errors.observacao?.message && (
                         <p className="text-xs text-red-600">
-                            {errors.descricao.message}
+                            {errors.observacao.message}
                         </p>
                     )}
                 </div>
@@ -89,7 +89,7 @@ AddAlunoModal.propTypes = {
     isEditing: PropTypes.bool,
     initialData: PropTypes.shape({
         nome: PropTypes.string,
-        descricao: PropTypes.string,
+        observacao: PropTypes.string,
     }),
     onClose: PropTypes.func,
     onSave: PropTypes.func,
