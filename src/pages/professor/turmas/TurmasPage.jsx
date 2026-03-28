@@ -1,29 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Tag, Select } from '../../../components/UI';
+import { listarTurmas } from '../../../api/turmaApi';
+
+const TURNO_DISPLAY = {
+    MATUTINO: 'Matutino',
+    VESPERTINO: 'Vespertino',
+    NOTURNO: 'Noturno',
+    INTEGRAL: 'Integral',
+};
+
+const getAnoLetivo = (anoLetivo) => {
+    if (Array.isArray(anoLetivo)) return String(anoLetivo[0]);
+    if (typeof anoLetivo === 'string') return anoLetivo.substring(0, 4);
+    return String(anoLetivo);
+};
 
 const TurmasPage = () => {
-    const instituicoes = [
-        { id: 'todas', nome: 'Todas as instituicoes' },
-        { id: 'inst1', nome: 'Colegio Sao Paulo' },
-        { id: 'inst2', nome: 'Escola Municipal Centro' },
-        { id: 'inst3', nome: 'Instituto Educacional Norte' },
-    ];
+    const [turmas, setTurmas] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const [instituicaoSelecionada, setInstituicaoSelecionada] = useState('todas');
-    const [periodoSelecionado, setPeriodoSelecionado] = useState('todos');
+    const [turnoSelecionado, setTurnoSelecionado] = useState('todos');
     const [anoSelecionado, setAnoSelecionado] = useState('todos');
 
-    const turmas = [
-        { id: 1, nome: '1o Ano - A', alunos: 28, status: 'Ativa', instituicaoId: 'inst1', turno: 'Matutino' },
-        { id: 2, nome: '1o Ano - B', alunos: 32, status: 'Ativa', instituicaoId: 'inst1', turno: 'Vespertino' },
-        { id: 3, nome: '2o Ano - A', alunos: 25, status: 'Ativa', instituicaoId: 'inst2', turno: 'Matutino' },
-        { id: 4, nome: '2o Ano - B', alunos: 18, status: 'Inativa', instituicaoId: 'inst3', turno: 'Vespertino' },
-    ];
+    useEffect(() => {
+        listarTurmas()
+            .then(setTurmas)
+            .catch((err) => setError(err.message))
+            .finally(() => setLoading(false));
+    }, []);
 
-    const turmasFiltradas = instituicaoSelecionada === 'todas'
-        ? turmas
-        : turmas.filter((turma) => turma.instituicaoId === instituicaoSelecionada);
+    const anosDisponiveis = [...new Set(turmas.map((t) => getAnoLetivo(t.anoLetivo)))].sort();
+
+    const turmasFiltradas = turmas.filter((turma) => {
+        const matchTurno = turnoSelecionado === 'todos' || turma.turno === turnoSelecionado;
+        const matchAno = anoSelecionado === 'todos' || getAnoLetivo(turma.anoLetivo) === anoSelecionado;
+        return matchTurno && matchAno;
+    });
 
     return (
         <div className="space-y-8">
@@ -43,29 +57,17 @@ const TurmasPage = () => {
 
             <div className="flex flex-col md:flex-row md:gap-2 gap-4">
                 <Select
-                    label="Filtrar por instituicao"
-                    value={instituicaoSelecionada}
-                    onChange={(e) => setInstituicaoSelecionada(e.target.value)}
-                    leftIcon={<i className="pi pi-building text-sm"></i>}
-                    fullWidth
-                >
-                    {instituicoes.map((inst) => (
-                        <Select.Option key={inst.id} value={inst.id}>
-                            {inst.nome}
-                        </Select.Option>
-                    ))}
-                </Select>
-
-                <Select
-                    label="Filtrar por periodo"
-                    value={periodoSelecionado}
-                    onChange={(e) => setPeriodoSelecionado(e.target.value)}
+                    label="Filtrar por turno"
+                    value={turnoSelecionado}
+                    onChange={(e) => setTurnoSelecionado(e.target.value)}
                     leftIcon={<i className="pi pi-clock text-sm"></i>}
                     fullWidth
                 >
-                    <Select.Option value="todos">Todos os periodos</Select.Option>
-                    <Select.Option value="matutino">Matutino</Select.Option>
-                    <Select.Option value="vespertino">Vespertino</Select.Option>
+                    <Select.Option value="todos">Todos os turnos</Select.Option>
+                    <Select.Option value="MATUTINO">Matutino</Select.Option>
+                    <Select.Option value="VESPERTINO">Vespertino</Select.Option>
+                    <Select.Option value="NOTURNO">Noturno</Select.Option>
+                    <Select.Option value="INTEGRAL">Integral</Select.Option>
                 </Select>
 
                 <Select
@@ -76,10 +78,23 @@ const TurmasPage = () => {
                     fullWidth
                 >
                     <Select.Option value="todos">Todos os anos</Select.Option>
-                    <Select.Option value="2025">2025</Select.Option>
-                    <Select.Option value="2026">2026</Select.Option>
+                    {anosDisponiveis.map((ano) => (
+                        <Select.Option key={ano} value={ano}>{ano}</Select.Option>
+                    ))}
                 </Select>
             </div>
+
+            {loading && (
+                <p className="text-sm text-gray-500">Carregando turmas...</p>
+            )}
+
+            {error && (
+                <p className="text-sm text-red-500">Erro ao carregar turmas: {error}</p>
+            )}
+
+            {!loading && !error && turmasFiltradas.length === 0 && (
+                <p className="text-sm text-gray-400 italic">Nenhuma turma encontrada.</p>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {turmasFiltradas.map((turma) => (
@@ -88,13 +103,15 @@ const TurmasPage = () => {
                             <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>
                             <p className="text-gray-600 text-sm">
                                 <i className="pi pi-users text-xs mr-2"></i>
-                                {turma.alunos} alunos
+                                {turma.alunosCount ?? 0} alunos
                             </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Tag>{instituicoes.find((inst) => inst.id === turma.instituicaoId)?.nome}</Tag>
-                            <Tag><i className="pi pi-clock text-xs mr-2"></i>{turma.turno}</Tag>
-                            <Tag><i className="pi pi-calendar text-xs mr-2"></i>2026</Tag>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {turma.disciplina && (
+                                <Tag><i className="pi pi-book text-xs mr-2"></i>{turma.disciplina}</Tag>
+                            )}
+                            <Tag><i className="pi pi-clock text-xs mr-2"></i>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
+                            <Tag><i className="pi pi-calendar text-xs mr-2"></i>{getAnoLetivo(turma.anoLetivo)}</Tag>
                         </div>
                     </Card>
                 ))}
