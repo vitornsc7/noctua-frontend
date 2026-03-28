@@ -1,21 +1,22 @@
 import { z } from 'zod';
 
-export const PERIODICIDADE_OPTIONS = ['Bimestre', 'Trimestre'];
+export const PERIODICIDADE_OPTIONS = ['Bimestral', 'Trimestral'];
 export const TURNO_OPTIONS = ['Matutino', 'Vespertino', 'Noturno', 'Integral'];
 
 export const TURMA_INITIAL_VALUES = {
     nome: '',
     periodicidade: '',
-    anoLetivo: '',
+    anoLetivo: String(new Date().getFullYear()),
     turno: '',
     disciplina: '',
-    mediaMinima: '',
+    mediaMinima: '7.0',
+    qtdeAulasPrevistasPeriodo: '',
     instituicao: '',
 };
 
 export const ALUNO_INITIAL_VALUES = {
     nome: '',
-    descricao: '',
+    observacao: '',
 };
 
 export const TURMA_STEP_ONE_FIELDS = [
@@ -25,6 +26,7 @@ export const TURMA_STEP_ONE_FIELDS = [
     'turno',
     'disciplina',
     'mediaMinima',
+    'qtdeAulasPrevistasPeriodo',
     'instituicao',
 ];
 
@@ -35,7 +37,7 @@ export const turmaSchema = z.object({
     periodicidade: z.string().trim()
         .min(1, 'Selecione a periodicidade da turma.')
         .refine((value) => PERIODICIDADE_OPTIONS.includes(value), {
-            message: 'Periodicidade inválida. Use Bimestre ou Trimestre.',
+            message: 'Periodicidade inválida. Use Bimestral ou Trimestral.',
         }),
     anoLetivo: z.string().trim()
         .min(1, 'Informe o ano letivo.')
@@ -64,6 +66,15 @@ export const turmaSchema = z.object({
         }, {
             message: 'A média mínima deve estar entre 0 e 10.',
         }),
+    qtdeAulasPrevistasPeriodo: z.string().trim()
+        .min(1, 'Informe a quantidade de aulas previstas por período.')
+        .regex(/^\d+$/, 'Informe um número inteiro.')
+        .refine((value) => {
+            const num = Number(value);
+            return num >= 1 && num <= 200;
+        }, {
+            message: 'A quantidade de aulas deve ser entre 1 e 200.',
+        }),
     instituicao: z.string().trim().optional().or(z.literal(''))
         .refine((value) => value.length === 0 || value.length >= 3, {
             message: 'A instituição deve ter pelo menos 3 caracteres.',
@@ -74,8 +85,8 @@ export const alunoSchema = z.object({
     nome: z.string().trim()
         .min(1, 'Informe o nome do aluno.')
         .min(3, 'O nome do aluno precisa ter pelo menos 3 caracteres.'),
-    descricao: z.string().trim()
-        .max(280, 'A descrição pode ter no máximo 280 caracteres.')
+    observacao: z.string().trim()
+        .max(280, 'A observação pode ter no máximo 280 caracteres.')
         .optional()
         .or(z.literal('')),
 });
