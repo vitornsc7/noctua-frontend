@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Input, Select, Stepper, Table, Tag } from '../../../components/UI';
+import { useToast } from '../../../components/UI/ToastContainer';
 import AddAlunoModal from './components/AddAlunoModal';
+import { criarTurma, criarAluno } from '../../../api/turmaApi';
 import {
     ALUNO_INITIAL_VALUES,
     PERIODICIDADE_OPTIONS,
@@ -15,7 +18,10 @@ import {
 let nextId = 1;
 
 const CadastroTurmaPage = () => {
+    const navigate = useNavigate();
+    const { showSuccess, showError } = useToast();
     const [currentStep, setCurrentStep] = useState(1);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [alunos, setAlunos] = useState([]);
     const [alunoModalOpen, setAlunoModalOpen] = useState(false);
@@ -71,14 +77,14 @@ const CadastroTurmaPage = () => {
             setAlunos((prev) =>
                 prev.map((a) =>
                     a.id === editingAluno.id
-                        ? { ...a, nome: alunoData.nome, descricao: alunoData.descricao }
+                        ? { ...a, nome: alunoData.nome, observacao: alunoData.observacao }
                         : a,
                 ),
             );
         } else {
             setAlunos((prev) => [
                 ...prev,
-                { id: nextId++, nome: alunoData.nome, descricao: alunoData.descricao },
+                { id: nextId++, nome: alunoData.nome, observacao: alunoData.observacao },
             ]);
         }
 
@@ -94,8 +100,25 @@ const CadastroTurmaPage = () => {
         setCurrentStep((s) => s - 1);
     };
 
-    const handleFinish = () => {
-        console.log('Cadastro finalizado:', { turmaInfo, alunos });
+    const handleFinish = async () => {
+        setIsSubmitting(true);
+        try {
+            const turma = await criarTurma(turmaInfo);
+
+            await Promise.all(
+                alunos.map((aluno) => criarAluno(turma.id, aluno))
+            );
+
+            showSuccess(
+                'Turma cadastrada!',
+                `A turma "${turma.nome}" foi criada com sucesso.`,
+            );
+            navigate('/turmas');
+        } catch (err) {
+            showError('Erro ao cadastrar turma.', err.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const normalizeMediaMinima = (value) => {
@@ -136,6 +159,7 @@ const CadastroTurmaPage = () => {
         { label: 'Periodicidade', value: turmaInfo.periodicidade },
         { label: 'Ano Letivo', value: turmaInfo.anoLetivo },
         { label: 'Turno', value: turmaInfo.turno },
+        turmaInfo.qtdeAulasPrevistasPeriodo ? { label: 'Aulas por período', value: turmaInfo.qtdeAulasPrevistasPeriodo } : null,
         turmaInfo.disciplina ? { label: 'Disciplina', value: turmaInfo.disciplina } : null,
         turmaInfo.mediaMinima ? { label: 'Média Mínima', value: turmaInfo.mediaMinima } : null,
         turmaInfo.instituicao ? { label: 'Instituição', value: turmaInfo.instituicao } : null,
@@ -153,8 +177,8 @@ const CadastroTurmaPage = () => {
                     Próximo
                 </Button>
             ) : (
-                <Button variant="primary" onClick={handleFinish}>
-                    Concluir
+                <Button variant="primary" onClick={handleFinish} disabled={isSubmitting}>
+                    {isSubmitting ? 'Salvando...' : 'Concluir'}
                 </Button>
             )}
         </div>
@@ -175,9 +199,7 @@ const CadastroTurmaPage = () => {
                     <Card
                         footer={navButtons}
                         header={
-                            <div>
-                                <h2 className="text-lg font-medium text-gray-700">Informações gerais</h2>
-                            </div>
+                            <h2 className="text-lg font-medium text-gray-700">Informações gerais</h2>
                         }>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <Input
@@ -223,9 +245,12 @@ const CadastroTurmaPage = () => {
                             </Select>
 
                             <Input
-                                label="Disciplina"
-                                placeholder="Ex: Matemática"
-                                {...getTurmaFieldProps('disciplina')}
+                                label="Aulas previstas por período"
+                                required
+                                placeholder="Ex: 20"
+                                {...getTurmaFieldProps('qtdeAulasPrevistasPeriodo')}
+                                integerOnly
+                                maxChars={3}
                                 fullWidth
                             />
 
@@ -240,11 +265,17 @@ const CadastroTurmaPage = () => {
                             />
 
                             <Input
+                                label="Disciplina"
+                                placeholder="Ex: Matemática"
+                                {...getTurmaFieldProps('disciplina')}
+                                fullWidth
+                            />
+
+                            <Input
                                 label="Instituição"
                                 placeholder="Ex: Escola Estadual João da Silva"
                                 {...getTurmaFieldProps('instituicao')}
                                 fullWidth
-                                className="sm:col-span-2"
                             />
                         </div>
                     </Card>
@@ -282,11 +313,11 @@ const CadastroTurmaPage = () => {
                             >
                                 <Table.Column header="Nome" accessor="nome" />
                                 <Table.Column
-                                    header="Descrição"
-                                    accessor="descricao"
+                                    header="Observação"
+                                    accessor="observacao"
                                     render={(row) => (
                                         <span>
-                                            {row.descricao || '--'}
+                                            {row.observacao || '--'}
                                         </span>
                                     )}
                                 />
@@ -307,7 +338,7 @@ const CadastroTurmaPage = () => {
                                     {turmaOverviewFields.map(({ label, value }) => (
                                         <div key={label}>
                                             <Tag className="text-sm font-medium text-gray-700">
-                                                {label === 'Média Mínima' ? `Média mínima ${value}` : value}
+                                                {label === 'Média Mínima' ? `Média mínima: ${value}` : label === 'Aulas por período' ? `Aulas por período: ${value}` : value}
                                             </Tag>
                                         </div>
                                     ))}
@@ -334,9 +365,9 @@ const CadastroTurmaPage = () => {
                                                     <p className="text-sm font-medium text-gray-700">
                                                         <i className='pi pi-user text-xs' /> {aluno.nome}
                                                     </p>
-                                                    {aluno.descricao && (
+                                                    {aluno.observacao && (
                                                         <p className="text-xs text-gray-400">
-                                                            {aluno.descricao}
+                                                            {aluno.observacao}
                                                         </p>
                                                     )}
                                                 </div>
@@ -356,7 +387,7 @@ const CadastroTurmaPage = () => {
                 isEditing={Boolean(editingAluno)}
                 initialData={editingAluno ? {
                     nome: editingAluno.nome,
-                    descricao: editingAluno.descricao,
+                    observacao: editingAluno.observacao,
                 } : ALUNO_INITIAL_VALUES}
                 onClose={handleCloseAlunoModal}
                 onSave={handleSaveAluno}
