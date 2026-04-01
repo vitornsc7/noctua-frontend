@@ -175,10 +175,10 @@ const CadastroTurmaPage = () => {
                     <Card
                         footer={navButtons}
                         header={
-                        <div>
-                            <h2 className="text-lg font-medium text-gray-700">Informações gerais</h2>
-                        </div>
-                    }>
+                            <div>
+                                <h2 className="text-lg font-medium text-gray-700">Informações gerais</h2>
+                            </div>
+                        }>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <Input
                                 label="Nome da turma"
@@ -258,18 +258,18 @@ const CadastroTurmaPage = () => {
                                 {alunos.length}{' '}
                                 {alunos.length === 1 ? 'aluno adicionado' : 'alunos adicionados'}
                             </p>
-                            <div>    
+                            <div>
                                 {navButtons}
                             </div>
                         </div>
                     }
-                    header={
-                        <div className='flex justify-between'>
-                            <h2 className="text-lg font-medium text-gray-700">Adicionar alunos à turma</h2>
-                            <Button variant="primary" onClick={openAddModal}>
-                                <i className="pi pi-plus text-xs" /> Adicionar aluno
-                            </Button>
-                        </div>}
+                        header={
+                            <div className='flex justify-between'>
+                                <h2 className="text-lg font-medium text-gray-700">Adicionar alunos à turma</h2>
+                                <Button variant="primary" onClick={openAddModal}>
+                                    <i className="pi pi-plus text-xs" /> Adicionar aluno
+                                </Button>
+                            </div>}
                     >
                         <div>
                             <Table
