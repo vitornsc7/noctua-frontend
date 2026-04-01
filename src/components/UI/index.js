@@ -11,4 +11,5 @@ export { default as Table } from './Table';
 export { default as Pageable } from './Pageable';
 export { default as Tooltip } from './Tooltip';
 export { default as Stepper } from './Stepper';
+export { default as Tabs } from './Tabs';
 export { ToastProvider, useToast } from './ToastContainer';
