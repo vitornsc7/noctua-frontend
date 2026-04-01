@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Tag, Select, Pageable, useToast } from '../../../components/UI';
-import { listarTurmas } from '../../../api/turmaApi';
+import { listarTurmas, buscarFiltrosTurmas } from '../../../api/turmaApi';
 
 const PAGE_SIZE = 10;
 
@@ -11,11 +11,6 @@ const TURNO_DISPLAY = {
     NOTURNO: 'Noturno',
     INTEGRAL: 'Integral',
 };
-
-const ANOS_DISPONIVEIS = Array.from(
-    { length: new Date().getFullYear() - 2019 },
-    (_, i) => String(2020 + i),
-);
 
 const getAnoLetivo = (anoLetivo) => {
     if (Array.isArray(anoLetivo)) return String(anoLetivo[0]);
@@ -30,20 +25,33 @@ const TurmasPage = () => {
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true);
 
+    const [anosDisponiveis, setAnosDisponiveis] = useState([]);
+    const [instituicoesDisponiveis, setInstituicoesDisponiveis] = useState([]);
+
     const [turnoSelecionado, setTurnoSelecionado] = useState('todos');
     const [anoSelecionado, setAnoSelecionado] = useState('todos');
+    const [instituicaoSelecionada, setInstituicaoSelecionada] = useState('todos');
+
+    useEffect(() => {
+        buscarFiltrosTurmas()
+            .then((data) => {
+                setAnosDisponiveis(data.anos ?? []);
+                setInstituicoesDisponiveis(data.instituicoes ?? []);
+            })
+            .catch(() => { });
+    }, []);
 
     useEffect(() => {
         setLoading(true);
 
-        listarTurmas({ page, size: PAGE_SIZE, turno: turnoSelecionado, anoLetivo: anoSelecionado })
+        listarTurmas({ page, size: PAGE_SIZE, turno: turnoSelecionado, anoLetivo: anoSelecionado, instituicao: instituicaoSelecionada })
             .then((data) => {
                 setTurmas(data.content);
                 setTotalElements(data.totalElements);
             })
             .catch((err) => showError('Erro ao carregar turmas', err.message))
             .finally(() => setLoading(false));
-    }, [page, turnoSelecionado, anoSelecionado]);
+    }, [page, turnoSelecionado, anoSelecionado, instituicaoSelecionada]);
 
     const handleFilterChange = (setter) => (e) => {
         setPage(0);
@@ -89,10 +97,25 @@ const TurmasPage = () => {
                     fullWidth
                 >
                     <Select.Option value="todos">Todos os anos</Select.Option>
-                    {ANOS_DISPONIVEIS.map((ano) => (
-                        <Select.Option key={ano} value={ano}>{ano}</Select.Option>
+                    {anosDisponiveis.map((ano) => (
+                        <Select.Option key={ano} value={String(ano)}>{ano}</Select.Option>
                     ))}
                 </Select>
+
+                {instituicoesDisponiveis.length > 0 && (
+                    <Select
+                        label="Filtrar por instituição"
+                        value={instituicaoSelecionada}
+                        onChange={handleFilterChange(setInstituicaoSelecionada)}
+                        leftIcon={<i className="pi pi-building text-sm"></i>}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todas as instituições</Select.Option>
+                        {instituicoesDisponiveis.map((inst) => (
+                            <Select.Option key={inst} value={inst}>{inst}</Select.Option>
+                        ))}
+                    </Select>
+                )}
             </div>
 
             <div className="relative">
