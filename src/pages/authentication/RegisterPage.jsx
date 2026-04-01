@@ -1,182 +1,122 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Input, Button } from '../../components/UI';
 import corujinha from '../../assets/corujinha.png';
+import { registerSchema, REGISTER_INITIAL_VALUES } from './authSchema';
 
 export default function RegisterPage() {
-    const [nome, setNome] = useState('');
-    const [cpf, setCpf] = useState('');
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
     const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState('');
 
-    const handleRegister = (e) => {
-        e.preventDefault();
-        setErro('');
+    const {
+        watch,
+        setValue,
+        trigger,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(registerSchema),
+        defaultValues: REGISTER_INITIAL_VALUES,
+        mode: 'onBlur',
+        reValidateMode: 'onChange',
+    });
 
-        if (!nome || !cpf || !email || !senha) {
-            setErro('Preencha todos os campos.');
-            return;
-        }
+    const registerInfo = watch();
 
-        console.log('Cadastro:', { nome, cpf, email, senha });
+    const handleFieldChange = (field) => (e) => {
+        setValue(field, e.target.value, {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: Boolean(errors[field]),
+        });
     };
+
+    const handleFieldBlur = (field) => () => {
+        trigger(field);
+    };
+
+    const getFieldProps = (field) => ({
+        value: registerInfo[field] ?? '',
+        onChange: handleFieldChange(field),
+        onBlur: handleFieldBlur(field),
+        error: errors[field]?.message,
+    });
+
+    const onSubmit = (data) => {
+        console.log('Cadastro:', data);
+    };
+
     return (
-        <div
-            style={{
-                minHeight: '100vh',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#f6f7f9',
-                padding: '24px',
-            }}
-        >
-            <div
-                style={{
-                    width: '100%',
-                    maxWidth: '420px',
-                    textAlign: 'center',
-                }}
-            >
-                <img
-                    src={corujinha}
-                    alt="Logo Noctua"
-                    style={{
-                        width: '58px',
-                        height: '58px',
-                        objectFit: 'contain',
-                        margin: '0 auto 4px auto',
-                        display: 'block',
-                    }}
-                />
-
-                <h1
-                    style={{
-                        margin: 0,
-                        fontSize: '36px',
-                        fontWeight: 500,
-                        lineHeight: '1.22',
-                        letterSpacing: '-3px',
-                        color: '#111827',
-                        fontFamily: 'Inter, sans-serif',
-                    }}
-                >
-                    Noctua
-                </h1>
-
-                <p
-                    style={{
-                        marginTop: '8px',
-                        marginBottom: '20px',
-                        fontSize: '14px',
-                        color: '#6b7280',
-                    }}
-                >
-                    <span style={{ fontStyle: 'italic' }}>Insights</span> poderosos que mudam a educação.
-                </p>
-
-                <Card
-                    style={{
-                        border: '1px solid #C6D2FF',
-                        borderRadius: '16px',
-                        boxShadow: 'none',
-                    }}
-                >
-                    <div style={{ textAlign: 'left' }}>
-                        <h2
-                            style={{
-                                marginTop: 2,
-                                marginBottom: '14px',
-                                fontSize: '16px',
-                                fontWeight: 500,
-                                color: '#1f2937',
-                            }}
-                        >
-                            Criar conta
-                        </h2>
-
-                        <form onSubmit={handleRegister}>
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    label="Nome"
-                                    type="text"
-                                    value={nome}
-                                    onChange={(e) => setNome(e.target.value)}
-                                />
-                            </div>
-
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    label="CPF"
-                                    type="text"
-                                    value={cpf}
-                                    onChange={(e) => setCpf(e.target.value)}
-                                />
-                            </div>
-
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    label="E-mail"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    label="Senha"
-                                    type="password"
-                                    value={senha}
-                                    onChange={(e) => setSenha(e.target.value)}
-                                />
-                            </div>
-                            {erro && (
-                                <p
-                                    style={{
-                                        marginTop: 0,
-                                        marginBottom: '16px',
-                                        color: '#DC6B6B',
-                                        fontSize: '13px',
-                                    }}
-                                >
-                                    {erro}
-                                </p>
-                            )}
-                            <div style={{ width: '100%' }}>
-                                <Button
-                                    type="submit"
-                                    disabled={carregando}
-                                    style={{
-                                        width: '100%',
-                                        borderRadius: '12px',
-                                        padding: '10px',
-                                        marginTop: '3px',
-                                        marginBottom: '15px',
-                                        transition: 'all 0.2s ease',
-                                    }}
-                                >
-                                    Cadastrar
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
-                </Card>
-
-                <div
-                    style={{
-                        marginTop: '32px',
-                        fontSize: '14px',
-                        color: '#6b7280',
-                    }}
-                >
-                    Já possui conta?{' '}
-                    <Link to="/login" style={{ textDecoration: 'underline' }}>
-                        Logar
-                    </Link>
+        <div className="min-h-screen flex justify-center items-center bg-[#f6f7f9] px-6 py-6">
+            <div className="w-full md:max-w-[420px]">
+                <div className='text-center'>
+                    <img
+                        src={corujinha}
+                        alt="Logo Noctua"
+                        className="w-[58px] h-[58px] object-contain mx-auto mb-1 block"
+                    />
+                    <h1 className="m-0 text-4xl font-medium leading-[1.22] tracking-[-3px] text-gray-900 font-['Inter',sans-serif]">
+                        Noctua
+                    </h1>
+                    <p className="mt-2 mb-5 text-sm text-gray-500">
+                        <span className="italic">Insights</span> poderosos que mudam a educação.
+                    </p>
                 </div>
+
+                <Card variant="accent"
+                    header={
+                        <h2 className="text-lg font-medium text-gray-700">Criar conta</h2>
+                    }
+                    footer={
+                        <div className="flex gap-2 items-center justify-between">
+                            <p className="text-sm text-gray-500">
+                                Já possui conta?{' '}
+                                <Link to="/login" className="underline">
+                                    Logar
+                                </Link>
+                            </p>
+                            <Button
+                                type="submit"
+                                form="register-form"
+                                disabled={carregando}
+                            >
+                                {carregando ? 'Cadastrando...' : 'Cadastrar'}
+                            </Button>
+                        </div>
+                    }
+                >
+                    <form id="register-form" onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
+                        <Input
+                            label="Nome"
+                            type="text"
+                            placeholder="Digite seu nome completo"
+                            {...getFieldProps('nome')}
+                        />
+
+                        <Input
+                            label="E-mail"
+                            type="email"
+                            placeholder="Digite seu e-mail"
+                            {...getFieldProps('email')}
+                        />
+
+                        <Input
+                            label="CPF"
+                            type="text"
+                            mask="***.***.***-**"
+                            placeholder="Digite seu CPF"
+                            {...getFieldProps('cpf')}
+                        />
+
+                        <Input
+                            label="Senha"
+                            type="password"
+                            placeholder="Digite sua senha"
+                            {...getFieldProps('senha')}
+                        />
+                    </form>
+                </Card>
             </div>
         </div>
     );

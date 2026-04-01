@@ -1,190 +1,121 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Input, Button } from '../../components/UI';
 import corujinha from '../../assets/corujinha.png';
+import { loginSchema, LOGIN_INITIAL_VALUES } from './authSchema';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
     const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState('');
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setErro('');
+    const {
+        watch,
+        setValue,
+        trigger,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: LOGIN_INITIAL_VALUES,
+        mode: 'onBlur',
+        reValidateMode: 'onChange',
+    });
 
-        if (!email || !senha) {
-            setErro('Preencha todos os campos.');
-            return;
-        }
+    const loginInfo = watch();
 
+    const handleFieldChange = (field) => (e) => {
+        setValue(field, e.target.value, {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: Boolean(errors[field]),
+        });
+    };
+
+    const handleFieldBlur = (field) => () => {
+        trigger(field);
+    };
+
+    const getFieldProps = (field) => ({
+        value: loginInfo[field] ?? '',
+        onChange: handleFieldChange(field),
+        onBlur: handleFieldBlur(field),
+        error: errors[field]?.message,
+    });
+
+    const onSubmit = async (data) => {
         try {
             setCarregando(true);
-            console.log('Login:', { email, senha });
+            console.log('Login:', data);
         } catch (err) {
-            setErro('E-mail ou senha inválidos.');
+            // handle server error
         } finally {
             setCarregando(false);
         }
     };
 
     return (
-        <div
-            style={{
-                minHeight: '100vh',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#f6f7f9',
-                padding: '24px',
-            }}
-        >
-            <div
-                style={{
-                    width: '100%',
-                    maxWidth: '420px',
-                    textAlign: 'center',
-                }}
-            >
-
-                <img
-                    src={corujinha}
-                    alt="Logo Noctua"
-                    style={{
-                        width: '58px',
-                        height: '58px',
-                        objectFit: 'contain',
-                        margin: '0 auto 4px auto',
-                        display: 'block',
-                    }}
-                />
-
-
-                <h1
-                    style={{
-                        margin: 0,
-                        fontSize: '36px',
-                        fontWeight: 500,
-                        lineHeight: '1.22',
-                        letterSpacing: '-3px',
-                        color: '#111827',
-                        fontFamily: 'Inter, sans-serif',
-                    }}
-                >
-                    Noctua
-                </h1>
-
-
-                <p
-                    style={{
-                        marginTop: '8px',
-                        marginBottom: '20px',
-                        fontSize: '14px',
-                        color: '#6b7280',
-                    }}
-                >
-                    <span style={{ fontStyle: 'italic' }}>Insights</span> poderosos que mudam a educação.
-                </p>
-
+        <div className="min-h-screen flex justify-center items-center bg-[#f6f7f9] px-6 py-6">
+            <div className="w-full md:max-w-[420px]">
+                <div className='text-center'>
+                    <img
+                        src={corujinha}
+                        alt="Logo Noctua"
+                        className="w-[58px] h-[58px] object-contain mx-auto mb-1 block"
+                    />
+                    <h1 className="m-0 text-4xl font-medium leading-[1.22] tracking-[-3px] text-gray-900 font-['Inter',sans-serif]">
+                        Noctua
+                    </h1>
+                    <p className="mt-2 mb-5 text-sm text-gray-500">
+                        <span className="italic">Insights</span> poderosos que mudam a educação.
+                    </p>
+                </div>
 
                 <Card
-                    style={{
-                        border: '1px solid #C6D2FF',
-                        borderRadius: '16px',
-                        boxShadow: 'none',
-                    }}
+                    variant="accent"
+                    header={
+                        <h2 className="text-lg font-medium text-gray-700">Acesso ao portal</h2>
+                    }
+                    footer={
+                        <div className="flex gap-2 items-center justify-between">
+                            <p className="text-sm text-gray-500 text-center m-0">
+                                Não possui conta?{' '}
+                                <Link to="/cadastro" className="underline">
+                                    Cadastrar
+                                </Link>
+                            </p>
+                            <Button
+                                type="submit"
+                                form="login-form"
+                                disabled={carregando}
+                            >
+                                {carregando ? 'Entrando...' : 'Entrar'}
+                            </Button>
+                        </div>
+                    }
                 >
-                    <div style={{ textAlign: 'left' }}>
-                        <h2
-                            style={{
-                                marginTop: 2,
-                                marginBottom: '14px',
-                                fontSize: '16px',
-                                fontWeight: 500,
-                                color: '#1f2937',
-                            }}
-                        >
-                            Acesso ao portal
-                        </h2>
+                    <form id="login-form" onSubmit={handleSubmit(onSubmit)} className='flex gap-3 flex-col'>
+                        <Input
+                            label="E-mail"
+                            type="email"
+                            placeholder="Digite seu e-mail"
+                            {...getFieldProps('email')}
+                        />
 
-                        <form onSubmit={handleLogin}>
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    label="E-mail"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Digite seu e-mail"
-                                />
-                            </div>
-
-                            <div style={{ marginBottom: '16px' }}>
-                                <Input
-                                    label="Senha"
-                                    type="password"
-                                    value={senha}
-                                    onChange={(e) => setSenha(e.target.value)}
-                                    placeholder="Digite sua senha"
-                                />
-                            </div>
-
-                            {erro && (
-                                <p
-                                    style={{
-                                        marginTop: 0,
-                                        marginBottom: '16px',
-                                        color: '#DC6B6B',
-                                        fontSize: '13px',
-                                    }}
-                                >
-                                    {erro}
-                                </p>
-                            )}
-
-                            <div style={{ width: '100%' }}>
-                                <Button
-                                    type="submit"
-                                    disabled={carregando}
-                                    style={{
-                                        width: '100%',
-                                        borderRadius: '12px',
-                                        padding: '10px',
-                                        marginTop: '3px',
-                                        marginBottom: '15px',
-                                        transition: 'all 0.2s ease',
-                                    }}
-                                >
-                                    {carregando ? 'Entrando...' : 'Entrar'}
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
+                        <Input
+                            label="Senha"
+                            type="password"
+                            placeholder="Digite sua senha"
+                            {...getFieldProps('senha')}
+                        />
+                    </form>
                 </Card>
 
-
-                <div
-                    style={{
-                        marginTop: '32px',
-                        fontSize: '14px',
-                        color: '#6b7280',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '6px',
-                    }}
-                >
-                    <div>
-                        Não possui conta?{' '}
-                        <Link to="/cadastro" style={{ textDecoration: 'underline' }}>
-                            Cadastrar
-                        </Link>
-                    </div>
-
-                    <div>
-                        Esqueceu sua senha?{' '}
-                        <Link to="/redefinir" style={{ textDecoration: 'underline' }}>
-                            Redefinir
-                        </Link>
-                    </div>
+                <div className="mt-4 text-sm text-gray-500 text-center">
+                    Esqueceu sua senha?{' '}
+                    <Link to="/redefinir" className="underline">
+                        Redefinir
+                    </Link>
                 </div>
             </div>
         </div>
