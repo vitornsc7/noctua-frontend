@@ -30,6 +30,7 @@ export const criarTurma = async (formData) => {
         turno: TURNO_TO_ENUM[formData.turno],
         disciplina: formData.disciplina?.trim() || null,
         mediaMinima: parseFloat(formData.mediaMinima),
+        instituicao: formData.instituicao?.trim() || null,
     };
 
     const response = await fetch(`${BASE_URL}/turmas`, {
@@ -41,8 +42,12 @@ export const criarTurma = async (formData) => {
     return handleResponse(response);
 };
 
-export const listarTurmas = async () => {
-    const response = await fetch(`${BASE_URL}/turmas`);
+export const listarTurmas = async ({ page = 0, size = 10, turno, anoLetivo } = {}) => {
+    const params = new URLSearchParams({ page, size });
+    if (turno && turno !== 'todos') params.set('turno', turno);
+    if (anoLetivo && anoLetivo !== 'todos') params.set('anoLetivo', anoLetivo);
+
+    const response = await fetch(`${BASE_URL}/turmas?${params}`);
     return handleResponse(response);
 };
 
