@@ -64,7 +64,7 @@ const applyMask = (value, mask, digitsOnly) => {
             continue;
         }
 
-        if (rawIndex > 0 || rawIndex < rawChars.length) {
+        if (rawIndex < rawChars.length) {
             output += maskChar;
         }
     }
@@ -89,9 +89,12 @@ const normalizeValue = (value, {
     const maxRawLength = parsedMaxChars != null
         ? Math.min(parsedMaxChars, maskSlots)
         : maskSlots;
-    const raw = withMode.slice(0, maxRawLength);
+    const shouldRestrictDigits = integerOnly || numericOnly;
+    const rawPattern = shouldRestrictDigits ? /\d/ : /[0-9a-zA-Z]/;
+    const rawOnly = withMode.split('').filter((c) => rawPattern.test(c)).join('');
+    const raw = rawOnly.slice(0, maxRawLength);
 
-    return applyMask(raw, mask, integerOnly || numericOnly);
+    return applyMask(raw, mask, shouldRestrictDigits);
 };
 
 /** 

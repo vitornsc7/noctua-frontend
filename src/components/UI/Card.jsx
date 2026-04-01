@@ -27,6 +27,7 @@ const Card = ({
     const variantClasses = {
         default: 'bg-white border border-gray-200',
         flat: 'bg-gray-50',
+        accent: 'bg-white border border-[#C6D2FF]',
     };
 
     const clickableClasses = isClickable
@@ -60,7 +61,7 @@ const Card = ({
             </div>
 
             {footer && (
-                <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+                <div className="px-6 pb-4 border-gray-200 rounded-b-lg">
                     {footer}
                 </div>
             )}
@@ -72,7 +73,7 @@ Card.propTypes = {
     header: PropTypes.node,
     children: PropTypes.node.isRequired,
     footer: PropTypes.node,
-    variant: PropTypes.oneOf(['default', 'flat']),
+    variant: PropTypes.oneOf(['default', 'flat', 'accent']),
     hoverable: PropTypes.bool,
     onClick: PropTypes.func,
     className: PropTypes.string,
