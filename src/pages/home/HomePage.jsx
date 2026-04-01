@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Table, Tooltip, useToast } from '../../components/UI';
+import { Button, Card, Table, Tabs, Tooltip, useToast } from '../../components/UI';
 import HomeCreateTurmaModal from './components/CreateTurmaModal';
 
 const demoRows = [
@@ -126,6 +126,20 @@ const HomePage = () => {
                         Passar o mouse em cima
                     </span>
                 </Tooltip>
+            </Card>
+
+            <Card header={<h2 className="text-xl font-semibold text-gray-700">Tabs</h2>}>
+                <Tabs defaultTab="overview">
+                    <Tabs.Tab id="overview" label="Visão geral" icon={<i className="pi pi-home" />}>
+                        <p className="text-sm text-gray-600">Conteúdo da aba de visão geral.</p>
+                    </Tabs.Tab>
+                    <Tabs.Tab id="alunos" label="Alunos" icon={<i className="pi pi-users" />}>
+                        <p className="text-sm text-gray-600">Conteúdo da aba de alunos.</p>
+                    </Tabs.Tab>
+                    <Tabs.Tab id="avaliacoes" label="Avaliações" icon={<i className="pi pi-file" />}>
+                        <p className="text-sm text-gray-600">Conteúdo da aba de avaliações.</p>
+                    </Tabs.Tab>
+                </Tabs>
             </Card>
         </div>
     );
