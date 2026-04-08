@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Card, Input, Button } from '../../components/UI';
+import { Card, Input, Button, Checkbox, useToast } from '../../components/UI';
 import corujinha from '../../assets/corujinha.png';
 import { loginSchema, LOGIN_INITIAL_VALUES } from './authSchema';
+import { login } from '../../api/authApi';
 
 export default function LoginPage() {
     const [carregando, setCarregando] = useState(false);
+    const { showError } = useToast();
+    const navigate = useNavigate();
 
     const {
         watch,
@@ -46,9 +49,10 @@ export default function LoginPage() {
     const onSubmit = async (data) => {
         try {
             setCarregando(true);
-            console.log('Login:', data);
+            await login({ email: data.email, senha: data.senha, rememberMe: data.rememberMe });
+            navigate('/');
         } catch (err) {
-            // handle server error
+            showError(err.message || 'Erro ao realizar login.', 'Verifique as informações inseridas.');
         } finally {
             setCarregando(false);
         }
@@ -107,6 +111,12 @@ export default function LoginPage() {
                             type="password"
                             placeholder="Digite sua senha"
                             {...getFieldProps('senha')}
+                        />
+
+                        <Checkbox
+                            label="Lembrar de mim"
+                            checked={loginInfo.rememberMe ?? false}
+                            onChange={(e) => setValue('rememberMe', e.target.checked)}
                         />
                     </form>
                 </Card>
