@@ -7,6 +7,7 @@ import TurmasPage from "./pages/professor/turmas/TurmasPage";
 import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
 import LoginPage from "./pages/authentication/LoginPage";
 import RegisterPage from "./pages/authentication/RegisterPage";
+import ConfigurationPage from "./pages/professor/configuration/ConfigurationPage";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="turmas" element={<TurmasPage />} />
             <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
+            <Route path="configuracao" element={<ConfigurationPage />} />
           </Route>
         </Routes>
       </Router>
