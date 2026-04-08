@@ -5,6 +5,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const LOGIN_INITIAL_VALUES = {
     email: '',
     senha: '',
+    rememberMe: false,
 };
 
 export const REGISTER_INITIAL_VALUES = {
