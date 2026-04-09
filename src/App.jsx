@@ -5,6 +5,7 @@ import HomePage from "./pages/home/HomePage";
 import DashboardPage from "./pages/professor/DashboardPage";
 import TurmasPage from "./pages/professor/turmas/TurmasPage";
 import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
+import TurmaDetalhesPage from "./pages/professor/turmas/TurmaDetalhesPage";
 import LoginPage from "./pages/authentication/LoginPage";
 import RegisterPage from "./pages/authentication/RegisterPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="turmas" element={<TurmasPage />} />
               <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
+              <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />
