@@ -131,25 +131,27 @@ const TurmasPage = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             {turmas.map((turma) => (
-                                <Card key={turma.id}>
-                                    <div className="flex items-start justify-between mb-3">
-                                        <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>
-                                        <p className="text-gray-600 text-sm shrink-0 ml-2">
-                                            <i className="pi pi-users text-xs mr-2"></i>
-                                            {turma.alunosCount ?? 0} alunos
-                                        </p>
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        {turma.disciplina && (
-                                            <Tag maxChars={20}><i className="pi pi-book text-xs mr-2"></i>{turma.disciplina}</Tag>
-                                        )}
-                                        {turma.instituicao && (
-                                            <Tag maxChars={20}><i className="pi pi-building text-xs mr-2"></i>{turma.instituicao}</Tag>
-                                        )}
-                                        <Tag><i className="pi pi-clock text-xs mr-2"></i>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
-                                        <Tag><i className="pi pi-calendar text-xs mr-2"></i>{getAnoLetivo(turma.anoLetivo)}</Tag>
-                                    </div>
-                                </Card>
+                                <Link key={turma.id} to={`/turmas/${turma.id}`} className="block">
+                                    <Card className="hover:border-gray-300 transition-colors cursor-pointer">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>
+                                            <p className="text-gray-600 text-sm shrink-0 ml-2">
+                                                <i className="pi pi-users text-xs mr-2"></i>
+                                                {turma.alunosCount ?? 0} alunos
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            {turma.disciplina && (
+                                                <Tag maxChars={20}><i className="pi pi-book text-xs mr-2"></i>{turma.disciplina}</Tag>
+                                            )}
+                                            {turma.instituicao && (
+                                                <Tag maxChars={20}><i className="pi pi-building text-xs mr-2"></i>{turma.instituicao}</Tag>
+                                            )}
+                                            <Tag><i className="pi pi-clock text-xs mr-2"></i>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
+                                            <Tag><i className="pi pi-calendar text-xs mr-2"></i>{getAnoLetivo(turma.anoLetivo)}</Tag>
+                                        </div>
+                                    </Card>
+                                </Link>
                             ))}
                         </div>
                     </>

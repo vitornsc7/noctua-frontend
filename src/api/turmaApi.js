@@ -43,3 +43,9 @@ export const criarAluno = (turmaId, alunoData) =>
         turmaId,
     });
 
+export const buscarTurmaPorId = (id) =>
+    client.get(`/turmas/${id}`);
+
+export const atualizarTurma = (id, payload) =>
+    client.put(`/turmas/${id}`, payload);
+
