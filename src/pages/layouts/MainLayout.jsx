@@ -18,7 +18,7 @@ const MainLayout = () => {
                         <Link to="/dashboard" className="hover:text-gray-800 transition-colors">Dashboard</Link>
                         <Link to="/turmas" className="hover:text-gray-800 transition-colors">Turmas</Link>
                         <p className="hover:cursor-pointer hover:text-gray-800 transition-colors">Ajuda</p>
-                        <p className="hover:cursor-pointer hover:text-gray-800 transition-colors">Configuracoes</p>
+                        <Link to="/configuracoes" className="hover:text-gray-800 transition-colors">Configurações</Link>
                         <div className="border-l border-gray-300 h-6"></div>
                         <p>Prof. Julio</p>
                         <i className="pi pi-sign-out text-xs hover:cursor-pointer hover:text-gray-800 transition-colors"></i>
