@@ -1,31 +1,62 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import QRCode from "qrcode";
+import { setup2FA, verifySetup2FA } from "../../../api/authApi";
 
 export default function TwoFactorSetupPage() {
     const [code, setCode] = useState('');
     const [qrCode, setQrCode] = useState('');
     const [secret, setSecret] = useState('');
+    const [otpauthUrl, setOtpauthUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
+    // 🔹 gera QR quando receber otpauthUrl
     useEffect(() => {
-        setQrCode('https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=otpauth://totp/Noctua:usuario@email.com?secret=ABC123');
-        setSecret('ABC123XYZ');
+        if (otpauthUrl) {
+            QRCode.toDataURL(otpauthUrl)
+                .then(setQrCode)
+                .catch(() => setError('Erro ao gerar QR Code'));
+        }
+    }, [otpauthUrl]);
+
+    // 🔹 chama backend ao abrir a tela
+    useEffect(() => {
+        const initSetup = async () => {
+            try {
+                setLoading(true);
+                const data = await setup2FA();
+
+                setSecret(data.secret);
+                setOtpauthUrl(data.otpauthUrl);
+
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initSetup();
     }, []);
 
-    const handleVerify = () => {
-        setLoading(true);
-        setError('');
+    // 🔹 confirmar código
+    const handleVerify = async () => {
+        try {
+            setLoading(true);
+            setError('');
 
-        setTimeout(() => {
-            if (code === '123456') {
-                setSuccess(true);
-            } else {
-                setError('Código inválido.');
-            }
+            await verifySetup2FA(code);
+
+            setSuccess(true);
+
+        } catch (err) {
+            setError('Código inválido ou expirado.');
+            setCode('');
+        } finally {
             setLoading(false);
-        }, 800);
+        }
     };
 
     return (
@@ -56,11 +87,21 @@ export default function TwoFactorSetupPage() {
                             Use o aplicativo para escanear o código abaixo.
                         </p>
 
-                        <img src={qrCode} className="mt-4 w-32 h-32" />
+                        {loading && !qrCode && (
+                            <p className="mt-4 text-sm text-slate-500">
+                                Gerando QR Code...
+                            </p>
+                        )}
 
-                        <p className="mt-2 text-sm text-slate-500">
-                            Código manual: {secret}
-                        </p>
+                        {qrCode && (
+                            <img src={qrCode} className="mt-4 w-32 h-32" />
+                        )}
+
+                        {secret && (
+                            <p className="mt-2 text-sm text-slate-500">
+                                Código manual: {secret}
+                            </p>
+                        )}
                     </Step>
 
                     <Step number="3" title="Verifique o código">
@@ -74,7 +115,8 @@ export default function TwoFactorSetupPage() {
 
                         <button
                             onClick={handleVerify}
-                            className="ml-4 h-12 px-6 bg-slate-700 text-white rounded-xl"
+                            disabled={loading || code.length < 6}
+                            className="ml-4 h-12 px-6 bg-slate-700 text-white rounded-xl disabled:opacity-50"
                         >
                             {loading ? 'Verificando...' : 'Verificar e ativar'}
                         </button>
