@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Card, Input, Button, Checkbox, useToast } from '../../components/UI';
-import corujinha from '../../assets/corujinha.png';
-import { loginSchema, LOGIN_INITIAL_VALUES } from './authSchema';
-import { login } from '../../api/authApi';
+import { Card, Input, Button } from '../../../components/UI';
+import corujinha from '../../../assets/corujinha.png';
+import { registerSchema, REGISTER_INITIAL_VALUES } from '../authSchema';
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const [carregando, setCarregando] = useState(false);
-    const { showError } = useToast();
-    const navigate = useNavigate();
 
     const {
         watch,
@@ -19,13 +16,13 @@ export default function LoginPage() {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(loginSchema),
-        defaultValues: LOGIN_INITIAL_VALUES,
+        resolver: zodResolver(registerSchema),
+        defaultValues: REGISTER_INITIAL_VALUES,
         mode: 'onBlur',
         reValidateMode: 'onChange',
     });
 
-    const loginInfo = watch();
+    const registerInfo = watch();
 
     const handleFieldChange = (field) => (e) => {
         setValue(field, e.target.value, {
@@ -40,22 +37,14 @@ export default function LoginPage() {
     };
 
     const getFieldProps = (field) => ({
-        value: loginInfo[field] ?? '',
+        value: registerInfo[field] ?? '',
         onChange: handleFieldChange(field),
         onBlur: handleFieldBlur(field),
         error: errors[field]?.message,
     });
 
-    const onSubmit = async (data) => {
-        try {
-            setCarregando(true);
-            await login({ email: data.email, senha: data.senha, rememberMe: data.rememberMe });
-            navigate('/');
-        } catch (err) {
-            showError(err.message || 'Erro ao realizar login.', 'Verifique as informações inseridas.');
-        } finally {
-            setCarregando(false);
-        }
+    const onSubmit = (data) => {
+        console.log('Cadastro:', data);
     };
 
     return (
@@ -75,30 +64,36 @@ export default function LoginPage() {
                     </p>
                 </div>
 
-                <Card
-                    variant="accent"
+                <Card variant="accent"
                     header={
-                        <h2 className="text-lg font-medium text-gray-700">Acesso ao portal</h2>
+                        <h2 className="text-lg font-medium text-gray-700">Criar conta</h2>
                     }
                     footer={
                         <div className="flex gap-2 items-center justify-between">
-                            <p className="text-sm text-gray-500 text-center m-0">
-                                Não possui conta?{' '}
-                                <Link to="/cadastro" className="underline">
-                                    Cadastrar
+                            <p className="text-sm text-gray-500">
+                                Já possui conta?{' '}
+                                <Link to="/login" className="underline">
+                                    Logar
                                 </Link>
                             </p>
                             <Button
                                 type="submit"
-                                form="login-form"
+                                form="register-form"
                                 disabled={carregando}
                             >
-                                {carregando ? 'Entrando...' : 'Entrar'}
+                                {carregando ? 'Cadastrando...' : 'Cadastrar'}
                             </Button>
                         </div>
                     }
                 >
-                    <form id="login-form" onSubmit={handleSubmit(onSubmit)} className='flex gap-3 flex-col'>
+                    <form id="register-form" onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
+                        <Input
+                            label="Nome"
+                            type="text"
+                            placeholder="Digite seu nome completo"
+                            {...getFieldProps('nome')}
+                        />
+
                         <Input
                             label="E-mail"
                             type="email"
@@ -107,26 +102,21 @@ export default function LoginPage() {
                         />
 
                         <Input
+                            label="CPF"
+                            type="text"
+                            mask="***.***.***-**"
+                            placeholder="Digite seu CPF"
+                            {...getFieldProps('cpf')}
+                        />
+
+                        <Input
                             label="Senha"
                             type="password"
                             placeholder="Digite sua senha"
                             {...getFieldProps('senha')}
                         />
-
-                        <Checkbox
-                            label="Lembrar de mim"
-                            checked={loginInfo.rememberMe ?? false}
-                            onChange={(e) => setValue('rememberMe', e.target.checked)}
-                        />
                     </form>
                 </Card>
-
-                <div className="mt-4 text-sm text-gray-500 text-center">
-                    Esqueceu sua senha?{' '}
-                    <Link to="/redefinir" className="underline">
-                        Redefinir
-                    </Link>
-                </div>
             </div>
         </div>
     );

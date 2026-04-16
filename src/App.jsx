@@ -6,9 +6,11 @@ import DashboardPage from "./pages/professor/DashboardPage";
 import TurmasPage from "./pages/professor/turmas/TurmasPage";
 import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
 import TurmaDetalhesPage from "./pages/professor/turmas/TurmaDetalhesPage";
-import LoginPage from "./pages/authentication/LoginPage";
-import RegisterPage from "./pages/authentication/RegisterPage";
+import LoginPage from "./pages/authentication/login/LoginPage";
+import RegisterPage from "./pages/authentication/register/RegisterPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import TwoFactorSetupPage from "./pages/authentication/twoFactor/TwoFactorSetupPage";
+
 
 function isTokenValid() {
   const token = localStorage.getItem("token");
@@ -32,6 +34,16 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/cadastro" element={<RegisterPage />} />
+          
+
+
+          */Rota temporária para testar o 2FA!!!!!!/*
+          <Route path="/" element={<MainLayout />}>
+            <Route path="teste/2fa" element={<TwoFactorSetupPage />} />
+          </Route>
+
+          
+
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
@@ -39,6 +51,9 @@ export default function App() {
               <Route path="turmas" element={<TurmasPage />} />
               <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
               <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
+              <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
+
+
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />
