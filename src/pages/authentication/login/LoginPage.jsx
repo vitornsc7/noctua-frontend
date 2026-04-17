@@ -193,7 +193,7 @@ export default function LoginPage() {
 
                 <div className="mt-4 text-sm text-gray-500 text-center">
                     Esqueceu sua senha?{' '}
-                    <Link to="/redefinir" className="underline">
+                    <Link to="/esqueci-minha-senha" className="underline">
                         Redefinir
                     </Link>
                 </div>

@@ -10,6 +10,8 @@ import LoginPage from "./pages/authentication/login/LoginPage";
 import RegisterPage from "./pages/authentication/register/RegisterPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import TwoFactorSetupPage from "./pages/authentication/twoFactor/TwoFactorSetupPage";
+import ForgotPasswordPage from "./pages/authentication/forgotPassword/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/authentication/forgotPassword/ResetPasswordPage";
 
 
 function isTokenValid() {
@@ -34,15 +36,18 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/cadastro" element={<RegisterPage />} />
-          
+          <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
 
-          */Rota temporária para testar o 2FA!!!!!!/*
+
+
+          { /* Rota de teste para 2FA*/}
           <Route path="/" element={<MainLayout />}>
             <Route path="teste/2fa" element={<TwoFactorSetupPage />} />
           </Route>
 
-          
+
 
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<MainLayout />}>
