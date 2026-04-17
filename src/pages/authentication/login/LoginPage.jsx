@@ -192,10 +192,14 @@ export default function LoginPage() {
                 </Card>
 
                 <div className="mt-4 text-sm text-gray-500 text-center">
-                    Esqueceu sua senha?{' '}
-                    <Link to="/esqueci-minha-senha" className="underline">
+                    Esqueceu sua senha?{" "}
+                    <button
+                        type="button"
+                        onClick={() => navigate("/esqueci-minha-senha")}
+                        className="underline bg-transparent border-none p-0 m-0 text-inherit cursor-pointer"
+                    >
                         Redefinir
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>

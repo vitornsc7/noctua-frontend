@@ -15,8 +15,35 @@ export default function ResetPasswordPage() {
     const [confirmacaoSenha, setConfirmacaoSenha] = useState("");
     const [carregando, setCarregando] = useState(false);
 
+    const senhaMuitoCurta = novaSenha.length > 0 && novaSenha.length < 8;
+
+    const senhasDiferentes =
+        novaSenha.length > 0 &&
+        confirmacaoSenha.length > 0 &&
+        novaSenha !== confirmacaoSenha;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!token) {
+            showError("Link inválido.", "Solicite uma nova redefinição de senha.");
+            return;
+        }
+
+        if (!novaSenha || !confirmacaoSenha) {
+            showError("Preencha os campos obrigatórios.", "Informe e confirme a nova senha.");
+            return;
+        }
+
+        if (novaSenha.length < 8) {
+            showError("Senha inválida.", "A nova senha deve ter pelo menos 8 caracteres.");
+            return;
+        }
+
+        if (novaSenha !== confirmacaoSenha) {
+            showError("As senhas não coincidem.", "Digite a mesma senha nos dois campos.");
+            return;
+        }
 
         try {
             setCarregando(true);
@@ -27,9 +54,7 @@ export default function ResetPasswordPage() {
                 confirmacaoSenha,
             });
 
-            showSuccess(
-                response.message || "Senha redefinida com sucesso."
-            );
+            showSuccess(response.message || "Senha redefinida com sucesso.");
 
             setTimeout(() => {
                 navigate("/login");
@@ -106,7 +131,13 @@ export default function ResetPasswordPage() {
                             <Button
                                 type="submit"
                                 form="reset-password-form"
-                                disabled={carregando || !novaSenha || !confirmacaoSenha}
+                                disabled={
+                                    carregando ||
+                                    !novaSenha ||
+                                    !confirmacaoSenha ||
+                                    senhaMuitoCurta ||
+                                    senhasDiferentes
+                                }
                             >
                                 {carregando ? "Salvando..." : "Redefinir"}
                             </Button>
@@ -126,6 +157,10 @@ export default function ResetPasswordPage() {
                             onChange={(e) => setNovaSenha(e.target.value)}
                         />
 
+                        <p className="text-xs text-gray-500 m-0">
+                            A senha deve ter pelo menos 8 caracteres.
+                        </p>
+
                         <Input
                             label="Confirmar nova senha"
                             type="password"
@@ -133,6 +168,18 @@ export default function ResetPasswordPage() {
                             value={confirmacaoSenha}
                             onChange={(e) => setConfirmacaoSenha(e.target.value)}
                         />
+
+                        {senhaMuitoCurta && (
+                            <p className="text-sm text-red-500 m-0">
+                                A senha deve ter pelo menos 8 caracteres.
+                            </p>
+                        )}
+
+                        {senhasDiferentes && (
+                            <p className="text-sm text-red-500 m-0">
+                                As senhas informadas devem ser iguais.
+                            </p>
+                        )}
                     </form>
                 </Card>
             </div>
