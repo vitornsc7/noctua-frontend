@@ -12,11 +12,29 @@ export const logout = () => {
 
 const getAuthHeaders = () => {
     const token = getToken();
-
-    return {
+    const headers = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
     };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    return headers;
+};
+
+const parseResponseBody = async (response) => {
+    const contentType = response.headers.get('content-type') ?? '';
+
+    if (response.status === 204) {
+        return null;
+    }
+
+    if (contentType.includes('application/json')) {
+        return response.json();
+    }
+
+    return response.text();
 };
 
 export const login = async ({ email, senha, rememberMe = false }) => {
@@ -49,6 +67,20 @@ export const verifyLogin2FA = async ({ email, senha, code, rememberMe = false })
     return await response.json();
 };
 
+export const getCurrentUser = async () => {
+    const response = await fetch(`${BASE_URL}/auth/me`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Erro HTTP ${response.status}`);
+    }
+
+    return await response.json();
+};
+
 export const setup2FA = async () => {
     const response = await fetch(`${BASE_URL}/2fa/setup`, {
         method: 'POST',
@@ -60,7 +92,7 @@ export const setup2FA = async () => {
         throw new Error(text || `Erro HTTP ${response.status}`);
     }
 
-    return await response.json();
+    return await parseResponseBody(response);
     // esperado:
     // { secret, otpauthUrl }
 };
@@ -77,7 +109,7 @@ export const verifySetup2FA = async (code) => {
         throw new Error(text || `Erro HTTP ${response.status}`);
     }
 
-    return await response.json();
+    return await parseResponseBody(response);
 };
 
 export const forgotPassword = async (email) => {
