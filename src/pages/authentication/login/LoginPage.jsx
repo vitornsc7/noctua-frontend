@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Input, Button, Checkbox, useToast } from '../../../components/UI';
 import corujinha from '../../../assets/corujinha.png';
 import { loginSchema, LOGIN_INITIAL_VALUES } from '../authSchema';
-import { login, verifyLogin2FA } from '../../../api/authApi';
+import { login, setToken, verifyLogin2FA } from '../../../api/authApi';
 
 export default function LoginPage() {
     const [carregando, setCarregando] = useState(false);
@@ -63,7 +63,7 @@ export default function LoginPage() {
                 return;
             }
 
-            localStorage.setItem('token', response.token);
+            setToken(response.token);
             navigate('/');
         } catch (err) {
             showError(err.message || 'Erro ao realizar login.', 'Verifique as informações inseridas.');
@@ -83,7 +83,7 @@ export default function LoginPage() {
                 rememberMe: loginInfo.rememberMe,
             });
 
-            localStorage.setItem('token', response.token);
+            setToken(response.token);
             navigate('/');
         } catch (err) {
             showError(err.message || 'Código inválido.', 'Tente novamente.');
