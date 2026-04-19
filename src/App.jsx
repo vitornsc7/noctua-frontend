@@ -3,6 +3,7 @@ import { ToastProvider } from "./components/UI";
 import MainLayout from "./pages/layouts/MainLayout";
 import HomePage from "./pages/home/HomePage";
 import DashboardPage from "./pages/professor/DashboardPage";
+import ConfiguracoesPage from "./pages/professor/ConfiguracoesPage";
 import TurmasPage from "./pages/professor/turmas/TurmasPage";
 import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
 import TurmaDetalhesPage from "./pages/professor/turmas/TurmaDetalhesPage";
@@ -39,20 +40,11 @@ export default function App() {
           <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-
-
-
-          { /* Rota de teste para 2FA*/}
-          <Route path="/" element={<MainLayout />}>
-            <Route path="teste/2fa" element={<TwoFactorSetupPage />} />
-          </Route>
-
-
-
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
               <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="configuracoes" element={<ConfiguracoesPage />} />
               <Route path="turmas" element={<TurmasPage />} />
               <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
               <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
