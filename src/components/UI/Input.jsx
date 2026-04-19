@@ -116,6 +116,7 @@ const Input = forwardRef(({
     type = 'text',
     error,
     disabled = false,
+    isLoading = false,
     fullWidth = false,
     leftIcon,
     rightIcon,
@@ -133,6 +134,7 @@ const Input = forwardRef(({
     ...rest
 }, ref) => {
     const hasError = Boolean(error);
+    const isBlocked = disabled || isLoading;
 
     const baseInputClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-primary bg-white text-sm';
 
@@ -140,11 +142,13 @@ const Input = forwardRef(({
         ? 'border-red-300 focus:ring-red-200 focus:border-red-300 bg-error'
         : 'border-gray-300 focus:ring-primary focus:border-primary';
 
-    const disabledClasses = disabled
+    const disabledClasses = isBlocked
         ? 'bg-gray-100 cursor-not-allowed opacity-60'
         : '';
 
-    const iconPaddingClasses = leftIcon ? 'pl-10' : rightIcon ? 'pr-10' : '';
+    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', rightIcon || isLoading ? 'pr-10' : '']
+        .filter(Boolean)
+        .join(' ');
 
     const inputClasses = `
     ${baseInputClasses}
@@ -187,7 +191,7 @@ const Input = forwardRef(({
     const handleKeyDown = (event) => {
         onKeyDown?.(event);
 
-        if (event.defaultPrevented || disabled) {
+        if (event.defaultPrevented || isBlocked) {
             return;
         }
 
@@ -238,6 +242,10 @@ const Input = forwardRef(({
             ? 'decimal'
             : rest.inputMode;
 
+    const trailingIcon = isLoading
+        ? <i className="pi pi-spin pi-spinner text-sm" aria-hidden="true"></i>
+        : rightIcon;
+
     return (
         <div className={`flex flex-col gap-1.5 ${containerClasses} ${className}`}>
             {label && (
@@ -258,7 +266,8 @@ const Input = forwardRef(({
                     ref={ref}
                     type={type}
                     placeholder={placeholder}
-                    disabled={disabled}
+                    disabled={isBlocked}
+                    aria-busy={isLoading}
                     className={inputClasses}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
@@ -268,9 +277,9 @@ const Input = forwardRef(({
                     {...rest}
                 />
 
-                {rightIcon && (
+                {trailingIcon && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                        {rightIcon}
+                        {trailingIcon}
                     </div>
                 )}
             </div>
@@ -297,6 +306,7 @@ Input.propTypes = {
     type: PropTypes.string,
     error: PropTypes.string,
     disabled: PropTypes.bool,
+    isLoading: PropTypes.bool,
     fullWidth: PropTypes.bool,
     leftIcon: PropTypes.node,
     rightIcon: PropTypes.node,

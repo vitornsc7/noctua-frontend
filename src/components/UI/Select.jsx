@@ -19,6 +19,7 @@ const Select = forwardRef(({
     children,
     error,
     disabled = false,
+    isLoading = false,
     fullWidth = false,
     leftIcon,
     className = '',
@@ -31,6 +32,7 @@ const Select = forwardRef(({
     ...rest
 }, ref) => {
     const hasError = Boolean(error);
+    const isBlocked = disabled || isLoading;
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const selectAreaRef = useRef(null);
@@ -79,6 +81,13 @@ const Select = forwardRef(({
     }, []);
 
     useEffect(() => {
+        if (isBlocked) {
+            setIsOpen(false);
+            setFocusedIndex(-1);
+        }
+    }, [isBlocked]);
+
+    useEffect(() => {
         if (focusedIndex >= 0 && dropdownRef.current) {
             const options = dropdownRef.current.children;
             if (options[focusedIndex]) {
@@ -88,7 +97,7 @@ const Select = forwardRef(({
     }, [focusedIndex]);
 
     const handleToggle = () => {
-        if (!disabled) {
+        if (!isBlocked) {
             clearBlurTimeout();
             setIsOpen(!isOpen);
         }
@@ -111,7 +120,7 @@ const Select = forwardRef(({
     };
 
     const handleKeyDown = (e) => {
-        if (disabled) return;
+        if (isBlocked) return;
 
         const childrenArray = React.Children.toArray(children).filter(child => !child.props.disabled);
         const optionsCount = childrenArray.length;
@@ -185,7 +194,7 @@ const Select = forwardRef(({
         buttonRef.current?.focus();
     };
 
-    const baseButtonClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-primary bg-white cursor-pointer text-sm text-left flex items-center justify-between';
+    const baseButtonClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-primary bg-white cursor-pointer text-sm text-left flex items-center';
 
     const textColorClass = selectedLabel ? 'text-gray-700' : 'text-gray-400';
 
@@ -193,11 +202,13 @@ const Select = forwardRef(({
         ? 'border-red-300 focus:ring-2 focus:ring-red-200 bg-error'
         : 'border-gray-300 focus:border-primary';
 
-    const disabledClasses = disabled
+    const disabledClasses = isBlocked
         ? 'bg-gray-100 cursor-not-allowed opacity-60'
         : '';
 
-    const iconPaddingClasses = leftIcon ? 'pl-10' : '';
+    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', 'pr-10']
+        .filter(Boolean)
+        .join(' ');
 
     const buttonClasses = `
         ${baseButtonClasses}
@@ -228,7 +239,8 @@ const Select = forwardRef(({
                 <button
                     ref={buttonRef}
                     type="button"
-                    disabled={disabled}
+                    disabled={isBlocked}
+                    aria-busy={isLoading}
                     className={buttonClasses}
                     onClick={handleToggle}
                     onKeyDown={handleKeyDown}
@@ -236,9 +248,16 @@ const Select = forwardRef(({
                     onFocus={handleFocus}
                     {...rest}
                 >
-                    <span className="truncate">{selectedLabel || placeholder}</span>
-                    <i className={`pi pi-chevron-down text-sm text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
+                    <span className="block w-full truncate">{selectedLabel || placeholder}</span>
                 </button>
+
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    {isLoading ? (
+                        <i className="pi pi-spin pi-spinner text-sm" aria-hidden="true"></i>
+                    ) : (
+                        <i className={`pi pi-chevron-down text-sm transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
+                    )}
+                </div>
 
                 {isOpen && (
                     <div
@@ -301,6 +320,7 @@ Select.propTypes = {
     children: PropTypes.node,
     error: PropTypes.string,
     disabled: PropTypes.bool,
+    isLoading: PropTypes.bool,
     fullWidth: PropTypes.bool,
     leftIcon: PropTypes.node,
     className: PropTypes.string,
