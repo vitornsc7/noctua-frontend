@@ -32,7 +32,12 @@ function AuthLoadingScreen() {
 
 function RoleHomeRedirect() {
   const { loading, role } = useAuth();
-  const isResolvingRole = isTokenValid() && !role;
+  const hasValidToken = isTokenValid();
+  const isResolvingRole = hasValidToken && !role;
+
+  if (!hasValidToken) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (loading || isResolvingRole) {
     return <AuthLoadingScreen />;
@@ -47,7 +52,12 @@ function RoleHomeRedirect() {
 
 function RoleRoute({ allowedRoles }) {
   const { loading, role } = useAuth();
-  const isResolvingRole = isTokenValid() && !role;
+  const hasValidToken = isTokenValid();
+  const isResolvingRole = hasValidToken && !role;
+
+  if (!hasValidToken) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (loading || isResolvingRole) {
     return <AuthLoadingScreen />;
