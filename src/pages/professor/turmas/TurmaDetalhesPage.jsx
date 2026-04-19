@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Tag, Tabs, useToast } from '../../../components/UI';
-import { buscarTurmaPorId, atualizarTurma } from '../../../api/turmaApi';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ActionMenu, Tag, Tabs, useToast } from '../../../components/UI';
+import { buscarTurmaPorId, atualizarTurma, excluirTurma } from '../../../api/turmaApi';
 import EdicaoTurmaModal from './EdicaoTurmaModal';
+import ExcluirTurmaModal from './components/ExcluirTurmaModal';
 import VisaoGeralTab from './tabs/VisaoGeralTab';
 import AlunosTab from './tabs/AlunosTab';
 import AvaliacoesTab from './tabs/AvaliacoesTab';
@@ -28,19 +29,22 @@ const getAno = (anoLetivo) => {
 };
 
 const TurmaDetalhesPage = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const { showError, showSuccess } = useToast();
 
     const [turma, setTurma] = useState(null);
     const [loadingTurma, setLoadingTurma] = useState(true);
     const [editModalOpen, setEditModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         buscarTurmaPorId(id)
             .then(setTurma)
             .catch((err) => showError('Erro ao carregar turma', err.message))
             .finally(() => setLoadingTurma(false));
-    }, [id]);
+    }, [id, showError]);
 
     const handleSalvarEdicao = (payload) => {
         atualizarTurma(id, payload)
@@ -50,6 +54,28 @@ const TurmaDetalhesPage = () => {
                 showSuccess('Turma atualizada com sucesso');
             })
             .catch((err) => showError('Erro ao atualizar turma', err.message));
+    };
+
+    const handleOpenEditModal = () => {
+        setEditModalOpen(true);
+    };
+
+    const handleOpenDeleteModal = () => {
+        setDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            setIsDeleting(true);
+            await excluirTurma(id);
+            showSuccess('Turma excluída com sucesso');
+            navigate('/turmas');
+        } catch (err) {
+            showError('Erro ao excluir turma', err.message);
+        } finally {
+            setIsDeleting(false);
+            setDeleteModalOpen(false);
+        }
     };
 
     if (loadingTurma) {
@@ -77,7 +103,6 @@ const TurmaDetalhesPage = () => {
     return (
         <>
             <div className="space-y-6">
-                {/* Cabeçalho */}
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div>
                         <Link
@@ -90,24 +115,48 @@ const TurmaDetalhesPage = () => {
                         <h1 className="text-3xl font-semibold text-gray-700">{turma.nome}</h1>
                     </div>
 
-                    <div className="flex items-center gap-4 pt-1">
-                        <button
-                            type="button"
-                            onClick={() => setEditModalOpen(true)}
-                            className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
-                        >
-                            Editar turma
-                        </button>
-                        <Link
-                            to={`/turmas/cadastro?from=${id}`}
-                            className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
-                        >
-                            Nova turma a partir da atual
-                        </Link>
+                    <div className="pt-1">
+                        <ActionMenu buttonLabel="Mais ações da turma">
+                            {({ closeMenu }) => (
+                                <>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        closeMenu();
+                                        handleOpenEditModal();
+                                    }}
+                                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                >
+                                    <i className="pi pi-pencil text-xs" aria-hidden="true"></i>
+                                    <span>Editar turma</span>
+                                </button>
+
+                                <Link
+                                    to={`/turmas/cadastro?from=${id}`}
+                                    onClick={closeMenu}
+                                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                >
+                                    <i className="pi pi-copy text-xs" aria-hidden="true"></i>
+                                    <span>Nova turma a partir da atual</span>
+                                </Link>
+
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        closeMenu();
+                                        handleOpenDeleteModal();
+                                    }}
+                                    className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-3 text-left text-sm text-red-500 transition hover:bg-red-50 hover:text-red-600"
+                                >
+                                    <i className="pi pi-trash text-xs" aria-hidden="true"></i>
+                                    <span>Excluir turma</span>
+                                </button>
+                                </>
+                            )}
+                        </ActionMenu>
                     </div>
                 </div>
 
-                {/* Tags de informação */}
                 <div className="flex flex-wrap gap-2">
                     <Tag>{getAno(turma.anoLetivo)}</Tag>
                     <Tag>{periodicidadeLabel}</Tag>
@@ -123,7 +172,6 @@ const TurmaDetalhesPage = () => {
                     {turma.instituicao && <Tag>{turma.instituicao}</Tag>}
                 </div>
 
-                {/* Tabs */}
                 <Tabs defaultTab="visao-geral">
                     <Tabs.Tab id="visao-geral" label="Visão geral">
                         <VisaoGeralTab />
@@ -148,6 +196,14 @@ const TurmaDetalhesPage = () => {
                 onClose={() => setEditModalOpen(false)}
                 turma={turma}
                 onSave={handleSalvarEdicao}
+            />
+
+            <ExcluirTurmaModal
+                isOpen={deleteModalOpen}
+                turmaNome={turma?.nome}
+                isDeleting={isDeleting}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
             />
         </>
     );

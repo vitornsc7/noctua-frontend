@@ -49,3 +49,6 @@ export const buscarTurmaPorId = (id) =>
 export const atualizarTurma = (id, payload) =>
     client.put(`/turmas/${id}`, payload);
 
+export const excluirTurma = (id) =>
+    client.delete(`/turmas/${id}`);
+
