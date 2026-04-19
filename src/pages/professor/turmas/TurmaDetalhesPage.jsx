@@ -63,8 +63,9 @@ const TurmaDetalhesPage = () => {
     if (!turma) {
         return (
             <div className="space-y-4">
-                <Link to="/turmas" className="text-sm text-gray-500 hover:text-gray-700 transition">
-                    ← Turmas
+                <Link to="/turmas" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
+                    <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
+                    <span>Turmas</span>
                 </Link>
                 <p className="text-gray-500 italic">Turma não encontrada.</p>
             </div>
@@ -81,9 +82,10 @@ const TurmaDetalhesPage = () => {
                     <div>
                         <Link
                             to="/turmas"
-                            className="text-sm text-gray-500 hover:text-gray-700 transition mb-2 inline-block"
+                            className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
                         >
-                            ← Turmas
+                            <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
+                            <span>Turmas</span>
                         </Link>
                         <h1 className="text-3xl font-semibold text-gray-700">{turma.nome}</h1>
                     </div>
