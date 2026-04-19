@@ -1,39 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { Header, Footer } from '../../components/UI';
-import { getCurrentUser, getToken, logout } from '../../api/authApi';
+import { useAuth } from '../../context/AuthContext';
 
 const MainLayout = () => {
     const navigate = useNavigate();
-    const [userName, setUserName] = useState('');
+    const { user, role, logout } = useAuth();
 
-    useEffect(() => {
-        if (!getToken()) {
-            setUserName('');
-            return;
+    const navItems = useMemo(() => {
+        if (role === 'ADMIN') {
+            return [
+                { label: 'Monitoramento operacional', to: '/admin' },
+                { label: 'Configurações', to: '/admin/configuracoes' },
+            ];
         }
 
-        let active = true;
+        if (role === 'PROFESSOR') {
+            return [
+                { label: 'Dashboard', to: '/dashboard' },
+                { label: 'Turmas', to: '/turmas' },
+                { label: 'Configurações', to: '/configuracoes' },
+            ];
+        }
 
-        getCurrentUser()
-            .then((user) => {
-                if (!active) return;
-                setUserName(user.nome ?? '');
-            })
-            .catch(() => {
-                if (!active) return;
-                logout();
-                navigate('/login', { replace: true });
-            });
+        return [];
+    }, [role]);
 
-        return () => {
-            active = false;
-        };
-    }, [navigate]);
+    const homeLink = role === 'ADMIN' ? '/admin' : '/dashboard';
 
     const handleLogout = () => {
         logout();
-        setUserName('');
         navigate('/login', { replace: true });
     };
 
@@ -41,7 +37,7 @@ const MainLayout = () => {
         <div className="flex min-h-screen flex-col bg-[#F6F6F8]">
             <Header
                 logo={
-                    <Link to="/">
+                    <Link to={homeLink}>
                         <div className="flex items-center gap-2">
                             <span className="text-2xl font-semibold text-gray-800">Noctua</span>
                         </div>
@@ -49,12 +45,13 @@ const MainLayout = () => {
                 }
                 actions={
                     <div className="text-sm text-gray-600 flex items-center gap-6">
-                        <Link to="/dashboard" className="hover:text-gray-800 transition-colors">Dashboard</Link>
-                        <Link to="/turmas" className="hover:text-gray-800 transition-colors">Turmas</Link>
-                        <p className="hover:cursor-pointer hover:text-gray-800 transition-colors">Ajuda</p>
-                        <Link to="/configuracoes" className="hover:text-gray-800 transition-colors">Configurações</Link>
+                        {navItems.map((item) => (
+                            <Link key={item.to} to={item.to} className="hover:text-gray-800 transition-colors">
+                                {item.label}
+                            </Link>
+                        ))}
                         <div className="border-l border-gray-300 h-6"></div>
-                        <p>{userName || 'Perfil'}</p>
+                        <p>{user?.nome || 'Perfil'}</p>
                         <button
                             type="button"
                             onClick={handleLogout}
