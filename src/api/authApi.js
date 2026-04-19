@@ -2,12 +2,26 @@ const BASE_URL = '/api';
 
 export const getToken = () => localStorage.getItem('token');
 
+export const isTokenValid = () => {
+    const token = getToken();
+    if (!token) return false;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp * 1000 > Date.now();
+    } catch {
+        return false;
+    }
+};
+
 export const setToken = (token) => {
     localStorage.setItem('token', token);
+    window.dispatchEvent(new Event('auth-change'));
 };
 
 export const logout = () => {
     localStorage.removeItem('token');
+    window.dispatchEvent(new Event('auth-change'));
 };
 
 const getAuthHeaders = () => {
