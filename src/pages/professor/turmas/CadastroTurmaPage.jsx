@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Input, Select, Stepper, Table, Tag } from '../../../components/UI';
 import { useToast } from '../../../components/UI/ToastContainer';
 import AddAlunoModal from './components/AddAlunoModal';
-import { criarTurma, criarAluno } from '../../../api/turmaApi';
+import { buscarTurmaPorId, criarTurma, criarAluno } from '../../../api/turmaApi';
 import {
     ALUNO_INITIAL_VALUES,
     PERIODICIDADE_OPTIONS,
@@ -17,11 +17,52 @@ import {
 
 let nextId = 1;
 
+const PERIODOS_TO_PERIODICIDADE = {
+    4: 'Bimestral',
+    3: 'Trimestral',
+};
+
+const TURNO_FROM_ENUM = {
+    MATUTINO: 'Matutino',
+    VESPERTINO: 'Vespertino',
+    NOTURNO: 'Noturno',
+    INTEGRAL: 'Integral',
+};
+
+const getAnoLetivo = (anoLetivo) => {
+    if (!anoLetivo) return String(new Date().getFullYear());
+    if (typeof anoLetivo === 'string') return anoLetivo.slice(0, 4);
+    if (Array.isArray(anoLetivo)) return String(anoLetivo[0] ?? new Date().getFullYear());
+    return String(anoLetivo).slice(0, 4);
+};
+
+const createAlunoDraft = (aluno = {}) => ({
+    id: nextId++,
+    nome: aluno.nome ?? '',
+    observacao: aluno.observacao ?? '',
+});
+
+const mapTurmaToFormValues = (turma) => ({
+    nome: turma?.nome ?? '',
+    periodicidade: PERIODOS_TO_PERIODICIDADE[turma?.qtdePeriodos] ?? '',
+    anoLetivo: getAnoLetivo(turma?.anoLetivo),
+    turno: TURNO_FROM_ENUM[turma?.turno] ?? '',
+    disciplina: turma?.disciplina ?? '',
+    mediaMinima: turma?.mediaMinima != null ? String(turma.mediaMinima) : TURMA_INITIAL_VALUES.mediaMinima,
+    qtdeAulasPrevistasPeriodo:
+        turma?.qtdeAulasPrevistasPeriodo != null ? String(turma.qtdeAulasPrevistasPeriodo) : '',
+    instituicao: turma?.instituicao ?? '',
+});
+
 const CadastroTurmaPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const sourceTurmaId = searchParams.get('from');
+    const isCopyMode = Boolean(sourceTurmaId);
     const { showSuccess, showError } = useToast();
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isCloningTurma, setIsCloningTurma] = useState(isCopyMode);
 
     const [alunos, setAlunos] = useState([]);
     const [alunoModalOpen, setAlunoModalOpen] = useState(false);
@@ -29,6 +70,7 @@ const CadastroTurmaPage = () => {
 
     const {
         watch: watchTurma,
+        reset: resetTurma,
         setValue: setTurmaValue,
         trigger: triggerTurma,
         formState: { errors: turmaErrors },
@@ -40,6 +82,29 @@ const CadastroTurmaPage = () => {
     });
 
     const turmaInfo = watchTurma();
+
+    useEffect(() => {
+        if (!sourceTurmaId) {
+            setIsCloningTurma(false);
+            resetTurma(TURMA_INITIAL_VALUES);
+            setAlunos([]);
+            return;
+        }
+
+        setIsCloningTurma(true);
+
+        buscarTurmaPorId(sourceTurmaId)
+            .then((turma) => {
+                resetTurma(mapTurmaToFormValues(turma));
+                setAlunos((turma.alunos ?? []).filter((aluno) => aluno.ativo !== false).map(createAlunoDraft));
+                setCurrentStep(1);
+            })
+            .catch((err) => {
+                showError('Erro ao copiar turma', err.message);
+                navigate('/turmas');
+            })
+            .finally(() => setIsCloningTurma(false));
+    }, [navigate, resetTurma, showError, sourceTurmaId]);
 
     const handleTurmaChange = (field) => (e) => {
         const value = e.target.value;
@@ -153,6 +218,7 @@ const CadastroTurmaPage = () => {
         onChange: handleTurmaChange(field),
         onBlur: handleTurmaBlur(field),
         error: turmaErrors[field]?.message,
+        isLoading: isCloningTurma,
     });
 
     const turmaOverviewFields = [
@@ -168,16 +234,16 @@ const CadastroTurmaPage = () => {
     const navButtons = (
         <div className="flex items-center justify-end gap-2">
             {currentStep > 1 && (
-                <Button variant="outline" onClick={handleBack}>
+                <Button variant="outline" onClick={handleBack} disabled={isCloningTurma}>
                     Voltar
                 </Button>
             )}
             {currentStep < 3 ? (
-                <Button variant="primary" onClick={handleNext}>
-                    Próximo
+                <Button variant="primary" onClick={handleNext} disabled={isCloningTurma}>
+                    {isCloningTurma ? 'Carregando...' : 'Próximo'}
                 </Button>
             ) : (
-                <Button variant="primary" onClick={handleFinish} disabled={isSubmitting}>
+                <Button variant="primary" onClick={handleFinish} disabled={isSubmitting || isCloningTurma}>
                     {isSubmitting ? 'Salvando...' : 'Concluir'}
                 </Button>
             )}
@@ -187,9 +253,13 @@ const CadastroTurmaPage = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-gray-800">Cadastrar turma</h1>
+                <h1 className="text-2xl font-bold text-gray-800">
+                    {isCopyMode ? 'Nova turma a partir da atual' : 'Cadastrar turma'}
+                </h1>
                 <p className="mt-1 text-sm text-gray-500">
-                    Preencha as informações para criar uma nova turma.
+                    {isCopyMode
+                        ? 'Os dados da turma de origem foram copiados para você ajustar apenas o que for necessário.'
+                        : 'Preencha as informações para criar uma nova turma.'}
                 </p>
             </div>
 
@@ -297,7 +367,7 @@ const CadastroTurmaPage = () => {
                         header={
                             <div className='flex justify-between'>
                                 <h2 className="text-lg font-medium text-gray-700">Adicionar alunos à turma</h2>
-                                <Button variant="primary" onClick={openAddModal}>
+                                <Button variant="primary" onClick={openAddModal} disabled={isCloningTurma}>
                                     <i className="pi pi-plus text-xs" /> Adicionar aluno
                                 </Button>
                             </div>}
