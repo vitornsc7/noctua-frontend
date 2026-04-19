@@ -79,3 +79,35 @@ export const verifySetup2FA = async (code) => {
 
     return await response.json();
 };
+
+export const forgotPassword = async (email) => {
+    const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(data?.message || `Erro HTTP ${response.status}`);
+    }
+
+    return data;
+};
+
+export const resetPassword = async ({ token, novaSenha, confirmacaoSenha }) => {
+    const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, novaSenha, confirmacaoSenha }),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(data?.message || `Erro HTTP ${response.status}`);
+    }
+
+    return data;
+};
