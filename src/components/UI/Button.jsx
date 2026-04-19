@@ -26,11 +26,11 @@ const Button = ({
     type = 'button',
     ...rest
 }) => {
-    const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-lg focus:outline-none px-3 py-1.5 text-sm';
+    const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 
     const variantClasses = {
-        primary: 'bg-primary text-white disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 focus:bg-secondary hover:bg-secondary',
-        outline: 'border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:border-gray-200 disabled:text-gray-400 focus:bg-gray-100',
+        primary: 'bg-primary text-white hover:bg-secondary active:bg-secondary disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50',
+        outline: 'border border-gray-300 text-gray-600 hover:bg-gray-100 active:bg-gray-100 disabled:border-gray-200 disabled:text-gray-400',
     };
 
     const widthClass = fullWidth ? 'w-full' : '';
