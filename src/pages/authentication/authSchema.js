@@ -24,16 +24,21 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-    nome: z.string().trim()
-        .min(1, 'Informe o nome completo.')
-        .min(3, 'O nome precisa ter pelo menos 3 caracteres.'),
+    nome: z
+        .string()
+        .trim()
+        .refine((value) => {
+            const partes = value.split(/\s+/);
+            return partes.length >= 2 && partes.every((parte) => parte.length >= 3);
+        }, 'Informe nome e sobrenome, ambos com pelo menos 3 letras.'),
     email: z.string().trim()
         .min(1, 'Informe o e-mail.')
         .regex(EMAIL_REGEX, 'Informe um e-mail válido.'),
     cpf: z.string().trim()
         .min(1, 'Informe o CPF.')
-        .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'Informe um CPF válido (ex: 123.456.789-01).'),
-    senha: z.string()
-        .min(1, 'Informe a senha.')
-        .min(8, 'A senha deve ter pelo menos 8 caracteres.'),
+        .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'Informe um CPF válido.'),
+    senha: z
+        .string()
+        .min(8, 'A senha deve ter pelo menos 8 caracteres.')
+        .regex(/\d/, 'A senha deve conter pelo menos 1 número.'),
 });

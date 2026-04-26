@@ -4,7 +4,8 @@ import { isTokenValid } from './api/authApi';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import MainLayout from "./pages/layouts/MainLayout";
 import DashboardPage from "./pages/professor/DashboardPage";
-import ConfiguracoesPage from "./pages/professor/configuration/ConfiguracoesPage";import TurmasPage from "./pages/professor/turmas/TurmasPage";
+import ConfiguracoesPage from "./pages/professor/configuration/ConfiguracoesPage";
+import TurmasPage from "./pages/professor/turmas/TurmasPage";
 import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
 import TurmaDetalhesPage from "./pages/professor/turmas/TurmaDetalhesPage";
 import LoginPage from "./pages/authentication/login/LoginPage";
@@ -90,6 +91,7 @@ export default function App() {
                 </Route>
               </Route>
             </Route>
+
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
