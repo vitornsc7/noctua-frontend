@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card } from '../../components/UI';
+import { Button, Card } from '../../../components/UI';
+import DadosCadastraisModal from './DadosCadastraisModal';
 
-const SettingCard = ({ icon, title, description, actionLabel, to, highlight = false }) => {
+const SettingCard = ({
+    icon,
+    title,
+    description,
+    actionLabel,
+    to,
+    onClick,
+    highlight = false,
+}) => {
     const content = (
         <Card className="h-full">
             <div className="flex h-full flex-col gap-4">
@@ -16,7 +25,9 @@ const SettingCard = ({ icon, title, description, actionLabel, to, highlight = fa
                 </div>
 
                 <div className="space-y-2">
-                    <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-gray-700">{title}</h2>
+                    <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-gray-700">
+                        {title}
+                    </h2>
                     <p className="text-sm leading-6 text-gray-600">{description}</p>
                 </div>
 
@@ -26,6 +37,18 @@ const SettingCard = ({ icon, title, description, actionLabel, to, highlight = fa
             </div>
         </Card>
     );
+
+    if (onClick) {
+        return (
+            <button
+                type="button"
+                onClick={onClick}
+                className="block h-full w-full text-left"
+            >
+                {content}
+            </button>
+        );
+    }
 
     if (!to) {
         return content;
@@ -39,11 +62,17 @@ const SettingCard = ({ icon, title, description, actionLabel, to, highlight = fa
 };
 
 const ConfiguracoesPage = () => {
+    const [dadosModalAberto, setDadosModalAberto] = useState(false);
+
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="mb-2 text-3xl font-semibold text-gray-700">Configurações</h1>
-                <p className="text-gray-600">Gerencie suas preferências e dados da conta.</p>
+                <h1 className="mb-2 text-3xl font-semibold text-gray-700">
+                    Configurações
+                </h1>
+                <p className="text-gray-600">
+                    Gerencie suas preferências e dados da conta.
+                </p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -52,6 +81,7 @@ const ConfiguracoesPage = () => {
                     title="Dados cadastrais"
                     description="Altere seus dados a qualquer momento."
                     actionLabel="Alterar dados"
+                    onClick={() => setDadosModalAberto(true)}
                 />
 
                 <SettingCard
@@ -81,7 +111,9 @@ const ConfiguracoesPage = () => {
             <Card>
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <h2 className="mb-2 text-lg font-medium text-gray-700">Precisa de ajuda com as configurações?</h2>
+                        <h2 className="mb-2 text-lg font-medium text-gray-700">
+                            Precisa de ajuda com as configurações?
+                        </h2>
                         <p className="text-gray-600">
                             Nossa equipe de suporte está disponível para tirar qualquer dúvida sobre a plataforma.
                         </p>
@@ -90,6 +122,11 @@ const ConfiguracoesPage = () => {
                     <Button variant="outline">Falar com suporte</Button>
                 </div>
             </Card>
+
+            <DadosCadastraisModal
+                open={dadosModalAberto}
+                onClose={() => setDadosModalAberto(false)}
+            />
         </div>
     );
 };
