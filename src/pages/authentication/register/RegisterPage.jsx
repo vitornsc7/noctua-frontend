@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Card, Input, Button } from '../../../components/UI';
+import { Card, Input, Button, useToast } from '../../../components/UI';
 import corujinha from '../../../assets/corujinha.png';
 import { registerSchema, REGISTER_INITIAL_VALUES } from '../authSchema';
+import { register } from '../../../api/authApi';
 
 export default function RegisterPage() {
+    const navigate = useNavigate();
+    const { showSuccess, showError } = useToast();
     const [carregando, setCarregando] = useState(false);
 
     const {
@@ -43,14 +46,25 @@ export default function RegisterPage() {
         error: errors[field]?.message,
     });
 
-    const onSubmit = (data) => {
-        console.log('Cadastro:', data);
+    const onSubmit = async (data) => {
+        try {
+            setCarregando(true);
+
+            await register(data);
+
+            showSuccess('Conta criada com sucesso!');
+            navigate('/login');
+        } catch (error) {
+            showError(error.message || 'Erro ao cadastrar usuário.');
+        } finally {
+            setCarregando(false);
+        }
     };
 
     return (
         <div className="min-h-screen flex justify-center items-center bg-[#f6f7f9] px-6 py-6">
             <div className="w-full md:max-w-[420px]">
-                <div className='text-center'>
+                <div className="text-center">
                     <img
                         src={corujinha}
                         alt="Logo Noctua"
@@ -64,9 +78,12 @@ export default function RegisterPage() {
                     </p>
                 </div>
 
-                <Card variant="accent"
+                <Card
+                    variant="accent"
                     header={
-                        <h2 className="text-lg font-medium text-gray-700">Criar conta</h2>
+                        <h2 className="text-lg font-medium text-gray-700">
+                            Criar conta
+                        </h2>
                     }
                     footer={
                         <div className="flex gap-2 items-center justify-between">
@@ -76,6 +93,7 @@ export default function RegisterPage() {
                                     Logar
                                 </Link>
                             </p>
+
                             <Button
                                 type="submit"
                                 form="register-form"
@@ -86,7 +104,11 @@ export default function RegisterPage() {
                         </div>
                     }
                 >
-                    <form id="register-form" onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
+                    <form
+                        id="register-form"
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="flex flex-col gap-3"
+                    >
                         <Input
                             label="Nome"
                             type="text"

@@ -51,6 +51,21 @@ const parseResponseBody = async (response) => {
     return response.text();
 };
 
+export const register = async ({ nome, email, cpf, senha }) => {
+    const response = await fetch(`${BASE_URL}/professores`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, cpf, senha }),
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Erro HTTP ${response.status}`);
+    }
+
+    return response.text();
+};
+
 export const login = async ({ email, senha, rememberMe = false }) => {
     const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
