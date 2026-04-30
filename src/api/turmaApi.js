@@ -1,22 +1,11 @@
 import client from './client';
-
-const TURNO_TO_ENUM = {
-    Matutino: 'MATUTINO',
-    Vespertino: 'VESPERTINO',
-    Noturno: 'NOTURNO',
-    Integral: 'INTEGRAL',
-};
-
-const PERIODICIDADE_TO_PERIODOS = {
-    Bimestral: 4,
-    Trimestral: 3,
-};
+import { TURNO_TO_ENUM, PERIODICIDADE_TO_QTDE, TIPO_AVALIACAO_TO_ENUM } from '../utils/displayMaps';
 
 export const criarTurma = (formData) =>
     client.post('/turmas', {
         nome: formData.nome.trim(),
         anoLetivo: `${formData.anoLetivo}-01-01`,
-        qtdePeriodos: PERIODICIDADE_TO_PERIODOS[formData.periodicidade],
+        qtdePeriodos: PERIODICIDADE_TO_QTDE[formData.periodicidade],
         qtdeAulasPrevistasPeriodo: Number(formData.qtdeAulasPrevistasPeriodo),
         turno: TURNO_TO_ENUM[formData.turno],
         disciplina: formData.disciplina?.trim() || null,
@@ -51,4 +40,24 @@ export const atualizarTurma = (id, payload) =>
 
 export const excluirTurma = (id) =>
     client.delete(`/turmas/${id}`);
+
+export const listarAvaliacoes = (turmaId) =>
+    client.get(`/turmas/${turmaId}/avaliacoes`);
+
+export const criarAvaliacao = (turmaId, formData) =>
+    client.post(`/turmas/${turmaId}/avaliacoes`, {
+        tema: formData.tema.trim(),
+        data: `${formData.data}T00:00:00`,
+        peso: Number(formData.peso),
+        tipo: TIPO_AVALIACAO_TO_ENUM[formData.tipo] ?? formData.tipo,
+        periodo: Number(formData.periodo),
+        turmaId: Number(turmaId),
+        alunosIds: formData.alunosIds,
+    });
+
+export const buscarAvaliacaoPorId = (turmaId, avaliacaoId) =>
+    client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`);
+
+export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
+    client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas`);
 
