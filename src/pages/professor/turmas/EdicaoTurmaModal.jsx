@@ -6,6 +6,7 @@ import {
     TURNO_OPTIONS,
     turmaSchema,
 } from './cadastroTurmaSchema';
+import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, PERIODICIDADE_TO_QTDE, TURNO_TO_ENUM } from '../../../utils/displayMaps';
 
 const extrairAno = (anoLetivo) => {
     if (!anoLetivo) return '';
@@ -13,17 +14,6 @@ const extrairAno = (anoLetivo) => {
     if (Array.isArray(anoLetivo)) return String(anoLetivo[0]);
     return String(anoLetivo);
 };
-
-const PERIODICIDADE_FROM_QTDE = { 4: 'Bimestral', 3: 'Trimestral' };
-const PERIODICIDADE_TO_QTDE = { Bimestral: 4, Trimestral: 3 };
-
-const TURNO_DISPLAY = {
-    MATUTINO: 'Matutino',
-    VESPERTINO: 'Vespertino',
-    NOTURNO: 'Noturno',
-    INTEGRAL: 'Integral',
-};
-const TURNO_FROM_ENUM = (enumValue) => TURNO_DISPLAY[enumValue] ?? enumValue;
 
 const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
     const {
@@ -44,9 +34,9 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
         if (isOpen && turma) {
             reset({
                 nome: turma.nome || '',
-                periodicidade: PERIODICIDADE_FROM_QTDE[turma.qtdePeriodos] || '',
+                periodicidade: PERIODICIDADE_DISPLAY[turma.qtdePeriodos] || '',
                 anoLetivo: extrairAno(turma.anoLetivo),
-                turno: TURNO_FROM_ENUM(turma.turno),
+                turno: TURNO_DISPLAY[turma.turno] ?? '',
                 qtdeAulasPrevistasPeriodo: String(turma.qtdeAulasPrevistasPeriodo || ''),
                 mediaMinima: String(turma.mediaMinima ?? ''),
                 disciplina: turma.disciplina || '',
@@ -77,7 +67,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
             anoLetivo: `${form.anoLetivo}-01-01`,
             qtdePeriodos: PERIODICIDADE_TO_QTDE[form.periodicidade],
             qtdeAulasPrevistasPeriodo: Number(form.qtdeAulasPrevistasPeriodo),
-            turno: Object.keys(TURNO_DISPLAY).find((k) => TURNO_DISPLAY[k] === form.turno) ?? form.turno,
+            turno: TURNO_TO_ENUM[form.turno] ?? form.turno,
             mediaMinima: parseFloat(form.mediaMinima),
             disciplina: form.disciplina?.trim() || null,
             instituicao: form.instituicao?.trim() || null,
