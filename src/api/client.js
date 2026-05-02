@@ -8,7 +8,7 @@ const authHeaders = () => {
 };
 
 const handleResponse = async (response) => {
-    if (response.status === 401 || response.status === 403) {
+    if (response.status === 401) {
         localStorage.removeItem('token');
         window.location.href = '/login';
         throw new Error('Sessão expirada. Por favor, faça login novamente.');

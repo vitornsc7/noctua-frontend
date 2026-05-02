@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Select, Tag, useToast } from '../../../../components/UI';
+import { Pageable, Select, Tag, useToast } from '../../../../components/UI';
 import { listarAvaliacoes } from '../../../../api/turmaApi';
-import { TIPO_AVALIACAO_DISPLAY, PERIODICIDADE_DISPLAY, PERIODO_LABEL, displayLabel } from '../../../../utils/displayMaps';
+import { TIPO_AVALIACAO_DISPLAY, PERIODO_LABEL, displayLabel } from '../../../../utils/displayMaps';
+
+const PAGE_SIZE = 10;
 
 const formatarData = (data) => {
     if (!data) return '';
@@ -24,6 +26,7 @@ const AvaliacoesTab = ({ turma }) => {
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
+    const [page, setPage] = useState(0);
 
     useEffect(() => {
         if (!turma?.id) return;
@@ -33,7 +36,8 @@ const AvaliacoesTab = ({ turma }) => {
             .finally(() => setLoading(false));
     }, [turma?.id, showError]);
 
-    const qtdePeriodos = turma?.qtdePeriodos ?? 4;
+    const qtdePeriodos = turma?.qtdePeriodos ?? 2;
+    const periodoLabel = PERIODO_LABEL[qtdePeriodos] ?? 'Período';
 
     const periodoOptions = Array.from({ length: qtdePeriodos }, (_, i) => ({
         value: String(i + 1),
@@ -44,13 +48,20 @@ const AvaliacoesTab = ({ turma }) => {
         ? avaliacoes
         : avaliacoes.filter((a) => String(a.periodo) === filtroPeriodo);
 
+    const avaliacoesPaginadas = avaliacoesFiltradas.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+    const handleFilterChange = (value) => {
+        setPage(0);
+        setFiltroPeriodo(value);
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-700">Avaliações</h2>
                 <Link
                     to={`/turmas/${turma?.id}/avaliacoes/nova`}
-                    className="text-sm text-[#3b5bdb] hover:underline"
+                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
                 >
                     Nova avaliação
                 </Link>
@@ -59,9 +70,9 @@ const AvaliacoesTab = ({ turma }) => {
             <div className="flex gap-4 flex-wrap">
                 <div className="w-72">
                     <Select
-                        label="Bimestre"
+                        label={periodoLabel}
                         value={filtroPeriodo}
-                        onChange={setFiltroPeriodo}
+                        onChange={(e) => handleFilterChange(e.target.value)}
                         fullWidth
                     >
                         <Select.Option value="todos">Todos os períodos</Select.Option>
@@ -83,12 +94,12 @@ const AvaliacoesTab = ({ turma }) => {
                     Nenhuma avaliação encontrada.
                 </p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {avaliacoesFiltradas.map((av) => (
+                <div className="grid grid-cols-2 gap-2">
+                    {avaliacoesPaginadas.map((av) => (
                         <Link
                             key={av.id}
                             to={`/turmas/${turma.id}/avaliacoes/${av.id}`}
-                            className="block bg-white border border-gray-200 rounded-lg hover:shadow-sm transition"
+                            className="block bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition"
                         >
                             <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-lg">
                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
@@ -110,6 +121,16 @@ const AvaliacoesTab = ({ turma }) => {
                         </Link>
                     ))}
                 </div>
+            )}
+
+            {avaliacoesFiltradas.length > PAGE_SIZE && (
+                <Pageable
+                    page={page}
+                    pageSize={PAGE_SIZE}
+                    totalItems={avaliacoesFiltradas.length}
+                    currentItemsCount={avaliacoesPaginadas.length}
+                    onPageChange={setPage}
+                />
             )}
         </div>
     );

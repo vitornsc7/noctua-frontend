@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ActionMenu, Tag, Tabs, useToast } from '../../../components/UI';
 import { buscarTurmaPorId, atualizarTurma, excluirTurma } from '../../../api/turmaApi';
 import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, displayLabel } from '../../../utils/displayMaps';
@@ -20,6 +20,8 @@ const getAno = (anoLetivo) => {
 const TurmaDetalhesPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const location = useLocation();
+    const initialTab = location.state?.tab ?? 'visao-geral';
     const { showError, showSuccess } = useToast();
 
     const [turma, setTurma] = useState(null);
@@ -161,7 +163,7 @@ const TurmaDetalhesPage = () => {
                     {turma.instituicao && <Tag>{turma.instituicao}</Tag>}
                 </div>
 
-                <Tabs defaultTab="visao-geral">
+                <Tabs defaultTab={initialTab}>
                     <Tabs.Tab id="visao-geral" label="Visão geral">
                         <VisaoGeralTab />
                     </Tabs.Tab>

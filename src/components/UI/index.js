@@ -1,8 +1,8 @@
 export { default as Button } from './Button';
 export { default as ActionMenu } from './ActionMenu';
 export { default as Checkbox } from './Checkbox';
+export { default as DateInput } from './DateInput';
 export { default as Input } from './Input';
-export { default as NumberInput } from './NumberInput';
 export { default as Select } from './Select';
 export { default as Card } from './Card';
 export { default as Tag } from './Tag';

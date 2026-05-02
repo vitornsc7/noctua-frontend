@@ -48,6 +48,7 @@ const AvaliacaoDetalhesPage = () => {
             <div className="space-y-4">
                 <Link
                     to={`/turmas/${turmaId}`}
+                    state={{ tab: 'avaliacoes' }}
                     className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
                 >
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
@@ -71,6 +72,7 @@ const AvaliacaoDetalhesPage = () => {
             <div>
                 <Link
                     to={`/turmas/${turmaId}`}
+                    state={{ tab: 'avaliacoes' }}
                     className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
                 >
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true" />

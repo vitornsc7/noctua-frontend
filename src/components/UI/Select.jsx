@@ -199,8 +199,8 @@ const Select = forwardRef(({
     const textColorClass = selectedLabel ? 'text-gray-700' : 'text-gray-400';
 
     const stateClasses = hasError
-        ? 'border-red-300 focus:ring-2 focus:ring-red-200 focus:border-red-400'
-        : 'border-gray-300 hover:border-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary';
+        ? 'border-red-300 focus:ring-red-200 focus:border-red-300'
+        : 'border-gray-300 hover:border-gray-400 focus:ring-primary focus:border-primary';
 
     const disabledClasses = isBlocked
         ? 'bg-gray-100 cursor-not-allowed opacity-60'
@@ -278,13 +278,11 @@ const Select = forwardRef(({
                                     className={`
                                         flex items-center justify-between
                                         px-3 py-2 rounded-md cursor-pointer transition-colors text-sm outline-none
-                                        ${isSelected ? 'bg-primary/10 text-primary font-medium' : 'text-gray-700 hover:bg-gray-100'}
-                                        ${isFocused && !isSelected ? 'bg-gray-100' : ''}
+                                        ${isFocused ? 'bg-gray-100' : 'text-gray-700 hover:bg-gray-100'}
                                         ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
                                     `}
                                 >
                                     <span>{child.props.children}</span>
-                                    {isSelected && <i className="pi pi-check text-xs text-primary" />}
                                 </div>
                             );
                         })}
