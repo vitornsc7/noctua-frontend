@@ -8,6 +8,8 @@ import ConfiguracoesPage from "./pages/professor/configuration/ConfiguracoesPage
 import TurmasPage from "./pages/professor/turmas/TurmasPage";
 import CadastroTurmaPage from "./pages/professor/turmas/CadastroTurmaPage";
 import TurmaDetalhesPage from "./pages/professor/turmas/TurmaDetalhesPage";
+import NovaAvaliacaoPage from "./pages/professor/turmas/NovaAvaliacaoPage";
+import AvaliacaoDetalhesPage from "./pages/professor/turmas/AvaliacaoDetalhesPage";
 import LoginPage from "./pages/authentication/login/LoginPage";
 import RegisterPage from "./pages/authentication/register/RegisterPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -82,6 +84,8 @@ export default function App() {
                   <Route path="turmas" element={<TurmasPage />} />
                   <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
                   <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
+                  <Route path="turmas/:id/avaliacoes/nova" element={<NovaAvaliacaoPage />} />
+                  <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
                 </Route>
 

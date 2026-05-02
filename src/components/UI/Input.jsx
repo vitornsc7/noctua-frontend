@@ -127,6 +127,10 @@ const Input = forwardRef(({
     integerOnly = false,
     mask,
     maxChars,
+    min,
+    max,
+    step = 1,
+    value,
     onChange,
     onKeyDown,
     minLength,
@@ -135,6 +139,20 @@ const Input = forwardRef(({
 }, ref) => {
     const hasError = Boolean(error);
     const isBlocked = disabled || isLoading;
+
+    const numValue = integerOnly ? (Number(value) || 0) : 0;
+    const canIncrement = integerOnly && !isBlocked && (max == null || numValue < Number(max));
+    const canDecrement = integerOnly && !isBlocked && (min == null || numValue > Number(min));
+
+    const increment = () => {
+        if (!canIncrement) return;
+        onChange?.({ target: { value: String(numValue + step) } });
+    };
+
+    const decrement = () => {
+        if (!canDecrement) return;
+        onChange?.({ target: { value: String(numValue - step) } });
+    };
 
     const baseInputClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-primary bg-white text-sm';
 
@@ -146,7 +164,7 @@ const Input = forwardRef(({
         ? 'bg-gray-100 cursor-not-allowed opacity-60'
         : '';
 
-    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', rightIcon || isLoading ? 'pr-10' : '']
+    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', integerOnly ? 'pr-8' : (rightIcon || isLoading ? 'pr-10' : '')]
         .filter(Boolean)
         .join(' ');
 
@@ -255,34 +273,87 @@ const Input = forwardRef(({
                 </label>
             )}
 
-            <div className="relative">
-                {leftIcon && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                        {leftIcon}
+            {integerOnly ? (
+                <div
+                    className={`
+                        flex rounded-lg border overflow-hidden
+                        ${hasError ? 'border-red-300 focus-within:border-red-300' : 'border-gray-300 focus-within:border-primary'}
+                        ${isBlocked ? 'opacity-60' : ''}
+                    `}
+                >
+                    {leftIcon && (
+                        <div className="pl-3 flex items-center text-gray-400 pointer-events-none">
+                            {leftIcon}
+                        </div>
+                    )}
+                    <input
+                        ref={ref}
+                        type={type}
+                        value={value}
+                        placeholder={placeholder}
+                        disabled={isBlocked}
+                        aria-busy={isLoading}
+                        className={`flex-1 px-4 py-2 bg-white text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBlocked ? 'bg-gray-100 cursor-not-allowed' : ''} ${leftIcon ? 'pl-2' : ''}`}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputMode="numeric"
+                        {...rest}
+                    />
+                    <div className="flex flex-col w-7 border-l border-gray-300 select-none">
+                        <button
+                            type="button"
+                            onClick={increment}
+                            disabled={!canIncrement}
+                            tabIndex={-1}
+                            aria-label="Aumentar"
+                            className="flex-1 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-30 disabled:cursor-default"
+                        >
+                            <i className="pi pi-chevron-up text-[9px] text-gray-500" aria-hidden="true" />
+                        </button>
+                        <div className="h-px bg-gray-300" />
+                        <button
+                            type="button"
+                            onClick={decrement}
+                            disabled={!canDecrement}
+                            tabIndex={-1}
+                            aria-label="Diminuir"
+                            className="flex-1 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-30 disabled:cursor-default"
+                        >
+                            <i className="pi pi-chevron-down text-[9px] text-gray-500" aria-hidden="true" />
+                        </button>
                     </div>
-                )}
+                </div>
+            ) : (
+                <div className="relative">
+                    {leftIcon && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                            {leftIcon}
+                        </div>
+                    )}
 
-                <input
-                    ref={ref}
-                    type={type}
-                    placeholder={placeholder}
-                    disabled={isBlocked}
-                    aria-busy={isLoading}
-                    className={inputClasses}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    minLength={resolvedMinLength}
-                    maxLength={resolvedMaxLength}
-                    inputMode={inputMode}
-                    {...rest}
-                />
+                    <input
+                        ref={ref}
+                        type={type}
+                        value={value}
+                        placeholder={placeholder}
+                        disabled={isBlocked}
+                        aria-busy={isLoading}
+                        className={inputClasses}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        minLength={resolvedMinLength}
+                        maxLength={resolvedMaxLength}
+                        inputMode={inputMode}
+                        {...rest}
+                    />
 
-                {trailingIcon && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                        {trailingIcon}
-                    </div>
-                )}
-            </div>
+                    {trailingIcon && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                            {trailingIcon}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {helperText && !error && (
                 <p className="text-xs text-gray-500">{helperText}</p>
@@ -317,6 +388,10 @@ Input.propTypes = {
     integerOnly: PropTypes.bool,
     mask: PropTypes.string,
     maxChars: PropTypes.number,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func,
     onKeyDown: PropTypes.func,
     minLength: PropTypes.number,

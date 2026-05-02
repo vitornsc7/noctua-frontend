@@ -6,6 +6,7 @@ import { Button, Card, Input, Select, Stepper, Table, Tag } from '../../../compo
 import { useToast } from '../../../components/UI/ToastContainer';
 import AddAlunoModal from './components/AddAlunoModal';
 import { buscarTurmaPorId, criarTurma, criarAluno } from '../../../api/turmaApi';
+import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY } from '../../../utils/displayMaps';
 import {
     ALUNO_INITIAL_VALUES,
     PERIODICIDADE_OPTIONS,
@@ -16,18 +17,6 @@ import {
 } from './cadastroTurmaSchema';
 
 let nextId = 1;
-
-const PERIODOS_TO_PERIODICIDADE = {
-    4: 'Bimestral',
-    3: 'Trimestral',
-};
-
-const TURNO_FROM_ENUM = {
-    MATUTINO: 'Matutino',
-    VESPERTINO: 'Vespertino',
-    NOTURNO: 'Noturno',
-    INTEGRAL: 'Integral',
-};
 
 const getAnoLetivo = (anoLetivo) => {
     if (!anoLetivo) return String(new Date().getFullYear());
@@ -44,9 +33,9 @@ const createAlunoDraft = (aluno = {}) => ({
 
 const mapTurmaToFormValues = (turma) => ({
     nome: turma?.nome ?? '',
-    periodicidade: PERIODOS_TO_PERIODICIDADE[turma?.qtdePeriodos] ?? '',
+    periodicidade: PERIODICIDADE_DISPLAY[turma?.qtdePeriodos] ?? '',
     anoLetivo: getAnoLetivo(turma?.anoLetivo),
-    turno: TURNO_FROM_ENUM[turma?.turno] ?? '',
+    turno: TURNO_DISPLAY[turma?.turno] ?? '',
     disciplina: turma?.disciplina ?? '',
     mediaMinima: turma?.mediaMinima != null ? String(turma.mediaMinima) : TURMA_INITIAL_VALUES.mediaMinima,
     qtdeAulasPrevistasPeriodo:

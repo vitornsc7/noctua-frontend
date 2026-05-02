@@ -194,13 +194,13 @@ const Select = forwardRef(({
         buttonRef.current?.focus();
     };
 
-    const baseButtonClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-primary bg-white cursor-pointer text-sm text-left flex items-center';
+    const baseButtonClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none transition-colors bg-white cursor-pointer text-sm text-left flex items-center';
 
     const textColorClass = selectedLabel ? 'text-gray-700' : 'text-gray-400';
 
     const stateClasses = hasError
-        ? 'border-red-300 focus:ring-2 focus:ring-red-200 bg-error'
-        : 'border-gray-300 focus:border-primary';
+        ? 'border-red-300 focus:ring-red-200 focus:border-red-300'
+        : 'border-gray-300 hover:border-gray-400 focus:ring-primary focus:border-primary';
 
     const disabledClasses = isBlocked
         ? 'bg-gray-100 cursor-not-allowed opacity-60'
@@ -262,7 +262,7 @@ const Select = forwardRef(({
                 {isOpen && (
                     <div
                         ref={dropdownRef}
-                        className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto"
+                        className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-auto p-1"
                     >
                         {React.Children.map(children, (child, index) => {
                             if (!child) return null;
@@ -276,13 +276,13 @@ const Select = forwardRef(({
                                     onMouseDown={(event) => event.preventDefault()}
                                     onClick={() => !isDisabled && handleOptionClick(child.props.value)}
                                     className={`
-                                        px-4 py-2.5 cursor-pointer transition-colors text-sm outline-none
-                                        ${isSelected ? 'bg-primary/10 text-primary font-medium border-l-2 border-primary' : 'text-gray-700 hover:bg-gray-50'}
-                                        ${isFocused ? 'bg-gray-100 border-l-2 border-gray-400' : ''}
+                                        flex items-center justify-between
+                                        px-3 py-2 rounded-md cursor-pointer transition-colors text-sm outline-none
+                                        ${isFocused ? 'bg-gray-100' : 'text-gray-700 hover:bg-gray-100'}
                                         ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
                                     `}
                                 >
-                                    {child.props.children}
+                                    <span>{child.props.children}</span>
                                 </div>
                             );
                         })}

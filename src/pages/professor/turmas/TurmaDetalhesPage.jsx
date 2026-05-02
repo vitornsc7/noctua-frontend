@@ -1,25 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ActionMenu, Tag, Tabs, useToast } from '../../../components/UI';
 import { buscarTurmaPorId, atualizarTurma, excluirTurma } from '../../../api/turmaApi';
+import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, displayLabel } from '../../../utils/displayMaps';
 import EdicaoTurmaModal from './EdicaoTurmaModal';
 import ExcluirTurmaModal from './components/ExcluirTurmaModal';
 import VisaoGeralTab from './tabs/VisaoGeralTab';
 import AlunosTab from './tabs/AlunosTab';
 import AvaliacoesTab from './tabs/AvaliacoesTab';
 import FaltasTab from './tabs/FaltasTab';
-
-const TURNO_DISPLAY = {
-    MATUTINO: 'Matutino',
-    VESPERTINO: 'Vespertino',
-    NOTURNO: 'Noturno',
-    INTEGRAL: 'Integral',
-};
-
-const PERIODICIDADE_DISPLAY = {
-    4: 'Bimestral',
-    3: 'Trimestral',
-};
 
 const getAno = (anoLetivo) => {
     if (!anoLetivo) return '';
@@ -31,6 +20,8 @@ const getAno = (anoLetivo) => {
 const TurmaDetalhesPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const location = useLocation();
+    const initialTab = location.state?.tab ?? 'visao-geral';
     const { showError, showSuccess } = useToast();
 
     const [turma, setTurma] = useState(null);
@@ -98,7 +89,7 @@ const TurmaDetalhesPage = () => {
         );
     }
 
-    const periodicidadeLabel = PERIODICIDADE_DISPLAY[turma.qtdePeriodos] ?? `${turma.qtdePeriodos} períodos`;
+    const periodicidadeLabel = displayLabel(PERIODICIDADE_DISPLAY, turma.qtdePeriodos) ?? `${turma.qtdePeriodos} períodos`;
 
     return (
         <>
@@ -119,38 +110,38 @@ const TurmaDetalhesPage = () => {
                         <ActionMenu buttonLabel="Mais ações da turma">
                             {({ closeMenu }) => (
                                 <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        closeMenu();
-                                        handleOpenEditModal();
-                                    }}
-                                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
-                                >
-                                    <i className="pi pi-pencil text-xs" aria-hidden="true"></i>
-                                    <span>Editar turma</span>
-                                </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            closeMenu();
+                                            handleOpenEditModal();
+                                        }}
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                    >
+                                        <i className="pi pi-pencil text-xs" aria-hidden="true"></i>
+                                        <span>Editar turma</span>
+                                    </button>
 
-                                <Link
-                                    to={`/turmas/cadastro?from=${id}`}
-                                    onClick={closeMenu}
-                                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
-                                >
-                                    <i className="pi pi-copy text-xs" aria-hidden="true"></i>
-                                    <span>Nova turma a partir da atual</span>
-                                </Link>
+                                    <Link
+                                        to={`/turmas/cadastro?from=${id}`}
+                                        onClick={closeMenu}
+                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                    >
+                                        <i className="pi pi-copy text-xs" aria-hidden="true"></i>
+                                        <span>Nova turma a partir da atual</span>
+                                    </Link>
 
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        closeMenu();
-                                        handleOpenDeleteModal();
-                                    }}
-                                    className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-3 text-left text-sm text-red-500 transition hover:bg-red-50 hover:text-red-600"
-                                >
-                                    <i className="pi pi-trash text-xs" aria-hidden="true"></i>
-                                    <span>Excluir turma</span>
-                                </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            closeMenu();
+                                            handleOpenDeleteModal();
+                                        }}
+                                        className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-3 text-left text-sm text-red-500 transition hover:bg-red-50 hover:text-red-600"
+                                    >
+                                        <i className="pi pi-trash text-xs" aria-hidden="true"></i>
+                                        <span>Excluir turma</span>
+                                    </button>
                                 </>
                             )}
                         </ActionMenu>
@@ -172,7 +163,7 @@ const TurmaDetalhesPage = () => {
                     {turma.instituicao && <Tag>{turma.instituicao}</Tag>}
                 </div>
 
-                <Tabs defaultTab="visao-geral">
+                <Tabs defaultTab={initialTab}>
                     <Tabs.Tab id="visao-geral" label="Visão geral">
                         <VisaoGeralTab />
                     </Tabs.Tab>
@@ -182,7 +173,7 @@ const TurmaDetalhesPage = () => {
                     </Tabs.Tab>
 
                     <Tabs.Tab id="avaliacoes" label="Avaliações">
-                        <AvaliacoesTab />
+                        <AvaliacoesTab turma={turma} />
                     </Tabs.Tab>
 
                     <Tabs.Tab id="faltas" label="Faltas">
