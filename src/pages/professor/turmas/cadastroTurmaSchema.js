@@ -82,6 +82,8 @@ export const turmaSchema = z.object({
         }),
 });
 
+export const edicaoTurmaSchema = turmaSchema.omit({ periodicidade: true });
+
 export const MATRICULA_OPTIONS = [
     { value: 'ativa', label: 'Ativa' },
     { value: 'inativa', label: 'Inativa' },

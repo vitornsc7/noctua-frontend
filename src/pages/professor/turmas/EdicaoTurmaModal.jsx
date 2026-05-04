@@ -4,15 +4,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Modal, Input, Select, Button } from '../../../components/UI';
 import {
     TURNO_OPTIONS,
-    turmaSchema,
+    edicaoTurmaSchema,
 } from './cadastroTurmaSchema';
-import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, PERIODICIDADE_TO_QTDE, TURNO_TO_ENUM } from '../../../utils/displayMaps';
+import { TURNO_DISPLAY, TURNO_TO_ENUM } from '../../../utils/displayMaps';
 
 const extrairAno = (anoLetivo) => {
     if (!anoLetivo) return '';
     if (typeof anoLetivo === 'string') return anoLetivo.slice(0, 4);
     if (Array.isArray(anoLetivo)) return String(anoLetivo[0]);
     return String(anoLetivo);
+};
+
+const normalizeMediaMinima = (value) => {
+    const text = String(value ?? '').trim();
+    if (!text) return text;
+    if (/^\d+$/.test(text)) return `${text}.0`;
+    return text;
 };
 
 const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
@@ -23,7 +30,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
         reset,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(turmaSchema),
+        resolver: zodResolver(edicaoTurmaSchema),
         mode: 'onBlur',
         reValidateMode: 'onChange',
     });
@@ -34,7 +41,6 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
         if (isOpen && turma) {
             reset({
                 nome: turma.nome || '',
-                periodicidade: PERIODICIDADE_DISPLAY[turma.qtdePeriodos] || '',
                 anoLetivo: extrairAno(turma.anoLetivo),
                 turno: TURNO_DISPLAY[turma.turno] ?? '',
                 qtdeAulasPrevistasPeriodo: String(turma.qtdeAulasPrevistasPeriodo || ''),
@@ -54,7 +60,15 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                 shouldValidate: Boolean(errors[field]),
             });
         },
-        onBlur: () => trigger(field),
+        onBlur: () => {
+            if (field === 'mediaMinima') {
+                const normalized = normalizeMediaMinima(form.mediaMinima);
+                if (normalized !== form.mediaMinima) {
+                    setValue('mediaMinima', normalized, { shouldDirty: true, shouldTouch: true });
+                }
+            }
+            trigger(field);
+        },
         error: errors[field]?.message,
     });
 
@@ -65,7 +79,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
         onSave({
             nome: form.nome,
             anoLetivo: `${form.anoLetivo}-01-01`,
-            qtdePeriodos: PERIODICIDADE_TO_QTDE[form.periodicidade],
+            qtdePeriodos: turma.qtdePeriodos,
             qtdeAulasPrevistasPeriodo: Number(form.qtdeAulasPrevistasPeriodo),
             turno: TURNO_TO_ENUM[form.turno] ?? form.turno,
             mediaMinima: parseFloat(form.mediaMinima),
@@ -104,6 +118,8 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         required
                         placeholder="Ex: 2026"
                         integerOnly
+                        min={2000}
+                        max={2100}
                         maxChars={4}
                         fullWidth
                         {...getFieldProps('anoLetivo')}
@@ -124,6 +140,8 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         required
                         placeholder="Ex: 20"
                         integerOnly
+                        min={1}
+                        max={200}
                         maxChars={3}
                         fullWidth
                         {...getFieldProps('qtdeAulasPrevistasPeriodo')}
@@ -143,13 +161,13 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         fullWidth
                         {...getFieldProps('disciplina')}
                     />
+                    <Input
+                        label="Instituição"
+                        placeholder="Ex: Escola Estadual João da Silva"
+                        fullWidth
+                        {...getFieldProps('instituicao')}
+                    />
                 </div>
-                <Input
-                    label="Instituição"
-                    placeholder="Ex: Escola Estadual João da Silva"
-                    fullWidth
-                    {...getFieldProps('instituicao')}
-                />
             </div>
         </Modal>
     );
