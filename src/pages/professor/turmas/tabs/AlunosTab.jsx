@@ -6,10 +6,9 @@ import AddAlunoModal from '../components/AddAlunoModal';
 const FILTRO_MATRICULA_OPTIONS = [
     { value: 'ativa', label: 'Matrícula ativa' },
     { value: 'inativa', label: 'Matrícula inativa' },
-    { value: 'todos', label: 'Todas as matrículas' },
 ];
 
-const FILTRO_TO_ATIVO = { ativa: true, inativa: false, todos: undefined };
+const FILTRO_TO_ATIVO = { ativa: true, inativa: false };
 
 const AlunosTab = ({ turma }) => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -17,6 +16,7 @@ const AlunosTab = ({ turma }) => {
     const [filtroMatricula, setFiltroMatricula] = useState('ativa');
     const [alunos, setAlunos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
     const { showError, showSuccess } = useToast();
 
     const fetchAlunos = useCallback(() => {
@@ -33,13 +33,15 @@ const AlunosTab = ({ turma }) => {
     }, [fetchAlunos]);
 
     const handleSave = (data) => {
+        setIsSaving(true);
         criarAluno(turma.id, data)
             .then(() => {
-                showSuccess('Aluno adicionado com sucesso');
+                showSuccess('Aluno adicionado com sucesso', 'O aluno foi cadastrado na turma.');
                 setIsAddModalOpen(false);
                 fetchAlunos();
             })
-            .catch((err) => showError('Erro ao adicionar aluno', err.message));
+            .catch((err) => showError('Erro ao adicionar aluno', err.message))
+            .finally(() => setIsSaving(false));
     };
 
     const handleEdit = (aluno) => {
@@ -50,13 +52,15 @@ const AlunosTab = ({ turma }) => {
     };
 
     const handleSaveEdit = (data) => {
+        setIsSaving(true);
         atualizarAluno(turma.id, editingAluno.id, data)
             .then(() => {
-                showSuccess('Aluno atualizado com sucesso');
+                showSuccess('Aluno atualizado com sucesso', 'As informações do aluno foram salvas.');
                 setEditingAluno(null);
                 fetchAlunos();
             })
-            .catch((err) => showError('Erro ao atualizar aluno', err.message));
+            .catch((err) => showError('Erro ao atualizar aluno', err.message))
+            .finally(() => setIsSaving(false));
     };
 
     return (
@@ -102,6 +106,7 @@ const AlunosTab = ({ turma }) => {
 
             <AddAlunoModal
                 isOpen={isAddModalOpen}
+                isLoading={isSaving}
                 onClose={() => setIsAddModalOpen(false)}
                 onSave={handleSave}
             />
@@ -109,6 +114,7 @@ const AlunosTab = ({ turma }) => {
             <AddAlunoModal
                 isOpen={Boolean(editingAluno)}
                 isEditing
+                isLoading={isSaving}
                 initialData={editingAluno}
                 onClose={() => setEditingAluno(null)}
                 onSave={handleSaveEdit}

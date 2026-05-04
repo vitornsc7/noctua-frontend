@@ -8,6 +8,7 @@ import { ALUNO_INITIAL_VALUES, MATRICULA_OPTIONS, alunoSchema } from '../cadastr
 const AddAlunoModal = ({
     isOpen,
     isEditing,
+    isLoading,
     initialData,
     onClose,
     onSave,
@@ -46,10 +47,15 @@ const AddAlunoModal = ({
             maxWidth="max-w-md"
             footer={
                 <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={onClose}>
+                    <Button variant="outline" onClick={onClose} disabled={isLoading}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit(onSubmit)}>
+                    <Button
+                        variant="primary"
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={isLoading}
+                        leftIcon={isLoading ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+                    >
                         {isEditing ? 'Salvar' : 'Adicionar'}
                     </Button>
                 </div>
@@ -118,6 +124,7 @@ const AddAlunoModal = ({
 AddAlunoModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     isEditing: PropTypes.bool,
+    isLoading: PropTypes.bool,
     initialData: PropTypes.shape({
         nome: PropTypes.string,
         observacao: PropTypes.string,

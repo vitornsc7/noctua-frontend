@@ -100,7 +100,7 @@ const NovaAvaliacaoPage = () => {
                 periodo: formValues.periodo,
                 alunosIds: selecionados,
             });
-            showSuccess('Avaliação criada com sucesso');
+            showSuccess('Avaliação criada com sucesso', 'A avaliação foi adicionada à turma.');
             navigate(`/turmas/${turmaId}/avaliacoes/${avaliacao.id}`);
         } catch (err) {
             showError('Erro ao criar avaliação', err.message);

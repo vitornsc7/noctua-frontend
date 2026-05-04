@@ -94,6 +94,7 @@ export const alunoSchema = z.object({
     observacao: z.string().trim()
         .max(280, 'A observação pode ter no máximo 280 caracteres.')
         .optional()
+        .nullable()
         .or(z.literal('')),
     ativo: z.enum(['ativa', 'inativa']).optional(),
 });
