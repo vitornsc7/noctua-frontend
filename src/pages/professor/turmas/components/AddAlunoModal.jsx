@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Input, Modal } from '../../../../components/UI';
-import { ALUNO_INITIAL_VALUES, alunoSchema } from '../cadastroTurmaSchema';
+import { Button, Input, Modal, Select, Tooltip } from '../../../../components/UI';
+import { ALUNO_INITIAL_VALUES, MATRICULA_OPTIONS, alunoSchema } from '../cadastroTurmaSchema';
 
 const AddAlunoModal = ({
     isOpen,
     isEditing,
+    isLoading,
     initialData,
     onClose,
     onSave,
@@ -15,6 +16,7 @@ const AddAlunoModal = ({
     const {
         register,
         reset,
+        control,
         handleSubmit,
         formState: { errors },
     } = useForm({
@@ -33,6 +35,7 @@ const AddAlunoModal = ({
         onSave?.({
             nome: values.nome?.trim() || '',
             observacao: values.observacao?.trim() || '',
+            ativo: values.ativo ?? 'ativa',
         });
     };
 
@@ -44,10 +47,15 @@ const AddAlunoModal = ({
             maxWidth="max-w-md"
             footer={
                 <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={onClose}>
+                    <Button variant="outline" onClick={onClose} disabled={isLoading}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit(onSubmit)}>
+                    <Button
+                        variant="primary"
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={isLoading}
+                        leftIcon={isLoading ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+                    >
                         {isEditing ? 'Salvar' : 'Adicionar'}
                     </Button>
                 </div>
@@ -79,6 +87,35 @@ const AddAlunoModal = ({
                         </p>
                     )}
                 </div>
+
+                {isEditing && (
+                    <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-medium text-gray-700">Matrícula</span>
+                            <Tooltip content="Isto não excluirá o aluno de avaliações em que já realizou, apenas deixará de mostrá-lo na criação de novas avaliações e na listagem principal dos alunos.">
+                                <i className="pi pi-info-circle text-xs text-gray-400 cursor-default" />
+                            </Tooltip>
+                        </div>
+                        <Controller
+                            name="ativo"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    fullWidth
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    onBlur={field.onBlur}
+                                >
+                                    {MATRICULA_OPTIONS.map((opt) => (
+                                        <Select.Option key={opt.value} value={opt.value}>
+                                            {opt.label}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            )}
+                        />
+                    </div>
+                )}
             </div>
         </Modal>
     );
@@ -87,9 +124,11 @@ const AddAlunoModal = ({
 AddAlunoModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     isEditing: PropTypes.bool,
+    isLoading: PropTypes.bool,
     initialData: PropTypes.shape({
         nome: PropTypes.string,
         observacao: PropTypes.string,
+        ativo: PropTypes.string,
     }),
     onClose: PropTypes.func,
     onSave: PropTypes.func,

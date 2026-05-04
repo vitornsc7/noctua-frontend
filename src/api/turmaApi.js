@@ -24,11 +24,26 @@ export const listarTurmas = ({ page = 0, size = 10, turno, anoLetivo, instituica
     return client.get(`/turmas?${params}`);
 };
 
+export const listarAlunos = (turmaId, { ativo } = {}) => {
+    const params = new URLSearchParams();
+    if (ativo !== undefined && ativo !== null) params.set('ativo', ativo);
+    const query = params.toString();
+    return client.get(`/turmas/${turmaId}/alunos${query ? `?${query}` : ''}`);
+};
+
 export const criarAluno = (turmaId, alunoData) =>
     client.post(`/turmas/${turmaId}/alunos`, {
         nome: alunoData.nome.trim(),
         observacao: alunoData.observacao?.trim() || null,
         ativo: true,
+        turmaId,
+    });
+
+export const atualizarAluno = (turmaId, alunoId, alunoData) =>
+    client.put(`/turmas/${turmaId}/alunos/${alunoId}`, {
+        nome: alunoData.nome.trim(),
+        observacao: alunoData.observacao?.trim() || null,
+        ativo: alunoData.ativo !== 'inativa',
         turmaId,
     });
 

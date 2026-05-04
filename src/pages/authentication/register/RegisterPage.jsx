@@ -52,10 +52,10 @@ export default function RegisterPage() {
 
             await register(data);
 
-            showSuccess('Conta criada com sucesso!');
+            showSuccess('Conta criada com sucesso!', 'Faça login para acessar o portal.');
             navigate('/login');
         } catch (error) {
-            showError(error.message || 'Erro ao cadastrar usuário.');
+            showError(error.message || 'Erro ao cadastrar usuário.', 'Verifique os dados e tente novamente.');
         } finally {
             setCarregando(false);
         }

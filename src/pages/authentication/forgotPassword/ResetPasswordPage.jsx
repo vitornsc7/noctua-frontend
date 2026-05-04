@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
                 confirmacaoSenha,
             });
 
-            showSuccess(response.message || "Senha redefinida com sucesso.");
+            showSuccess(response.message || "Senha redefinida com sucesso.", "Você será redirecionado para o login.");
 
             setTimeout(() => {
                 navigate("/login");

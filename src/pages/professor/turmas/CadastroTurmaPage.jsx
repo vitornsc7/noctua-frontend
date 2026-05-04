@@ -167,7 +167,7 @@ const CadastroTurmaPage = () => {
                 'Turma cadastrada!',
                 `A turma "${turma.nome}" foi criada com sucesso.`,
             );
-            navigate('/turmas');
+            navigate(`/turmas/${turma.id}`);
         } catch (err) {
             showError('Erro ao cadastrar turma.', err.message);
         } finally {

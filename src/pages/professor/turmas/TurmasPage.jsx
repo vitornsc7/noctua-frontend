@@ -35,8 +35,13 @@ const TurmasPage = () => {
     useEffect(() => {
         buscarFiltrosTurmas()
             .then((data) => {
-                setAnosDisponiveis(data.anos ?? []);
+                const anos = data.anos ?? [];
+                setAnosDisponiveis(anos);
                 setInstituicoesDisponiveis(data.instituicoes ?? []);
+                if (anos.length > 0) {
+                    const maisRecente = anos.reduce((a, b) => (Number(a) > Number(b) ? a : b));
+                    setAnoSelecionado(String(maisRecente));
+                }
             })
             .catch(() => { });
     }, []);

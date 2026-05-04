@@ -24,7 +24,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                 setEmail(data.email || '');
                 setSenha('');
             } catch (error) {
-                showError('Erro ao carregar dados do usuário.');
+                showError('Erro ao carregar dados do usuário', 'Tente novamente mais tarde.');
             }
         }
 
@@ -35,12 +35,12 @@ const DadosCadastraisModal = ({ open, onClose }) => {
         const partesNome = nome.trim().split(/\s+/);
 
         if (partesNome.length < 2 || partesNome.some((parte) => parte.length < 3)) {
-            showError('Informe nome e sobrenome, ambos com pelo menos 3 letras.');
+            showError('Dados inválidos', 'Informe nome e sobrenome, ambos com pelo menos 3 letras.');
             return false;
         }
 
         if (senha && (senha.length < 8 || !/\d/.test(senha))) {
-            showError('A senha deve ter pelo menos 8 caracteres e conter 1 número.');
+            showError('Senha inválida', 'A senha deve ter pelo menos 8 caracteres e conter 1 número.');
             return false;
         }
 
@@ -71,11 +71,11 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                 })
             );
 
-            showSuccess('Dados atualizados com sucesso!');
+            showSuccess('Dados atualizados com sucesso!', 'Suas informações foram salvas.');
             setSenha('');
             onClose();
         } catch (error) {
-            showError('Erro ao atualizar dados.');
+            showError('Erro ao atualizar dados', 'Tente novamente mais tarde.');
         } finally {
             setLoading(false);
         }
@@ -90,11 +90,11 @@ const DadosCadastraisModal = ({ open, onClose }) => {
             await deleteMe(token);
 
             localStorage.removeItem('token');
-            showSuccess('Conta excluída com sucesso.');
+            showSuccess('Conta excluída com sucesso.', 'Você será redirecionado para o login.');
 
             window.location.href = '/login';
         } catch (error) {
-            showError('Erro ao excluir conta.');
+            showError('Erro ao excluir conta', 'Tente novamente mais tarde.');
         } finally {
             setExcluindoConta(false);
             setConfirmarExclusaoOpen(false);
@@ -108,7 +108,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
 
     return (
         <>
-            <Modal isOpen={open} onClose={fecharModalPrincipal} title="Edição de dados cadastrais" 
+            <Modal isOpen={open} onClose={fecharModalPrincipal} title="Edição de dados cadastrais"
                 maxWidth="max-w-md"
                 footer={
                     <div className="flex justify-between pt-4">

@@ -18,6 +18,7 @@ export default function ForgotPasswordPage() {
             const response = await forgotPassword(email);
 
             showSuccess(
+                'E-mail enviado',
                 response.message || "Se existir uma conta com esse e-mail, enviaremos instruções para redefinição de senha."
             );
 

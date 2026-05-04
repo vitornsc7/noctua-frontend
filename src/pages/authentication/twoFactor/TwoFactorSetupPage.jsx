@@ -71,7 +71,7 @@ export default function TwoFactorSetupPage() {
             await verifySetup2FA(code);
 
             setSuccess(true);
-            showSuccess('2FA ativado com sucesso');
+            showSuccess('2FA ativado com sucesso', 'A autenticação em dois fatores está ativa na sua conta.');
         } catch (err) {
             if (String(err.message).includes('403')) {
                 navigate('/login', { replace: true });

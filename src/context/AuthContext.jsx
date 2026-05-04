@@ -44,11 +44,19 @@ export const AuthProvider = ({ children }) => {
             syncAuth();
         };
 
+        const handleUsuarioAtualizado = (e) => {
+            if (e.detail) {
+                setUser((prev) => ({ ...prev, ...e.detail }));
+            }
+        };
+
         window.addEventListener('auth-change', handleAuthChange);
+        window.addEventListener('usuarioAtualizado', handleUsuarioAtualizado);
 
         return () => {
             active = false;
             window.removeEventListener('auth-change', handleAuthChange);
+            window.removeEventListener('usuarioAtualizado', handleUsuarioAtualizado);
         };
     }, []);
 

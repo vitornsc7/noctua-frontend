@@ -42,7 +42,7 @@ const TurmaDetalhesPage = () => {
             .then((atualizada) => {
                 setTurma(atualizada);
                 setEditModalOpen(false);
-                showSuccess('Turma atualizada com sucesso');
+                showSuccess('Turma atualizada com sucesso', 'As informações da turma foram salvas.');
             })
             .catch((err) => showError('Erro ao atualizar turma', err.message));
     };
@@ -59,7 +59,7 @@ const TurmaDetalhesPage = () => {
         try {
             setIsDeleting(true);
             await excluirTurma(id);
-            showSuccess('Turma excluída com sucesso');
+            showSuccess('Turma excluída com sucesso', 'A turma foi removida permanentemente.');
             navigate('/turmas');
         } catch (err) {
             showError('Erro ao excluir turma', err.message);
