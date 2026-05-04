@@ -1,17 +1,22 @@
 import client from './client';
 import { TURNO_TO_ENUM, PERIODICIDADE_TO_QTDE, TIPO_AVALIACAO_TO_ENUM } from '../utils/displayMaps';
 
+const buildTurmaPayload = (formData) => ({
+    nome: formData.nome.trim(),
+    anoLetivo: `${formData.anoLetivo}-01-01`,
+    qtdePeriodos: PERIODICIDADE_TO_QTDE[formData.periodicidade],
+    qtdeAulasPrevistasPeriodo: Number(formData.qtdeAulasPrevistasPeriodo),
+    turno: TURNO_TO_ENUM[formData.turno],
+    disciplina: formData.disciplina?.trim() || null,
+    mediaMinima: parseFloat(formData.mediaMinima),
+    instituicao: formData.instituicao?.trim() || null,
+});
+
 export const criarTurma = (formData) =>
-    client.post('/turmas', {
-        nome: formData.nome.trim(),
-        anoLetivo: `${formData.anoLetivo}-01-01`,
-        qtdePeriodos: PERIODICIDADE_TO_QTDE[formData.periodicidade],
-        qtdeAulasPrevistasPeriodo: Number(formData.qtdeAulasPrevistasPeriodo),
-        turno: TURNO_TO_ENUM[formData.turno],
-        disciplina: formData.disciplina?.trim() || null,
-        mediaMinima: parseFloat(formData.mediaMinima),
-        instituicao: formData.instituicao?.trim() || null,
-    });
+    client.post('/turmas', buildTurmaPayload(formData));
+
+export const atualizarTurmaComFormData = (id, formData) =>
+    client.put(`/turmas/${id}`, buildTurmaPayload(formData));
 
 export const buscarFiltrosTurmas = () =>
     client.get('/turmas/filtros');
@@ -55,6 +60,9 @@ export const atualizarTurma = (id, payload) =>
 
 export const excluirTurma = (id) =>
     client.delete(`/turmas/${id}`);
+
+export const excluirAluno = (turmaId, alunoId) =>
+    client.delete(`/turmas/${turmaId}/alunos/${alunoId}`);
 
 export const listarAvaliacoes = (turmaId) =>
     client.get(`/turmas/${turmaId}/avaliacoes`);

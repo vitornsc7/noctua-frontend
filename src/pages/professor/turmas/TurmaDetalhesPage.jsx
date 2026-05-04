@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ActionMenu, Tag, Tabs, useToast } from '../../../components/UI';
 import { buscarTurmaPorId, atualizarTurma, excluirTurma } from '../../../api/turmaApi';
@@ -22,7 +22,17 @@ const TurmaDetalhesPage = () => {
     const { id } = useParams();
     const location = useLocation();
     const initialTab = location.state?.tab ?? 'visao-geral';
-    const { showError, showSuccess } = useToast();
+    const pendingToast = location.state?.toast ?? null;
+    const { showError, showSuccess, showInfo, showWarning } = useToast();
+    const toastShownRef = useRef(false);
+
+    useEffect(() => {
+        if (!pendingToast || toastShownRef.current) return;
+        toastShownRef.current = true;
+        const show = { success: showSuccess, error: showError, info: showInfo, warning: showWarning };
+        show[pendingToast.variant]?.(pendingToast.message, pendingToast.description);
+        navigate(location.pathname, { replace: true, state: { tab: initialTab } });
+    }, []);
 
     const [turma, setTurma] = useState(null);
     const [loadingTurma, setLoadingTurma] = useState(true);
