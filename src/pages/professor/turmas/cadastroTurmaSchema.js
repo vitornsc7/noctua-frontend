@@ -17,6 +17,7 @@ export const TURMA_INITIAL_VALUES = {
 export const ALUNO_INITIAL_VALUES = {
     nome: '',
     observacao: '',
+    ativo: 'ativa',
 };
 
 export const TURMA_STEP_ONE_FIELDS = [
@@ -81,6 +82,11 @@ export const turmaSchema = z.object({
         }),
 });
 
+export const MATRICULA_OPTIONS = [
+    { value: 'ativa', label: 'Ativa' },
+    { value: 'inativa', label: 'Inativa' },
+];
+
 export const alunoSchema = z.object({
     nome: z.string().trim()
         .min(1, 'Informe o nome do aluno.')
@@ -89,4 +95,5 @@ export const alunoSchema = z.object({
         .max(280, 'A observação pode ter no máximo 280 caracteres.')
         .optional()
         .or(z.literal('')),
+    ativo: z.enum(['ativa', 'inativa']).optional(),
 });
