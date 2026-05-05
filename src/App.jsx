@@ -19,6 +19,7 @@ import ForgotPasswordPage from "./pages/authentication/forgotPassword/ForgotPass
 import ResetPasswordPage from "./pages/authentication/forgotPassword/ResetPasswordPage";
 import MonitoramentoOperacionalPage from './pages/admin/MonitoramentoOperacionalPage';
 import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
+import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
 
 function PrivateRoute() {
   return isTokenValid() ? <Outlet /> : <Navigate to="/login" replace />;
@@ -86,6 +87,7 @@ export default function App() {
                   <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
                   <Route path="turmas/:id/avaliacoes/nova" element={<NovaAvaliacaoPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
+                  <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
                 </Route>
 

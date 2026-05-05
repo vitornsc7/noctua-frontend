@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Table } from '../../../../components/UI';
+import { atualizarFalta, excluirFalta, listarFaltasPorTurma } from '../../../../api/turmaApi';
+import { Table, useToast } from '../../../../components/UI';
+import EditarFaltaModal from '../EditarFaltaModal';
 
 const formatarData = (data) => {
     if (!data) return '-';
@@ -10,21 +11,55 @@ const formatarData = (data) => {
 const FaltasTab = ({ turma }) => {
     const [faltas, setFaltas] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [faltaSelecionada, setFaltaSelecionada] = useState(null);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const { showSuccess, showError } = useToast();
 
     const getNomeAluno = (alunoId) => {
         const aluno = turma?.alunos?.find((item) => item.id === alunoId);
         return aluno?.nome ?? `Aluno ID: ${alunoId}`;
     };
 
-    useEffect(() => {
+    const carregarFaltas = () => {
         if (!turma?.id) return;
 
         setLoading(true);
 
         listarFaltasPorTurma(turma.id)
             .then(setFaltas)
-            .catch(console.error)
+            .catch((err) => showError('Erro ao carregar faltas', err.message))
             .finally(() => setLoading(false));
+    };
+
+    const handleOpenEditModal = (falta) => {
+        setFaltaSelecionada(falta);
+        setEditModalOpen(true);
+    };
+
+    const handleSalvarEdicao = async (formData) => {
+        try {
+            await atualizarFalta(faltaSelecionada.id, formData);
+            showSuccess('Falta atualizada com sucesso');
+            setEditModalOpen(false);
+            setFaltaSelecionada(null);
+            carregarFaltas();
+        } catch (err) {
+            showError('Erro ao atualizar falta', err.message);
+        }
+    };
+
+    const handleExcluirFalta = async (falta) => {
+        try {
+            await excluirFalta(falta.id);
+            showSuccess('Falta excluída com sucesso');
+            carregarFaltas();
+        } catch (err) {
+            showError('Erro ao excluir falta', err.message);
+        }
+    };
+
+    useEffect(() => {
+        carregarFaltas();
     }, [turma?.id]);
 
     return (
@@ -35,6 +70,12 @@ const FaltasTab = ({ turma }) => {
                 data={faltas}
                 loading={loading}
                 emptyMessage="Nenhuma falta cadastrada."
+                onEdit={handleOpenEditModal}
+                onDelete={handleExcluirFalta}
+                actionTooltips={{
+                    edit: 'Editar falta',
+                    delete: 'Excluir falta',
+                }}
             >
                 <Table.Column
                     header="Aluno"
@@ -51,6 +92,14 @@ const FaltasTab = ({ turma }) => {
                     render={(falta) => formatarData(falta.dataFalta)}
                 />
             </Table>
+
+            <EditarFaltaModal
+                isOpen={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                onSave={handleSalvarEdicao}
+                falta={faltaSelecionada}
+                turma={turma}
+            />
         </div>
     );
 };
