@@ -11,6 +11,11 @@ const FaltasTab = ({ turma }) => {
     const [faltas, setFaltas] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const getNomeAluno = (alunoId) => {
+        const aluno = turma?.alunos?.find((item) => item.id === alunoId);
+        return aluno?.nome ?? `Aluno ID: ${alunoId}`;
+    };
+
     useEffect(() => {
         if (!turma?.id) return;
 
@@ -33,7 +38,7 @@ const FaltasTab = ({ turma }) => {
             >
                 <Table.Column
                     header="Aluno"
-                    render={(falta) => `Aluno ID: ${falta.alunoId}`}
+                    render={(falta) => getNomeAluno(falta.alunoId)}
                 />
 
                 <Table.Column
