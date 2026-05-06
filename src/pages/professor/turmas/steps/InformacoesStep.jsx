@@ -3,15 +3,23 @@ import PropTypes from 'prop-types';
 import { Button, Card, Input, Select } from '../../../../components/UI';
 import { PERIODICIDADE_OPTIONS, TURNO_OPTIONS } from '../cadastroTurmaSchema';
 
-const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isEditing, onSubmit }) => {
+const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isEditing, onSubmit, onCancel, isCancelling }) => {
     const label = isEditing ? 'Editar turma' : 'Criar turma';
 
     const footer = (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+            <Button
+                variant="outline"
+                onClick={onCancel}
+                disabled={isSubmitting || isCloningTurma || isCancelling}
+                leftIcon={isCancelling ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+            >
+                Cancelar
+            </Button>
             <Button
                 variant="primary"
                 onClick={onSubmit}
-                disabled={isSubmitting || isCloningTurma}
+                disabled={isSubmitting || isCloningTurma || isCancelling}
                 leftIcon={isSubmitting ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
             >
                 {label}
@@ -111,6 +119,8 @@ InformacoesStep.propTypes = {
     isSubmitting: PropTypes.bool,
     isEditing: PropTypes.bool,
     onSubmit: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    isCancelling: PropTypes.bool,
 };
 
 export default InformacoesStep;
