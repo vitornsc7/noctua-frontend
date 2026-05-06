@@ -84,3 +84,31 @@ export const buscarAvaliacaoPorId = (turmaId, avaliacaoId) =>
 export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
     client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas`);
 
+export const listarFaltasPorTurma = (turmaId) =>
+    client.get(`/frequencias/turma/${turmaId}`);
+
+export const listarFaltasPorAluno = (alunoId) =>
+    client.get(`/frequencias/aluno/${alunoId}`);
+
+export const registrarFalta = (formData) =>
+    client.post('/frequencias', {
+        dataFalta: `${formData.dataFalta}T00:00:00`,
+        periodo: Number(formData.periodo),
+        alunoId: Number(formData.alunoId),
+    });
+
+export const atualizarFalta = (faltaId, formData) =>
+    client.put(`/frequencias/${faltaId}`, {
+        dataFalta: `${formData.dataFalta}T00:00:00`,
+        periodo: Number(formData.periodo),
+        alunoId: Number(formData.alunoId),
+    });
+
+export const excluirFalta = (faltaId) =>
+    client.delete(`/frequencias/${faltaId}`);
+
+export const calcularPercentualFrequencia = (alunoId, periodo) =>
+    client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/percentual`);
+
+export const classificarFrequencia = (alunoId, periodo) =>
+    client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/classificacao`);

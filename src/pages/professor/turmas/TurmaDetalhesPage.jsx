@@ -187,7 +187,7 @@ const TurmaDetalhesPage = () => {
                     </Tabs.Tab>
 
                     <Tabs.Tab id="faltas" label="Faltas">
-                        <FaltasTab />
+                        <FaltasTab turma={turma} />
                     </Tabs.Tab>
                 </Tabs>
             </div>
