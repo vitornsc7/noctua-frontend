@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
+import Tooltip from './Tooltip';
 
 const CONTROL_KEYS = new Set([
     'Backspace',
@@ -112,6 +113,7 @@ const normalizeValue = (value, {
  */
 const Input = forwardRef(({
     label,
+    tooltip,
     placeholder,
     type = 'text',
     error,
@@ -265,12 +267,19 @@ const Input = forwardRef(({
         : rightIcon;
 
     return (
-        <div className={`flex flex-col gap-1.5 ${containerClasses} ${className}`}>
+        <div className={`flex flex-col gap-1 ${containerClasses} ${className}`}>
             {label && (
-                <label className="text-sm font-medium text-gray-700">
-                    {label}
-                    {required && <span className="text-red-500 ml-1">*</span>}
-                </label>
+                <div className="flex justify-between">
+                    <label className="text-sm font-medium text-gray-700">
+                        {label}
+                        {required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                    {tooltip && (
+                        <Tooltip content={tooltip}>
+                            <i className="pi pi-info-circle text-sm text-gray-400 cursor-default" />
+                        </Tooltip>
+                    )}
+                </div>
             )}
 
             {integerOnly ? (
@@ -373,6 +382,7 @@ Input.displayName = 'Input';
 
 Input.propTypes = {
     label: PropTypes.string,
+    tooltip: PropTypes.string,
     placeholder: PropTypes.string,
     type: PropTypes.string,
     error: PropTypes.string,

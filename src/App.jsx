@@ -49,11 +49,15 @@ function RoleHomeRedirect() {
 }
 
 function RoleRoute({ allowedRoles }) {
-  const { loading, role } = useAuth();
+  const { loading, role, isAuthenticated } = useAuth();
   const isResolvingRole = isTokenValid() && !role;
 
   if (loading || isResolvingRole) {
     return <AuthLoadingScreen />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
   if (!allowedRoles.includes(role)) {

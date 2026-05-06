@@ -21,11 +21,12 @@ export const atualizarTurmaComFormData = (id, formData) =>
 export const buscarFiltrosTurmas = () =>
     client.get('/turmas/filtros');
 
-export const listarTurmas = ({ page = 0, size = 10, turno, anoLetivo, instituicao } = {}) => {
+export const listarTurmas = ({ page = 0, size = 10, turno, anoLetivo, instituicao, disciplina } = {}) => {
     const params = new URLSearchParams({ page, size });
     if (turno && turno !== 'todos') params.set('turno', turno);
     if (anoLetivo && anoLetivo !== 'todos') params.set('anoLetivo', anoLetivo);
     if (instituicao && instituicao !== 'todos') params.set('instituicao', instituicao);
+    if (disciplina && disciplina !== 'todos') params.set('disciplina', disciplina);
     return client.get(`/turmas?${params}`);
 };
 

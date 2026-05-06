@@ -149,6 +149,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                     <Input
                         label="Média mínima"
                         required
+                        tooltip="Média mínima da instituição, utilizada no cálculo da matriz de intervenção."
                         placeholder="Ex: 7.0"
                         numericOnly
                         maxChars={4}
