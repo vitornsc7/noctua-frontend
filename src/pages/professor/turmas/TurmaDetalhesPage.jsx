@@ -39,6 +39,7 @@ const TurmaDetalhesPage = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const deleteGuardRef = useRef(false);
 
     useEffect(() => {
         buscarTurmaPorId(id)
@@ -66,12 +67,15 @@ const TurmaDetalhesPage = () => {
     };
 
     const handleConfirmDelete = async () => {
+        if (deleteGuardRef.current) return;
+        deleteGuardRef.current = true;
         try {
             setIsDeleting(true);
             await excluirTurma(id);
             showSuccess('Turma excluída com sucesso', 'A turma foi removida permanentemente.');
             navigate('/turmas');
         } catch (err) {
+            deleteGuardRef.current = false;
             showError('Erro ao excluir turma', err.message);
         } finally {
             setIsDeleting(false);
