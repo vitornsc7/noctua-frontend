@@ -162,7 +162,7 @@ const TurmaDetalhesPage = () => {
                     <Tag>{getAno(turma.anoLetivo)}</Tag>
                     <Tag>{periodicidadeLabel}</Tag>
                     <Tag>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
-                    <Tag>{turma.alunosCount ?? turma.alunos?.length ?? 0} Alunos</Tag>
+                    <Tag>{turma.alunosCount ?? turma.alunos?.length ?? 0} Aluno(s)</Tag>
                     <Tag>
                         Média mínima:{' '}
                         {turma.mediaMinima != null
