@@ -19,6 +19,12 @@ const Checkbox = ({
                 className={`flex items-center gap-2 text-sm select-none
                     ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer text-gray-600'}
                 `}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (!disabled) onChange?.({ target: { checked: !checked } });
+                    }
+                }}
             >
                 <input
                     type="checkbox"
