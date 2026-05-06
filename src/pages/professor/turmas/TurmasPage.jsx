@@ -27,10 +27,12 @@ const TurmasPage = () => {
 
     const [anosDisponiveis, setAnosDisponiveis] = useState([]);
     const [instituicoesDisponiveis, setInstituicoesDisponiveis] = useState([]);
+    const [disciplinasDisponiveis, setDisciplinasDisponiveis] = useState([]);
 
     const [turnoSelecionado, setTurnoSelecionado] = useState('todos');
     const [anoSelecionado, setAnoSelecionado] = useState('todos');
     const [instituicaoSelecionada, setInstituicaoSelecionada] = useState('todos');
+    const [disciplinaSelecionada, setDisciplinaSelecionada] = useState('todos');
 
     useEffect(() => {
         buscarFiltrosTurmas()
@@ -38,6 +40,7 @@ const TurmasPage = () => {
                 const anos = data.anos ?? [];
                 setAnosDisponiveis(anos);
                 setInstituicoesDisponiveis(data.instituicoes ?? []);
+                setDisciplinasDisponiveis(data.disciplinas ?? []);
                 if (anos.length > 0) {
                     const maisRecente = anos.reduce((a, b) => (Number(a) > Number(b) ? a : b));
                     setAnoSelecionado(String(maisRecente));
@@ -49,14 +52,14 @@ const TurmasPage = () => {
     useEffect(() => {
         setLoading(true);
 
-        listarTurmas({ page, size: PAGE_SIZE, turno: turnoSelecionado, anoLetivo: anoSelecionado, instituicao: instituicaoSelecionada })
+        listarTurmas({ page, size: PAGE_SIZE, turno: turnoSelecionado, anoLetivo: anoSelecionado, instituicao: instituicaoSelecionada, disciplina: disciplinaSelecionada })
             .then((data) => {
                 setTurmas(data.content);
                 setTotalElements(data.totalElements);
             })
             .catch((err) => showError('Erro ao carregar turmas', err.message))
             .finally(() => setLoading(false));
-    }, [page, turnoSelecionado, anoSelecionado, instituicaoSelecionada]);
+    }, [page, turnoSelecionado, anoSelecionado, instituicaoSelecionada, disciplinaSelecionada]);
 
     const handleFilterChange = (setter) => (e) => {
         setPage(0);
@@ -121,6 +124,21 @@ const TurmasPage = () => {
                         ))}
                     </Select>
                 )}
+
+                {disciplinasDisponiveis.length > 0 && (
+                    <Select
+                        label="Filtrar por disciplina"
+                        value={disciplinaSelecionada}
+                        onChange={handleFilterChange(setDisciplinaSelecionada)}
+                        leftIcon={<i className="pi pi-book text-sm"></i>}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todas as disciplinas</Select.Option>
+                        {disciplinasDisponiveis.map((disc) => (
+                            <Select.Option key={disc} value={disc}>{disc}</Select.Option>
+                        ))}
+                    </Select>
+                )}
             </div>
 
             <div className="relative">
@@ -137,7 +155,8 @@ const TurmasPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             {turmas.map((turma) => (
                                 <Link key={turma.id} to={`/turmas/${turma.id}`} className="block">
-                                    <Card className="hover:border-gray-300 transition-colors cursor-pointer">
+                                    <Card className="hover:border-gray-300 transition-colors cursor-pointer
+                                    h-full">
                                         <div className="flex items-start justify-between mb-3">
                                             <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>
                                             <p className="text-gray-600 text-sm shrink-0 ml-2">
