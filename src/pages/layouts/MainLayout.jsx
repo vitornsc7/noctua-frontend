@@ -19,7 +19,7 @@ const MainLayout = () => {
             return [
                 { label: 'Dashboard', to: '/dashboard' },
                 { label: 'Turmas', to: '/turmas' },
-                { label: 'Central de ajuda', to: '/ajuda' },
+                { label: 'Ajuda', to: '/ajuda' },
                 { label: 'Configurações', to: '/configuracoes' },
             ];
         }
