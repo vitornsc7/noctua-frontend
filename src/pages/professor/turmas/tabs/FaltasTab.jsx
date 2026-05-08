@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { atualizarFalta, excluirFalta, listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Button, Table, useToast } from '../../../../components/UI';
+import { Table, useToast } from '../../../../components/UI';
 import EditarFaltaModal from '../EditarFaltaModal';
 
 const formatarData = (data) => {
@@ -10,8 +10,6 @@ const formatarData = (data) => {
 };
 
 const FaltasTab = ({ turma }) => {
-    const navigate = useNavigate();
-
     const [faltas, setFaltas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [faltaSelecionada, setFaltaSelecionada] = useState(null);
@@ -70,12 +68,11 @@ const FaltasTab = ({ turma }) => {
             <div className="flex items-center justify-between gap-4">
                 <h2 className="text-lg font-semibold text-gray-700">Faltas</h2>
 
-                <Button
-                    variant="primary"
-                    onClick={() => navigate(`/turmas/${turma.id}/faltas/nova`)}
-                >
-                    + Nova falta
-                </Button>
+                <Link
+                    to={`/turmas/${turma.id}/faltas/nova`}
+                    className="text-sm text-primary underline"                >
+                    Nova falta
+                </Link>
             </div>
 
             <Table
