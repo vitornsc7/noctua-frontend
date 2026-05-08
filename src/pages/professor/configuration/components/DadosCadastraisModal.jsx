@@ -1,16 +1,33 @@
 import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input, Modal, useToast } from '../../../../components/UI';
 import { getMe, updateMe, deleteMe } from '../../../../api/userApi';
+import { editUserSchema, EDIT_USER_INITIAL_VALUES } from '../../../authentication/authSchema';
 
 const DadosCadastraisModal = ({ open, onClose }) => {
     const { showSuccess, showError } = useToast();
 
-    const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
     const [loading, setLoading] = useState(false);
     const [confirmarExclusaoOpen, setConfirmarExclusaoOpen] = useState(false);
     const [excluindoConta, setExcluindoConta] = useState(false);
+
+    const {
+        watch,
+        setValue,
+        trigger,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(editUserSchema),
+        defaultValues: EDIT_USER_INITIAL_VALUES,
+        mode: 'onBlur',
+        reValidateMode: 'onChange',
+    });
+
+    const dadosUsuario = watch();
 
     useEffect(() => {
         if (!open) return;
@@ -20,47 +37,51 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                 const token = localStorage.getItem('token');
                 const data = await getMe(token);
 
-                setNome(data.nome || '');
+                reset({
+                    nome: data.nome || '',
+                    senha: '',
+                });
+
                 setEmail(data.email || '');
-                setSenha('');
             } catch (error) {
                 showError('Erro ao carregar dados do usuário', 'Tente novamente mais tarde.');
             }
         }
 
         carregarUsuario();
-    }, [open, showError]);
+    }, [open, reset, showError]);
 
-    function validarFormulario() {
-        const partesNome = nome.trim().split(/\s+/);
+    const handleFieldChange = (field) => (event) => {
+        setValue(field, event.target.value, {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: Boolean(errors[field]),
+        });
+    };
 
-        if (partesNome.length < 2 || partesNome.some((parte) => parte.length < 3)) {
-            showError('Dados inválidos', 'Informe nome e sobrenome, ambos com pelo menos 3 letras.');
-            return false;
-        }
+    const handleFieldBlur = (field) => () => {
+        trigger(field);
+    };
 
-        if (senha && (senha.length < 8 || !/\d/.test(senha))) {
-            showError('Senha inválida', 'A senha deve ter pelo menos 8 caracteres e conter 1 número.');
-            return false;
-        }
+    const getFieldProps = (field) => ({
+        value: dadosUsuario[field] ?? '',
+        onChange: handleFieldChange(field),
+        onBlur: handleFieldBlur(field),
+        error: errors[field]?.message,
+    });
 
-        return true;
-    }
-
-    async function salvarAlteracoes() {
-        if (!validarFormulario()) return;
-
+    async function salvarAlteracoes(data) {
         try {
             setLoading(true);
 
             const token = localStorage.getItem('token');
 
             const payload = {
-                nome: nome.trim().replace(/\s+/g, ' '),
+                nome: data.nome.trim().replace(/\s+/g, ' '),
             };
 
-            if (senha && senha.trim() !== '') {
-                payload.senha = senha;
+            if (data.senha && data.senha.trim() !== '') {
+                payload.senha = data.senha;
             }
 
             const usuarioAtualizado = await updateMe(token, payload);
@@ -72,7 +93,12 @@ const DadosCadastraisModal = ({ open, onClose }) => {
             );
 
             showSuccess('Dados atualizados com sucesso!', 'Suas informações foram salvas.');
-            setSenha('');
+
+            reset({
+                nome: usuarioAtualizado.nome || payload.nome,
+                senha: '',
+            });
+
             onClose();
         } catch (error) {
             showError('Erro ao atualizar dados', 'Tente novamente mais tarde.');
@@ -108,7 +134,10 @@ const DadosCadastraisModal = ({ open, onClose }) => {
 
     return (
         <>
-            <Modal isOpen={open} onClose={fecharModalPrincipal} title="Edição de dados cadastrais"
+            <Modal
+                isOpen={open}
+                onClose={fecharModalPrincipal}
+                title="Edição de dados cadastrais"
                 maxWidth="max-w-md"
                 footer={
                     <div className="flex justify-between pt-4">
@@ -120,51 +149,50 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                             Excluir minha conta
                         </button>
 
-                        <div className='flex gap-3'>
+                        <div className="flex gap-3">
                             <Button variant="outline" onClick={fecharModalPrincipal}>
                                 Cancelar
                             </Button>
 
-                            <Button onClick={salvarAlteracoes} disabled={loading}>
+                            <Button
+                                type="submit"
+                                form="dados-cadastrais-form"
+                                disabled={loading}
+                            >
                                 {loading ? 'Salvando...' : 'Salvar'}
                             </Button>
                         </div>
-                    </ div>
-                }>
-                <div className="grid grid-cols-1 gap-4">
+                    </div>
+                }
+            >
+                <form
+                    id="dados-cadastrais-form"
+                    onSubmit={handleSubmit(salvarAlteracoes)}
+                    className="grid grid-cols-1 gap-4"
+                >
                     <Input
                         label="Nome"
                         type="text"
-                        value={nome}
-                        onChange={(event) => setNome(event.target.value)}
+                        required
+                        {...getFieldProps('nome')}
                     />
 
-                    <div>
-                        <Input
-                            label="E-mail"
-                            type="email"
-                            value={email}
-                            disabled
-                            tabIndex={-1}
-                        />
-                        <p className="mt-2 text-xs text-gray-500">
-                            O e-mail não pode ser alterado.
-                        </p>
-                    </div>
+                    <Input
+                        label="E-mail"
+                        type="email"
+                        value={email}
+                        disabled
+                        tabIndex={-1}
+                        tooltip="O e-mail não pode ser alterado."
+                    />
 
-                    <div>
-                        <Input
-                            label="Senha"
-                            type="password"
-                            value={senha}
-                            onChange={(event) => setSenha(event.target.value)}
-                            placeholder="Digite uma nova senha"
-                        />
-                        <p className="mt-2 text-xs text-gray-500">
-                            Preencha apenas se desejar alterar a senha.
-                        </p>
-                    </div>
-                </div>
+                    <Input
+                        label="Senha"
+                        type="password"
+                        placeholder="Digite uma nova senha"
+                        {...getFieldProps('senha')}
+                    />
+                </form>
             </Modal>
 
             <Modal
