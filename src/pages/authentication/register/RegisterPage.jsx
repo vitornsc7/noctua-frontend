@@ -113,6 +113,7 @@ export default function RegisterPage() {
                             label="Nome"
                             type="text"
                             placeholder="Digite seu nome completo"
+                            tooltip="Informe nome e sobrenome, ambos com pelo menos 3 letras."
                             {...getFieldProps('nome')}
                         />
 
@@ -120,6 +121,7 @@ export default function RegisterPage() {
                             label="E-mail"
                             type="email"
                             placeholder="Digite seu e-mail"
+                            tooltip="Informe um e-mail válido."
                             {...getFieldProps('email')}
                         />
 
@@ -127,6 +129,7 @@ export default function RegisterPage() {
                             label="Senha"
                             type="password"
                             placeholder="Digite sua senha"
+                            tooltip="A senha deve ter pelo menos 8 caracteres e 1 número."
                             {...getFieldProps('senha')}
                         />
                     </form>
