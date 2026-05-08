@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { buscarTurmaPorId, registrarFalta } from '../../../api/turmaApi';
-import { Button, Checkbox, DateInput, Input, Tag, useToast } from '../../../components/UI';
+import { Button, Checkbox, DateInput, Input, Select, Tag, useToast } from '../../../components/UI';
 import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, displayLabel } from '../../../utils/displayMaps';
+
+const PERIODO_LETIVO_DISPLAY = {
+    Bimestral: 'Bimestre',
+    Trimestral: 'Trimestre',
+};
 
 const NovaFaltaPage = () => {
     const { id } = useParams();
@@ -15,6 +20,7 @@ const NovaFaltaPage = () => {
 
     const [form, setForm] = useState({
         periodo: '',
+        periodoLetivo: '',
         dataFalta: '',
     });
 
@@ -41,6 +47,19 @@ const NovaFaltaPage = () => {
         turma?.qtdePeriodos
     ) ?? `${turma?.qtdePeriodos} períodos`;
 
+    const periodoLetivoLabel = PERIODO_LETIVO_DISPLAY[periodicidadeLabel] ?? 'Período';
+
+    const getQuantidadePeriodosLetivos = () => {
+        if (periodicidadeLabel === 'Bimestral') return 4;
+        if (periodicidadeLabel === 'Trimestral') return 3;
+        return turma?.qtdePeriodos || 0;
+    };
+
+    const periodosLetivos = Array.from(
+        { length: getQuantidadePeriodosLetivos() },
+        (_, i) => i + 1
+    );
+
     const toggleAluno = (id) => {
         setSelecionados((prev) =>
             prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
@@ -64,7 +83,7 @@ const NovaFaltaPage = () => {
             return;
         }
 
-        if (!form.periodo || !form.dataFalta) {
+        if (!form.periodo || !form.periodoLetivo || !form.dataFalta) {
             showError('Preencha os dados da falta');
             return;
         }
@@ -77,6 +96,7 @@ const NovaFaltaPage = () => {
                     registrarFalta({
                         alunoId,
                         periodo: Number(form.periodo),
+                        periodoLetivo: Number(form.periodoLetivo),
                         dataFalta: form.dataFalta,
                     })
                 )
@@ -135,44 +155,48 @@ const NovaFaltaPage = () => {
                 <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
                     <h2 className="font-medium text-gray-700">Adicionar falta</h2>
 
-                    <Input
-                        label="Disciplina"
-                        value={turma?.disciplina ?? ''}
-                        disabled
-                        fullWidth
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                            label="Disciplina"
+                            value={turma?.disciplina ?? ''}
+                            disabled
+                            fullWidth
+                        />
 
-                    <Input
-                        label="Aulas previstas por período"
-                        value={turma?.qtdeAulasPrevistasPeriodo ?? ''}
-                        disabled
-                        fullWidth
-                    />
+                        <Input
+                            label="Períodos faltados"
+                            type="text"
+                            required
+                            integerOnly
+                            min={1}
+                            max={6}
+                            value={form.periodo}
+                            onChange={handleChange('periodo')}
+                            fullWidth
+                        />
 
-                    <div className="flex gap-4">
-                        <div className="flex-1">
-                            <Input
-                                label="Períodos faltados"
-                                type="text"
-                                required
-                                integerOnly
-                                min={1}
-                                max={6}
-                                value={form.periodo}
-                                onChange={handleChange('periodo')}
-                                fullWidth
-                            />
-                        </div>
+                        <Select
+                            label={periodoLetivoLabel}
+                            required
+                            placeholder={`Selecione o ${periodoLetivoLabel.toLowerCase()}`}
+                            value={form.periodoLetivo}
+                            onChange={handleChange('periodoLetivo')}
+                            fullWidth
+                        >
+                            {periodosLetivos.map((periodo) => (
+                                <Select.Option key={periodo} value={periodo}>
+                                    {periodo}º {periodoLetivoLabel}
+                                </Select.Option>
+                            ))}
+                        </Select>
 
-                        <div className="flex-1">
-                            <DateInput
-                                label="Data"
-                                required
-                                value={form.dataFalta}
-                                onChange={handleChange('dataFalta')}
-                                fullWidth
-                            />
-                        </div>
+                        <DateInput
+                            label="Data"
+                            required
+                            value={form.dataFalta}
+                            onChange={handleChange('dataFalta')}
+                            fullWidth
+                        />
                     </div>
                 </div>
 
