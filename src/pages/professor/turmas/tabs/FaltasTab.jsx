@@ -70,12 +70,11 @@ const FaltasTab = ({ turma }) => {
             <div className="flex items-center justify-between gap-4">
                 <h2 className="text-lg font-semibold text-gray-700">Faltas</h2>
 
-                <Button
-                    variant="primary"
-                    onClick={() => navigate(`/turmas/${turma.id}/faltas/nova`)}
-                >
-                    + Nova falta
-                </Button>
+                <Link
+                    to={`/turmas/${turma.id}/faltas/nova`}
+                    className="text-sm text-primary underline"                >
+                    Nova falta
+                </Link>
             </div>
 
             <Table
