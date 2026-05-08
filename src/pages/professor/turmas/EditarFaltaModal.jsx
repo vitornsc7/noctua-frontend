@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DateInput, Modal, Select } from '../../../components/UI';
+import { Button, DateInput, Input, Modal, Select } from '../../../components/UI';
 
 const formatarDataParaInput = (data) => {
     if (!data) return '';
@@ -30,11 +30,6 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
         }));
     };
 
-    const periodos = Array.from(
-        { length: turma?.qtdePeriodos || 0 },
-        (_, index) => index + 1
-    );
-
     return (
         <Modal
             isOpen={isOpen}
@@ -48,7 +43,12 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     </Button>
                     <Button
                         variant="primary"
-                        onClick={() => onSave(form)}
+                        onClick={() =>
+                            onSave({
+                                ...form,
+                                periodo: Number(form.periodo),
+                            })
+                        }
                         disabled={!form.alunoId || !form.periodo || !form.dataFalta}
                     >
                         Salvar
@@ -72,20 +72,17 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     ))}
                 </Select>
 
-                <Select
-                    label="Período"
+                <Input
+                    label="Períodos faltados"
+                    type="text"
                     required
-                    placeholder="Selecione o período"
+                    integerOnly
+                    min={1}
+                    max={6}
                     value={form.periodo}
                     onChange={handleChange('periodo')}
                     fullWidth
-                >
-                    {periodos.map((periodo) => (
-                        <Select.Option key={periodo} value={periodo}>
-                            {periodo}º período
-                        </Select.Option>
-                    ))}
-                </Select>
+                />
 
                 <DateInput
                     label="Data da falta"

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { buscarTurmaPorId, registrarFalta } from '../../../api/turmaApi';
-import { Button, Checkbox, DateInput, Input, Select, Tag, useToast } from '../../../components/UI';
-import { TURNO_DISPLAY } from '../../../utils/displayMaps';
+import { Button, Checkbox, DateInput, Input, Tag, useToast } from '../../../components/UI';
+import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, displayLabel } from '../../../utils/displayMaps';
 
 const NovaFaltaPage = () => {
     const { id } = useParams();
@@ -36,6 +36,11 @@ const NovaFaltaPage = () => {
 
     const todosSelecionados = alunos.length > 0 && alunos.every((a) => selecionados.includes(a.id));
 
+    const periodicidadeLabel = displayLabel(
+        PERIODICIDADE_DISPLAY,
+        turma?.qtdePeriodos
+    ) ?? `${turma?.qtdePeriodos} períodos`;
+
     const toggleAluno = (id) => {
         setSelecionados((prev) =>
             prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
@@ -56,6 +61,11 @@ const NovaFaltaPage = () => {
     const handleSalvar = async () => {
         if (selecionados.length === 0) {
             showError('Selecione pelo menos um aluno');
+            return;
+        }
+
+        if (!form.periodo || !form.dataFalta) {
+            showError('Preencha os dados da falta');
             return;
         }
 
@@ -80,14 +90,6 @@ const NovaFaltaPage = () => {
             setSaving(false);
         }
     };
-
-    const isBimestral = turma?.qtdePeriodos === 4;
-    const periodoLabel = isBimestral ? 'Bimestre' : 'Trimestre';
-
-    const periodos = Array.from(
-        { length: turma?.qtdePeriodos || 0 },
-        (_, i) => i + 1
-    );
 
     if (loading) {
         return (
@@ -116,7 +118,7 @@ const NovaFaltaPage = () => {
             {turma && (
                 <div className="flex flex-wrap gap-2">
                     <Tag>{turma.anoLetivo?.slice(0, 4)}</Tag>
-                    <Tag>{isBimestral ? 'Bimestral' : 'Trimestral'}</Tag>
+                    <Tag>{periodicidadeLabel}</Tag>
                     <Tag>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
                     <Tag>{turma.alunos?.length ?? 0} alunos</Tag>
                     <Tag>
@@ -140,7 +142,7 @@ const NovaFaltaPage = () => {
                     />
 
                     <Input
-                        label="Períodos"
+                        label="Aulas previstas por período"
                         value={turma?.qtdeAulasPrevistasPeriodo ?? ''}
                         disabled
                         fullWidth
@@ -148,23 +150,23 @@ const NovaFaltaPage = () => {
 
                     <div className="flex gap-4">
                         <div className="flex-1">
-                            <Select
-                                label={periodoLabel}
+                            <Input
+                                label="Períodos faltados"
+                                type="text"
+                                required
+                                integerOnly
+                                min={1}
+                                max={6}
                                 value={form.periodo}
                                 onChange={handleChange('periodo')}
                                 fullWidth
-                            >
-                                {periodos.map((p) => (
-                                    <Select.Option key={p} value={p}>
-                                        {p}º {periodoLabel}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                            />
                         </div>
 
                         <div className="flex-1">
                             <DateInput
                                 label="Data"
+                                required
                                 value={form.dataFalta}
                                 onChange={handleChange('dataFalta')}
                                 fullWidth

@@ -95,7 +95,7 @@ const FaltasTab = ({ turma }) => {
                 />
 
                 <Table.Column
-                    header="Período"
+                    header="Períodos faltados"
                     accessor="periodo"
                 />
 
