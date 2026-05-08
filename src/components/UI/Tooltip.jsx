@@ -65,12 +65,12 @@ const Tooltip = ({ content, children, className = '', contentClassName = '' }) =
             {isVisible && typeof document !== 'undefined' && createPortal(
                 <span
                     role="tooltip"
-                    className={`pointer-events-none fixed z-[1000] w-max max-w-[200px] -translate-x-1/2 rounded-md bg-gray-700 px-2 py-1 text-sm text-white ${contentClassName}`.trim()}
+                    className={`pointer-events-none fixed z-[1000] w-max max-w-[200px] text-justify -translate-x-1/2 rounded-md bg-gray-700 px-2 py-1 text-sm text-white ${contentClassName}`.trim()}
                     style={{ top: `${position.top}px`, left: `${position.left}px` }}
                 >
                     <span
-                    aria-hidden="true"
-                    className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full 
+                        aria-hidden="true"
+                        className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full 
                                 w-0 h-0 
                                 border-l-[6px] border-l-transparent 
                                 border-r-[6px] border-r-transparent 

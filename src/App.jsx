@@ -19,6 +19,7 @@ import ForgotPasswordPage from "./pages/authentication/forgotPassword/ForgotPass
 import ResetPasswordPage from "./pages/authentication/forgotPassword/ResetPasswordPage";
 import MonitoramentoOperacionalPage from './pages/admin/MonitoramentoOperacionalPage';
 import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
+import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
 
 function PrivateRoute() {
   return isTokenValid() ? <Outlet /> : <Navigate to="/login" replace />;
@@ -48,11 +49,15 @@ function RoleHomeRedirect() {
 }
 
 function RoleRoute({ allowedRoles }) {
-  const { loading, role } = useAuth();
+  const { loading, role, isAuthenticated } = useAuth();
   const isResolvingRole = isTokenValid() && !role;
 
   if (loading || isResolvingRole) {
     return <AuthLoadingScreen />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
   if (!allowedRoles.includes(role)) {
@@ -86,6 +91,7 @@ export default function App() {
                   <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
                   <Route path="turmas/:id/avaliacoes/nova" element={<NovaAvaliacaoPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
+                  <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
                 </Route>
 

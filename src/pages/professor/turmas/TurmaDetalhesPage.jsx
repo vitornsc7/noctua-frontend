@@ -39,6 +39,7 @@ const TurmaDetalhesPage = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const deleteGuardRef = useRef(false);
 
     useEffect(() => {
         buscarTurmaPorId(id)
@@ -66,12 +67,15 @@ const TurmaDetalhesPage = () => {
     };
 
     const handleConfirmDelete = async () => {
+        if (deleteGuardRef.current) return;
+        deleteGuardRef.current = true;
         try {
             setIsDeleting(true);
             await excluirTurma(id);
             showSuccess('Turma excluída com sucesso', 'A turma foi removida permanentemente.');
             navigate('/turmas');
         } catch (err) {
+            deleteGuardRef.current = false;
             showError('Erro ao excluir turma', err.message);
         } finally {
             setIsDeleting(false);
@@ -162,7 +166,7 @@ const TurmaDetalhesPage = () => {
                     <Tag>{getAno(turma.anoLetivo)}</Tag>
                     <Tag>{periodicidadeLabel}</Tag>
                     <Tag>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
-                    <Tag>{turma.alunosCount ?? turma.alunos?.length ?? 0} Alunos</Tag>
+                    <Tag>{turma.alunosCount ?? turma.alunos?.length ?? 0} Aluno(s)</Tag>
                     <Tag>
                         Média mínima:{' '}
                         {turma.mediaMinima != null
@@ -187,7 +191,7 @@ const TurmaDetalhesPage = () => {
                     </Tabs.Tab>
 
                     <Tabs.Tab id="faltas" label="Faltas">
-                        <FaltasTab />
+                        <FaltasTab turma={turma} />
                     </Tabs.Tab>
                 </Tabs>
             </div>

@@ -9,6 +9,7 @@ import {
     criarTurma,
     criarAluno,
     atualizarTurmaComFormData,
+    excluirTurma,
 } from '../../../api/turmaApi';
 import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY } from '../../../utils/displayMaps';
 import {
@@ -49,6 +50,7 @@ const CadastroTurmaPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [createdTurmaId, setCreatedTurmaId] = useState(null);
     const [isSubmittingStep1, setIsSubmittingStep1] = useState(false);
+    const [isCancellingStep1, setIsCancellingStep1] = useState(false);
     const [isCloningTurma, setIsCloningTurma] = useState(isCopyMode);
     const [alunos, setAlunos] = useState([]);
 
@@ -166,6 +168,21 @@ const CadastroTurmaPage = () => {
         }
     };
 
+    const handleStep1Cancel = async () => {
+        if (createdTurmaId) {
+            setIsCancellingStep1(true);
+            try {
+                await excluirTurma(createdTurmaId);
+            } catch (err) {
+                showError('Erro ao cancelar cadastro.', err.message);
+                return;
+            } finally {
+                setIsCancellingStep1(false);
+            }
+        }
+        navigate('/turmas');
+    };
+
     const handleStep2Next = () => setCurrentStep(3);
     const handleStep2Back = () => setCurrentStep(1);
 
@@ -216,6 +233,8 @@ const CadastroTurmaPage = () => {
                         isSubmitting={isSubmittingStep1}
                         isEditing={Boolean(createdTurmaId)}
                         onSubmit={handleStep1Submit}
+                        onCancel={handleStep1Cancel}
+                        isCancelling={isCancellingStep1}
                     />
                 </Stepper.Step>
 

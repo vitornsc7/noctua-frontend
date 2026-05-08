@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import Toast from './Toast';
 
@@ -15,23 +15,28 @@ export const useToast = () => {
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
-    const addToast = (variant, message, description = '', duration = 5000) => {
+    const addToast = useCallback((variant, message, description = '', duration = 5000) => {
         const id = Date.now() + Math.random();
         const createdAt = Date.now();
         setToasts((prev) => [...prev, { id, variant, message, description, duration, createdAt }]);
-    };
+    }, []);
 
-    const removeToast = (id) => {
+    const removeToast = useCallback((id) => {
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    };
+    }, []);
 
-    const showSuccess = (message, description, duration) => addToast('success', message, description, duration);
-    const showError = (message, description, duration) => addToast('error', message, description, duration);
-    const showWarning = (message, description, duration) => addToast('warning', message, description, duration);
-    const showInfo = (message, description, duration) => addToast('info', message, description, duration);
+    const showSuccess = useCallback((message, description, duration) => addToast('success', message, description, duration), [addToast]);
+    const showError = useCallback((message, description, duration) => addToast('error', message, description, duration), [addToast]);
+    const showWarning = useCallback((message, description, duration) => addToast('warning', message, description, duration), [addToast]);
+    const showInfo = useCallback((message, description, duration) => addToast('info', message, description, duration), [addToast]);
+
+    const contextValue = useMemo(
+        () => ({ addToast, showSuccess, showError, showWarning, showInfo }),
+        [addToast, showSuccess, showError, showWarning, showInfo],
+    );
 
     return (
-        <ToastContext.Provider value={{ addToast, showSuccess, showError, showWarning, showInfo }}>
+        <ToastContext.Provider value={contextValue}>
             {children}
             <div className="fixed top-20 right-4 z-[9999] flex flex-col gap-3 pointer-events-none">
                 {toasts.map((toast) => (

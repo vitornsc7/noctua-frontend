@@ -126,15 +126,6 @@ export default function RegisterPage() {
                         />
 
                         <Input
-                            label="CPF"
-                            type="text"
-                            mask="***.***.***-**"
-                            placeholder="Digite seu CPF"
-                            tooltip="Informe um CPF válido."
-                            {...getFieldProps('cpf')}
-                        />
-
-                        <Input
                             label="Senha"
                             type="password"
                             placeholder="Digite sua senha"
