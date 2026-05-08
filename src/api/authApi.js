@@ -51,11 +51,11 @@ const parseResponseBody = async (response) => {
     return response.text();
 };
 
-export const register = async ({ nome, email, cpf, senha }) => {
+export const register = async ({ nome, email, senha }) => {
     const response = await fetch(`${BASE_URL}/professores`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, cpf, senha }),
+        body: JSON.stringify({ nome, email, senha }),
     });
 
     if (!response.ok) {

@@ -124,14 +124,6 @@ export default function RegisterPage() {
                         />
 
                         <Input
-                            label="CPF"
-                            type="text"
-                            mask="***.***.***-**"
-                            placeholder="Digite seu CPF"
-                            {...getFieldProps('cpf')}
-                        />
-
-                        <Input
                             label="Senha"
                             type="password"
                             placeholder="Digite sua senha"
