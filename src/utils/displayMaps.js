@@ -13,7 +13,7 @@ export const TURNO_TO_ENUM = {
 };
 
 export const PERIODICIDADE_DISPLAY = {
-    2: 'Bimestral',
+    4: 'Bimestral',
     3: 'Trimestral',
 };
 
@@ -23,7 +23,7 @@ export const PERIODICIDADE_TO_QTDE = {
 };
 
 export const PERIODO_LABEL = {
-    2: 'Bimestre',
+    4: 'Bimestre',
     3: 'Trimestre',
 };
 
