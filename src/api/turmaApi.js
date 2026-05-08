@@ -21,11 +21,12 @@ export const atualizarTurmaComFormData = (id, formData) =>
 export const buscarFiltrosTurmas = () =>
     client.get('/turmas/filtros');
 
-export const listarTurmas = ({ page = 0, size = 10, turno, anoLetivo, instituicao } = {}) => {
+export const listarTurmas = ({ page = 0, size = 10, turno, anoLetivo, instituicao, disciplina } = {}) => {
     const params = new URLSearchParams({ page, size });
     if (turno && turno !== 'todos') params.set('turno', turno);
     if (anoLetivo && anoLetivo !== 'todos') params.set('anoLetivo', anoLetivo);
     if (instituicao && instituicao !== 'todos') params.set('instituicao', instituicao);
+    if (disciplina && disciplina !== 'todos') params.set('disciplina', disciplina);
     return client.get(`/turmas?${params}`);
 };
 
@@ -84,3 +85,31 @@ export const buscarAvaliacaoPorId = (turmaId, avaliacaoId) =>
 export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
     client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas`);
 
+export const listarFaltasPorTurma = (turmaId) =>
+    client.get(`/frequencias/turma/${turmaId}`);
+
+export const listarFaltasPorAluno = (alunoId) =>
+    client.get(`/frequencias/aluno/${alunoId}`);
+
+export const registrarFalta = (formData) =>
+    client.post('/frequencias', {
+        dataFalta: `${formData.dataFalta}T00:00:00`,
+        periodo: Number(formData.periodo),
+        alunoId: Number(formData.alunoId),
+    });
+
+export const atualizarFalta = (faltaId, formData) =>
+    client.put(`/frequencias/${faltaId}`, {
+        dataFalta: `${formData.dataFalta}T00:00:00`,
+        periodo: Number(formData.periodo),
+        alunoId: Number(formData.alunoId),
+    });
+
+export const excluirFalta = (faltaId) =>
+    client.delete(`/frequencias/${faltaId}`);
+
+export const calcularPercentualFrequencia = (alunoId, periodo) =>
+    client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/percentual`);
+
+export const classificarFrequencia = (alunoId, periodo) =>
+    client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/classificacao`);

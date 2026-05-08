@@ -11,7 +11,6 @@ export const LOGIN_INITIAL_VALUES = {
 export const REGISTER_INITIAL_VALUES = {
     nome: '',
     email: '',
-    cpf: '',
     senha: '',
 };
 
@@ -39,9 +38,6 @@ export const registerSchema = z.object({
     email: z.string().trim()
         .min(1, 'Informe o e-mail.')
         .regex(EMAIL_REGEX, 'Informe um e-mail válido.'),
-    cpf: z.string().trim()
-        .min(1, 'Informe o CPF.')
-        .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'Informe um CPF válido.'),
     senha: z
         .string()
         .min(8, 'A senha deve ter pelo menos 8 caracteres.')
