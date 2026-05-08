@@ -18,7 +18,7 @@ export const PERIODICIDADE_DISPLAY = {
 };
 
 export const PERIODICIDADE_TO_QTDE = {
-    Bimestral: 2,
+    Bimestral: 4,
     Trimestral: 3,
 };
 
