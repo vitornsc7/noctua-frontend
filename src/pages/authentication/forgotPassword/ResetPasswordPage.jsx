@@ -17,6 +17,9 @@ export default function ResetPasswordPage() {
 
     const senhaMuitoCurta = novaSenha.length > 0 && novaSenha.length < 8;
 
+    const senhaSemNumero =
+        novaSenha.length > 0 && !/\d/.test(novaSenha);
+
     const senhasDiferentes =
         novaSenha.length > 0 &&
         confirmacaoSenha.length > 0 &&
@@ -40,6 +43,11 @@ export default function ResetPasswordPage() {
             return;
         }
 
+        if (!/\d/.test(novaSenha)) {
+            showError("Senha inválida.", "A nova senha deve conter pelo menos 1 número.");
+            return;
+        }
+
         if (novaSenha !== confirmacaoSenha) {
             showError("As senhas não coincidem.", "Digite a mesma senha nos dois campos.");
             return;
@@ -54,7 +62,10 @@ export default function ResetPasswordPage() {
                 confirmacaoSenha,
             });
 
-            showSuccess(response.message || "Senha redefinida com sucesso.", "Você será redirecionado para o login.");
+            showSuccess(
+                response.message || "Senha redefinida com sucesso.",
+                "Você será redirecionado para o login."
+            );
 
             setTimeout(() => {
                 navigate("/login");
@@ -136,6 +147,7 @@ export default function ResetPasswordPage() {
                                     !novaSenha ||
                                     !confirmacaoSenha ||
                                     senhaMuitoCurta ||
+                                    senhaSemNumero ||
                                     senhasDiferentes
                                 }
                             >
@@ -158,7 +170,7 @@ export default function ResetPasswordPage() {
                         />
 
                         <p className="text-xs text-gray-500 m-0">
-                            A senha deve ter pelo menos 8 caracteres.
+                            A senha deve ter pelo menos 8 caracteres e 1 número.
                         </p>
 
                         <Input
@@ -172,6 +184,12 @@ export default function ResetPasswordPage() {
                         {senhaMuitoCurta && (
                             <p className="text-sm text-red-500 m-0">
                                 A senha deve ter pelo menos 8 caracteres.
+                            </p>
+                        )}
+
+                        {senhaSemNumero && (
+                            <p className="text-sm text-red-500 m-0">
+                                A senha deve conter pelo menos 1 número.
                             </p>
                         )}
 
