@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Tag, Table, useToast } from '../../../components/UI';
-import { buscarAvaliacaoPorId, buscarTurmaPorId, listarNotasPorAvaliacao } from '../../../api/turmaApi';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ActionMenu, Tag, Table, useToast } from '../../../components/UI';
+import { buscarAvaliacaoPorId, buscarTurmaPorId, listarNotasPorAvaliacao, atualizarNota } from '../../../api/turmaApi';
 import { TIPO_AVALIACAO_DISPLAY, displayLabel, normalizeNumber } from '../../../utils/displayMaps';
 import TurmaTags from './components/TurmaTags';
+import EditarNotaModal from './EditarNotaModal';
 
 const formatarData = (data) => {
     if (!data) return '';
@@ -17,15 +18,33 @@ const formatarData = (data) => {
 
 const AvaliacaoDetalhesPage = () => {
     const { id: turmaId, avaliacaoId } = useParams();
-    const { showError } = useToast();
+    const navigate = useNavigate();
+    const { showError, showSuccess } = useToast();
 
     const [avaliacao, setAvaliacao] = useState(null);
     const [turma, setTurma] = useState(null);
     const [notas, setNotas] = useState([]);
     const [loadingAvaliacao, setLoadingAvaliacao] = useState(true);
     const [loadingNotas, setLoadingNotas] = useState(true);
+    const [notaEditando, setNotaEditando] = useState(null);
+    const [savingNota, setSavingNota] = useState(false);
 
     const mediaMinima = normalizeNumber(turma?.mediaMinima);
+
+    const handleSaveNota = async (payload) => {
+        setSavingNota(true);
+        try {
+            await atualizarNota(turmaId, avaliacaoId, notaEditando.id, payload);
+            const novasNotas = await listarNotasPorAvaliacao(turmaId, avaliacaoId);
+            setNotas(novasNotas);
+            setNotaEditando(null);
+            showSuccess('Nota atualizada com sucesso.', 'A nota do aluno foi salva.');
+        } catch (err) {
+            showError('Erro ao salvar nota', err.message);
+        } finally {
+            setSavingNota(false);
+        }
+    };
 
     useEffect(() => {
         buscarAvaliacaoPorId(turmaId, avaliacaoId)
@@ -77,16 +96,45 @@ const AvaliacaoDetalhesPage = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <Link
-                    to={`/turmas/${turmaId}`}
-                    state={{ tab: 'avaliacoes' }}
-                    className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
-                >
-                    <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
-                    <span>Avaliações</span>
-                </Link>
-                <h1 className="text-3xl font-semibold text-gray-700">{titulo}</h1>
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <Link
+                        to={`/turmas/${turmaId}`}
+                        state={{ tab: 'avaliacoes' }}
+                        className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                    >
+                        <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
+                        <span>Avaliações</span>
+                    </Link>
+                    <h1 className="text-3xl font-semibold text-gray-700">{titulo}</h1>
+                </div>
+                <div className="pt-1">
+                    <ActionMenu buttonLabel="Mais ações da avaliação">
+                        {({ closeMenu }) => (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        closeMenu();
+                                        navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/editar`);
+                                    }}
+                                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                >
+                                    <i className="pi pi-pencil text-xs" aria-hidden="true" />
+                                    <span>Editar avaliação</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-400"
+                                >
+                                    <i className="pi pi-upload text-xs" aria-hidden="true" />
+                                    <span>Lançar notas</span>
+                                </button>
+                            </>
+                        )}
+                    </ActionMenu>
+                </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -94,9 +142,6 @@ const AvaliacaoDetalhesPage = () => {
                 <Tag>Peso: {avaliacao.peso}</Tag>
                 <Tag>Data aplicação: {formatarData(avaliacao.data)}</Tag>
                 <Tag>Média mínima da instituição: {mediaMinima}</Tag>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
             </div>
 
             {media != null && (
@@ -117,6 +162,7 @@ const AvaliacaoDetalhesPage = () => {
                 rowKey="id"
                 loading={loadingNotas}
                 emptyMessage="Nenhum aluno associado a esta avaliação."
+                onEdit={setNotaEditando}
             >
                 <Table.Column
                     header="Aluno"
@@ -127,10 +173,20 @@ const AvaliacaoDetalhesPage = () => {
                     render={(nota) =>
                         nota.valor != null
                             ? Number(nota.valor).toLocaleString('pt-BR', { minimumFractionDigits: 1 })
-                            : '-'
+                            : nota.naoRealizada
+                                ? <span className="text-gray-400 italic text-sm">Não compareceu</span>
+                                : '-'
                     }
                 />
             </Table>
+
+            <EditarNotaModal
+                isOpen={Boolean(notaEditando)}
+                onClose={() => setNotaEditando(null)}
+                onSave={handleSaveNota}
+                nota={notaEditando}
+                saving={savingNota}
+            />
         </div>
     );
 };
