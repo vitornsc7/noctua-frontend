@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Tag, Table, useToast } from '../../../components/UI';
 import { buscarAvaliacaoPorId, buscarTurmaPorId, listarNotasPorAvaliacao } from '../../../api/turmaApi';
-import { TIPO_AVALIACAO_DISPLAY, displayLabel } from '../../../utils/displayMaps';
+import { TIPO_AVALIACAO_DISPLAY, displayLabel, normalizeNumber } from '../../../utils/displayMaps';
 import TurmaTags from './components/TurmaTags';
 
 const formatarData = (data) => {
@@ -25,10 +25,7 @@ const AvaliacaoDetalhesPage = () => {
     const [loadingAvaliacao, setLoadingAvaliacao] = useState(true);
     const [loadingNotas, setLoadingNotas] = useState(true);
 
-    const mediaMinima =
-        turma?.mediaMinima != null
-            ? turma.mediaMinima.toLocaleString('en-US', { minimumFractionDigits: 1 })
-            : '—';
+    const mediaMinima = normalizeNumber(turma?.mediaMinima);
 
     useEffect(() => {
         buscarAvaliacaoPorId(turmaId, avaliacaoId)
