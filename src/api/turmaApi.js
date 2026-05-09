@@ -79,11 +79,25 @@ export const criarAvaliacao = (turmaId, formData) =>
         alunosIds: formData.alunosIds,
     });
 
+export const atualizarAvaliacao = (turmaId, avaliacaoId, formData) =>
+    client.put(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`, {
+        tema: formData.tema.trim(),
+        data: `${formData.data}T00:00:00`,
+        peso: Number(formData.peso),
+        tipo: TIPO_AVALIACAO_TO_ENUM[formData.tipo] ?? formData.tipo,
+        periodo: Number(formData.periodo),
+        turmaId: Number(turmaId),
+        alunosIds: formData.alunosIds,
+    });
+
 export const buscarAvaliacaoPorId = (turmaId, avaliacaoId) =>
     client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`);
 
 export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
     client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas`);
+
+export const atualizarNota = (turmaId, avaliacaoId, notaId, payload) =>
+    client.put(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas/${notaId}`, payload);
 
 export const listarFaltasPorTurma = (turmaId) =>
     client.get(`/frequencias/turma/${turmaId}`);
