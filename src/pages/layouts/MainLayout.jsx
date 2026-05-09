@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Header, Footer } from '../../components/UI';
 import { useAuth } from '../../context/AuthContext';
 
 const MainLayout = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, role, logout } = useAuth();
 
     const navItems = useMemo(() => {
@@ -45,11 +46,26 @@ const MainLayout = () => {
                 }
                 actions={
                     <div className="text-sm text-gray-600 flex items-center gap-6">
-                        {navItems.map((item) => (
-                            <Link key={item.to} to={item.to} className="hover:text-gray-800 transition-colors">
-                                {item.label}
-                            </Link>
-                        ))}
+                        {navItems.map((item) => {
+                            const isActive =
+                                location.pathname === item.to ||
+                                location.pathname.startsWith(item.to + '/');
+                            return (
+                                <Link
+                                    key={item.to}
+                                    to={item.to}
+                                    className={[
+                                        'relative text-sm border-b-2 pt-1 pb-0.5 transition-colors',
+                                        isActive
+                                            ? 'border-primary text-gray-800 font-medium'
+                                            : 'border-transparent text-gray-600 hover:text-gray-800',
+                                    ].join(' ')}
+                                >
+                                    <span aria-hidden className="invisible font-medium">{item.label}</span>
+                                    <span className="absolute inset-0 flex items-center justify-center">{item.label}</span>
+                                </Link>
+                            );
+                        })}
                         <div className="border-l border-gray-300 h-6"></div>
                         <p>{user?.nome || 'Perfil'}</p>
                         <button

@@ -6,20 +6,13 @@ import {
     TURNO_OPTIONS,
     edicaoTurmaSchema,
 } from './cadastroTurmaSchema';
-import { TURNO_DISPLAY, TURNO_TO_ENUM } from '../../../utils/displayMaps';
+import { TURNO_DISPLAY, TURNO_TO_ENUM, normalizeNumber } from '../../../utils/displayMaps';
 
 const extrairAno = (anoLetivo) => {
     if (!anoLetivo) return '';
     if (typeof anoLetivo === 'string') return anoLetivo.slice(0, 4);
     if (Array.isArray(anoLetivo)) return String(anoLetivo[0]);
     return String(anoLetivo);
-};
-
-const normalizeMediaMinima = (value) => {
-    const text = String(value ?? '').trim();
-    if (!text) return text;
-    if (/^\d+$/.test(text)) return `${text}.0`;
-    return text;
 };
 
 const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
@@ -44,7 +37,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                 anoLetivo: extrairAno(turma.anoLetivo),
                 turno: TURNO_DISPLAY[turma.turno] ?? '',
                 qtdeAulasPrevistasPeriodo: String(turma.qtdeAulasPrevistasPeriodo || ''),
-                mediaMinima: String(turma.mediaMinima ?? ''),
+                mediaMinima: normalizeNumber(turma.mediaMinima ?? ''),
                 disciplina: turma.disciplina || '',
                 instituicao: turma.instituicao || '',
             });
@@ -61,12 +54,6 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
             });
         },
         onBlur: () => {
-            if (field === 'mediaMinima') {
-                const normalized = normalizeMediaMinima(form.mediaMinima);
-                if (normalized !== form.mediaMinima) {
-                    setValue('mediaMinima', normalized, { shouldDirty: true, shouldTouch: true });
-                }
-            }
             trigger(field);
         },
         error: errors[field]?.message,
@@ -152,7 +139,9 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         tooltip="Média mínima da instituição, utilizada no cálculo da matriz de intervenção."
                         placeholder="Ex: 7.0"
                         numericOnly
-                        maxChars={4}
+                        maxIntegerDigits={2}
+                        maxDecimalDigits={2}
+                        min={0}
                         fullWidth
                         {...getFieldProps('mediaMinima')}
                     />
@@ -163,9 +152,10 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         {...getFieldProps('disciplina')}
                     />
                     <Input
-                        label="Instituição"
+                        label="Nome da instituição"
                         placeholder="Ex: Escola Estadual João da Silva"
                         fullWidth
+                        className="col-span-2"
                         {...getFieldProps('instituicao')}
                     />
                 </div>

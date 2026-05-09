@@ -36,7 +36,7 @@ const AvaliacoesTab = ({ turma }) => {
             .finally(() => setLoading(false));
     }, [turma?.id, showError]);
 
-    const qtdePeriodos = turma?.qtdePeriodos ?? 2;
+    const qtdePeriodos = Number(turma?.qtdePeriodos) || 4;
     const periodoLabel = PERIODO_LABEL[qtdePeriodos] ?? 'Período';
 
     const periodoOptions = Array.from({ length: qtdePeriodos }, (_, i) => ({

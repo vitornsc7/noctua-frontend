@@ -1,21 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ActionMenu, Tag, Tabs, useToast } from '../../../components/UI';
+import { ActionMenu, Tabs, useToast } from '../../../components/UI';
 import { buscarTurmaPorId, atualizarTurma, excluirTurma } from '../../../api/turmaApi';
-import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, displayLabel } from '../../../utils/displayMaps';
+import TurmaTags from './components/TurmaTags';
 import EdicaoTurmaModal from './EdicaoTurmaModal';
 import ExcluirTurmaModal from './components/ExcluirTurmaModal';
 import VisaoGeralTab from './tabs/VisaoGeralTab';
 import AlunosTab from './tabs/AlunosTab';
 import AvaliacoesTab from './tabs/AvaliacoesTab';
 import FaltasTab from './tabs/FaltasTab';
-
-const getAno = (anoLetivo) => {
-    if (!anoLetivo) return '';
-    if (typeof anoLetivo === 'string') return anoLetivo.slice(0, 4);
-    if (Array.isArray(anoLetivo)) return String(anoLetivo[0]);
-    return String(anoLetivo);
-};
 
 const TurmaDetalhesPage = () => {
     const navigate = useNavigate();
@@ -103,8 +96,6 @@ const TurmaDetalhesPage = () => {
         );
     }
 
-    const periodicidadeLabel = displayLabel(PERIODICIDADE_DISPLAY, turma.qtdePeriodos) ?? `${turma.qtdePeriodos} períodos`;
-
     return (
         <>
             <div className="space-y-6">
@@ -162,20 +153,7 @@ const TurmaDetalhesPage = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                    <Tag>{getAno(turma.anoLetivo)}</Tag>
-                    <Tag>{periodicidadeLabel}</Tag>
-                    <Tag>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
-                    <Tag>{turma.alunosCount ?? turma.alunos?.length ?? 0} Aluno(s)</Tag>
-                    <Tag>
-                        Média mínima:{' '}
-                        {turma.mediaMinima != null
-                            ? turma.mediaMinima.toLocaleString('pt-BR', { minimumFractionDigits: 1 })
-                            : '—'}
-                    </Tag>
-                    {turma.disciplina && <Tag>{turma.disciplina}</Tag>}
-                    {turma.instituicao && <Tag>{turma.instituicao}</Tag>}
-                </div>
+                <TurmaTags turma={turma} />
 
                 <Tabs defaultTab={initialTab}>
                     <Tabs.Tab id="visao-geral" label="Visão geral">

@@ -36,7 +36,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                 <Input
                     label="Nome da turma"
                     required
-                    placeholder="Ex: 6º Ano - 9A"
+                    placeholder="Ex: 6º Ano - A"
                     {...getTurmaFieldProps('nome')}
                     fullWidth
                 />
@@ -92,7 +92,9 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                     placeholder="Ex: 7.0"
                     {...getTurmaFieldProps('mediaMinima')}
                     numericOnly
-                    maxChars={4}
+                    maxIntegerDigits={2}
+                    maxDecimalDigits={2}
+                    min={0}
                     fullWidth
                 />
 

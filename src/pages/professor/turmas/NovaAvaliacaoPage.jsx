@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Checkbox, DateInput, Input, Select, Tag, useToast } from '../../../components/UI';
+import { Button, Checkbox, DateInput, Input, Select, useToast } from '../../../components/UI';
 import { buscarTurmaPorId, criarAvaliacao } from '../../../api/turmaApi';
-import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, PERIODO_LABEL, displayLabel } from '../../../utils/displayMaps';
+import { PERIODO_LABEL } from '../../../utils/displayMaps';
 import { AVALIACAO_INITIAL_VALUES, TIPOS_AVALIACAO, novaAvaliacaoSchema } from './novaAvaliacaoSchema';
+import TurmaTags from './components/TurmaTags';
 
 const NovaAvaliacaoPage = () => {
     const { id: turmaId } = useParams();
@@ -74,7 +75,7 @@ const NovaAvaliacaoPage = () => {
         setAlunosError('');
     };
 
-    const qtdePeriodos = turma?.qtdePeriodos ?? 2;
+    const qtdePeriodos = Number(turma?.qtdePeriodos) || 4;
     const periodoLabel = PERIODO_LABEL[qtdePeriodos] ?? 'Período';
     const periodoOptions = Array.from({ length: qtdePeriodos }, (_, i) => ({
         value: String(i + 1),
@@ -131,17 +132,9 @@ const NovaAvaliacaoPage = () => {
                 <h1 className="text-3xl font-semibold text-gray-700">Nova avaliação</h1>
             </div>
 
-            {turma && (
-                <div className="flex flex-wrap gap-2">
-                    <Tag>{typeof turma.anoLetivo === 'string' ? turma.anoLetivo.slice(0, 4) : String(turma.anoLetivo?.[0] ?? '')}</Tag>
-                    <Tag>{displayLabel(PERIODICIDADE_DISPLAY, qtdePeriodos)}</Tag>
-                    <Tag>{displayLabel(TURNO_DISPLAY, turma.turno)}</Tag>
-                    <Tag>{turma.alunosCount ?? turma.alunos?.length ?? 0} Alunos</Tag>
-                    <Tag>Média mínima: {turma.mediaMinima != null ? turma.mediaMinima.toLocaleString('pt-BR', { minimumFractionDigits: 1 }) : '—'}</Tag>
-                </div>
-            )}
+            {turma && <TurmaTags turma={turma} />}
 
-            <div className="flex gap-6 flex-wrap lg:flex-nowrap">
+            <div className="flex gap-2 flex-wrap lg:flex-nowrap">
                 <div className="flex-1 min-w-72 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
                     <h2 className="font-medium text-gray-700">Avaliação</h2>
 
@@ -159,6 +152,16 @@ const NovaAvaliacaoPage = () => {
                     </Select>
 
                     <Input
+                        label="Tema"
+                        value={formValues.tema}
+                        onChange={handleChange('tema')}
+                        placeholder="Ex: Fotossíntese"
+                        required
+                        fullWidth
+                        error={errors.tema?.message}
+                    />
+
+                    <Input
                         label="Peso"
                         value={formValues.peso}
                         onChange={handleChange('peso')}
@@ -168,16 +171,6 @@ const NovaAvaliacaoPage = () => {
                         required
                         fullWidth
                         error={errors.peso?.message}
-                    />
-
-                    <Input
-                        label="Tema"
-                        value={formValues.tema}
-                        onChange={handleChange('tema')}
-                        placeholder="Ex: Fotossíntese"
-                        required
-                        fullWidth
-                        error={errors.tema?.message}
                     />
 
                     <div className="flex gap-4">

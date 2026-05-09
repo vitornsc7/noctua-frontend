@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip';
 
@@ -16,7 +16,7 @@ const CONTROL_KEYS = new Set([
 
 const getMaskSlotsCount = (mask) => (mask ? (mask.match(/\*/g) || []).length : 0);
 
-const sanitizeByMode = (value, { numericOnly, integerOnly }) => {
+const sanitizeByMode = (value, { numericOnly, integerOnly, maxIntegerDigits, maxDecimalDigits }) => {
     const input = String(value ?? '');
 
     if (integerOnly) {
@@ -32,11 +32,15 @@ const sanitizeByMode = (value, { numericOnly, integerOnly }) => {
         .replace(/[^\d.]/g, '');
 
     const [whole = '', ...decimalParts] = normalized.split('.');
+    const limitedWhole = maxIntegerDigits != null ? whole.slice(0, maxIntegerDigits) : whole;
+
     if (decimalParts.length === 0) {
-        return whole;
+        return limitedWhole;
     }
 
-    return `${whole}.${decimalParts.join('')}`;
+    const decimal = decimalParts.join('');
+    const limitedDecimal = maxDecimalDigits != null ? decimal.slice(0, maxDecimalDigits) : decimal;
+    return `${limitedWhole}.${limitedDecimal}`;
 };
 
 const applyMask = (value, mask, digitsOnly) => {
@@ -78,8 +82,10 @@ const normalizeValue = (value, {
     integerOnly,
     mask,
     maxChars,
+    maxIntegerDigits,
+    maxDecimalDigits,
 }) => {
-    const withMode = sanitizeByMode(value, { numericOnly, integerOnly });
+    const withMode = sanitizeByMode(value, { numericOnly, integerOnly, maxIntegerDigits, maxDecimalDigits });
     const parsedMaxChars = Number.isInteger(maxChars) && maxChars >= 0 ? maxChars : undefined;
     const maskSlots = getMaskSlotsCount(mask);
 
@@ -129,6 +135,8 @@ const Input = forwardRef(({
     integerOnly = false,
     mask,
     maxChars,
+    maxIntegerDigits,
+    maxDecimalDigits,
     min,
     max,
     step = 1,
@@ -141,6 +149,18 @@ const Input = forwardRef(({
 }, ref) => {
     const hasError = Boolean(error);
     const isBlocked = disabled || isLoading;
+
+    const displayValue = mask
+        ? normalizeValue(String(value ?? ''), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars })
+        : value;
+
+    useEffect(() => {
+        if (!mask || value == null) return;
+        const normalized = normalizeValue(String(value), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars });
+        if (normalized !== String(value)) {
+            onChange?.({ target: { value: normalized } });
+        }
+    }, [value, mask]);
 
     const numValue = integerOnly ? (Number(value) || 0) : 0;
     const canIncrement = integerOnly && !isBlocked && (max == null || numValue < Number(max));
@@ -156,6 +176,28 @@ const Input = forwardRef(({
         onChange?.({ target: { value: String(numValue - step) } });
     };
 
+    const numFloatValue = numericOnly ? (parseFloat(value) || 0) : 0;
+    const floatMax = maxIntegerDigits != null ? Math.pow(10, maxIntegerDigits) - 0.01 : null;
+    const effectiveMax = max != null ? Number(max) : floatMax;
+    const canIncrementFloat = numericOnly && !isBlocked && (effectiveMax == null || numFloatValue < effectiveMax);
+    const canDecrementFloat = numericOnly && !isBlocked && (min == null || numFloatValue > Number(min));
+
+    const incrementFloat = () => {
+        if (!canIncrementFloat) return;
+        const next = Math.round((numFloatValue + 0.01) * 100) / 100;
+        const clamped = effectiveMax != null ? Math.min(next, effectiveMax) : next;
+        const normalized = normalizeValue(String(clamped), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars, maxIntegerDigits, maxDecimalDigits });
+        onChange?.({ target: { value: normalized } });
+    };
+
+    const decrementFloat = () => {
+        if (!canDecrementFloat) return;
+        const next = Math.round((numFloatValue - 0.01) * 100) / 100;
+        const clamped = min != null ? Math.max(next, Number(min)) : next;
+        const normalized = normalizeValue(String(clamped), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars, maxIntegerDigits, maxDecimalDigits });
+        onChange?.({ target: { value: normalized } });
+    };
+
     const baseInputClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none focus:border-primary bg-white text-sm';
 
     const stateClasses = hasError
@@ -163,7 +205,7 @@ const Input = forwardRef(({
         : 'border-gray-300 focus:ring-primary focus:border-primary';
 
     const disabledClasses = isBlocked
-        ? 'bg-gray-100 cursor-not-allowed opacity-60'
+        ? 'bg-gray-100 opacity-60'
         : '';
 
     const iconPaddingClasses = [leftIcon ? 'pl-10' : '', integerOnly ? 'pr-8' : (rightIcon || isLoading ? 'pr-10' : '')]
@@ -199,6 +241,8 @@ const Input = forwardRef(({
             integerOnly,
             mask,
             maxChars: parsedMaxChars,
+            maxIntegerDigits,
+            maxDecimalDigits,
         });
 
         if (normalized !== event.target.value) {
@@ -298,11 +342,11 @@ const Input = forwardRef(({
                     <input
                         ref={ref}
                         type={type}
-                        value={value}
+                        value={displayValue}
                         placeholder={placeholder}
                         disabled={isBlocked}
                         aria-busy={isLoading}
-                        className={`flex-1 min-w-0 px-4 py-2 bg-white text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBlocked ? 'bg-gray-100 cursor-not-allowed' : ''} ${leftIcon ? 'pl-2' : ''}`}
+                        className={`flex-1 min-w-0 px-4 py-2 bg-white text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBlocked ? 'bg-gray-100' : ''} ${leftIcon ? 'pl-2' : ''}`}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
                         inputMode="numeric"
@@ -332,6 +376,56 @@ const Input = forwardRef(({
                         </button>
                     </div>
                 </div>
+            ) : numericOnly ? (
+                <div
+                    className={`
+                        flex rounded-lg border overflow-hidden
+                        ${hasError ? 'border-red-300 focus-within:border-red-300' : 'border-gray-300 focus-within:border-primary'}
+                        ${isBlocked ? 'opacity-60' : ''}
+                    `}
+                >
+                    {leftIcon && (
+                        <div className="pl-3 flex items-center text-gray-400 pointer-events-none">
+                            {leftIcon}
+                        </div>
+                    )}
+                    <input
+                        ref={ref}
+                        type={type}
+                        value={displayValue}
+                        placeholder={placeholder}
+                        disabled={isBlocked}
+                        aria-busy={isLoading}
+                        className={`flex-1 min-w-0 px-4 py-2 bg-white text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBlocked ? 'bg-gray-100' : ''} ${leftIcon ? 'pl-2' : ''}`}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputMode="decimal"
+                        {...rest}
+                    />
+                    <div className="flex flex-col w-7 border-l border-gray-300 select-none">
+                        <button
+                            type="button"
+                            onClick={incrementFloat}
+                            disabled={!canIncrementFloat}
+                            tabIndex={-1}
+                            aria-label="Aumentar"
+                            className="flex-1 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-30 disabled:cursor-default"
+                        >
+                            <i className="pi pi-chevron-up text-[9px] text-gray-500" aria-hidden="true" />
+                        </button>
+                        <div className="h-px bg-gray-300" />
+                        <button
+                            type="button"
+                            onClick={decrementFloat}
+                            disabled={!canDecrementFloat}
+                            tabIndex={-1}
+                            aria-label="Diminuir"
+                            className="flex-1 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-30 disabled:cursor-default"
+                        >
+                            <i className="pi pi-chevron-down text-[9px] text-gray-500" aria-hidden="true" />
+                        </button>
+                    </div>
+                </div>
             ) : (
                 <div className="relative">
                     {leftIcon && (
@@ -343,7 +437,7 @@ const Input = forwardRef(({
                     <input
                         ref={ref}
                         type={type}
-                        value={value}
+                        value={displayValue}
                         placeholder={placeholder}
                         disabled={isBlocked}
                         aria-busy={isLoading}

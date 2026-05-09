@@ -11,7 +11,7 @@ import {
     atualizarTurmaComFormData,
     excluirTurma,
 } from '../../../api/turmaApi';
-import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY } from '../../../utils/displayMaps';
+import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, normalizeNumber } from '../../../utils/displayMaps';
 import {
     TURMA_INITIAL_VALUES,
     TURMA_STEP_ONE_FIELDS,
@@ -34,7 +34,7 @@ const mapTurmaToFormValues = (turma) => ({
     anoLetivo: getAnoLetivo(turma?.anoLetivo),
     turno: TURNO_DISPLAY[turma?.turno] ?? '',
     disciplina: turma?.disciplina ?? '',
-    mediaMinima: turma?.mediaMinima != null ? String(turma.mediaMinima) : TURMA_INITIAL_VALUES.mediaMinima,
+    mediaMinima: turma?.mediaMinima != null ? normalizeNumber(turma.mediaMinima) : TURMA_INITIAL_VALUES.mediaMinima,
     qtdeAulasPrevistasPeriodo:
         turma?.qtdeAulasPrevistasPeriodo != null ? String(turma.qtdeAulasPrevistasPeriodo) : '',
     instituicao: turma?.instituicao ?? '',
@@ -107,23 +107,7 @@ const CadastroTurmaPage = () => {
         });
     };
 
-    const normalizeMediaMinima = (value) => {
-        const text = String(value ?? '').trim();
-        if (!text) return text;
-        if (/^\d+$/.test(text)) return `${text}.0`;
-        return text;
-    };
-
     const handleTurmaBlur = (field) => () => {
-        if (field === 'mediaMinima') {
-            const normalized = normalizeMediaMinima(turmaInfo.mediaMinima);
-            if (normalized !== turmaInfo.mediaMinima) {
-                setTurmaValue('mediaMinima', normalized, {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                });
-            }
-        }
         triggerTurma(field);
     };
 

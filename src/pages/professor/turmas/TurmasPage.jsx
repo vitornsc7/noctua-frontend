@@ -82,7 +82,7 @@ const TurmasPage = () => {
                 </Link>
             </div>
 
-            <div className="flex flex-col md:flex-row md:gap-2 gap-4">
+            <div className="grid sm:grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4 ">
                 <Select
                     label="Filtrar por turno"
                     value={turnoSelecionado}

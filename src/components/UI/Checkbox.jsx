@@ -11,13 +11,16 @@ const Checkbox = ({
     className = '',
     ...rest
 }) => {
-    const shape = variant === 'circle' ? 'rounded-full' : 'rounded-sm';
+    const shape = variant === 'circle' ? `rounded-full h-5 w-5 ${checked
+        ? 'border-none'
+        : 'border-gray-400'
+        }` : 'rounded-sm';
 
     return (
         <div className={`flex flex-col gap-1 ${className}`}>
             <label
                 className={`flex items-center gap-2 text-sm select-none
-                    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer text-gray-600'}
+                    ${disabled ? 'opacity-50' : 'cursor-pointer text-gray-600'}
                 `}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {

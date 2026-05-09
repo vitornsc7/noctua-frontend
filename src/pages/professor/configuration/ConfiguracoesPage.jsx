@@ -14,25 +14,24 @@ const SettingCard = ({
 }) => {
     const content = (
         <Card className="h-full">
-            <div className="flex h-full flex-col">
-                <div className='flex gap-4 flex-col'>
+            <div className="flex h-full flex-col justify-between gap-2">
+                <div className='flex gap-4 flex-row'>
                     <div
                         className={[
-                            'flex h-11 w-11 items-center justify-center rounded-lg',
-                            highlight ? 'bg-[#EEF2FF] text-primary' : 'bg-gray-100 text-gray-600',
+                            'flex min-h-14 min-w-14 items-center justify-center rounded-lg bg-gray-100 text-gray-600'
                         ].join(' ')}
                     >
-                        <i className={icon} aria-hidden="true"></i>
+                        <span className={[icon, 'text-lg'].join(' ')}></span>
                     </div>
-                    <div className="space-y-2">
-                        <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-gray-700">
+                    <div>
+                        <h2 className="text-xs font-semibold uppercase tracking-[0.06em] text-gray-700">
                             {title}
                         </h2>
-                        <p className="text-sm leading-6 text-gray-600">{description}</p>
+                        <p className="text-sm text-gray-600">{description}</p>
                     </div>
                 </div>
 
-                <div className="mt-auto pt-2 text-sm text-primary underline underline-offset-4">
+                <div className="xl:pt-2 text-sm text-primary underline underline-offset-4">
                     {actionLabel}
                 </div>
             </div>
@@ -67,8 +66,8 @@ const ConfiguracoesPage = () => {
 
     return (
         <>
-            <div className='space-y-6'>
-                <div>
+            <div className='space-y-2'>
+                <div className='mb-8'>
                     <h1 className="mb-2 text-3xl font-semibold text-gray-700">
                         Configurações
                     </h1>
@@ -76,7 +75,7 @@ const ConfiguracoesPage = () => {
                         Gerencie suas preferências e dados da conta.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-2 xl:grid-cols-3">
                     <SettingCard
                         icon="pi pi-user"
                         title="Dados cadastrais"
@@ -86,32 +85,25 @@ const ConfiguracoesPage = () => {
                     />
                     <SettingCard
                         icon="pi pi-chart-bar"
-                        title="Limites de frequência"
-                        description="Defina o intervalo dos valores da classificação da frequência."
+                        title="Limites de nota e frequência"
+                        description="Defina o intervalo dos valores de classificação."
                         actionLabel="Configurar limites"
                     />
                     <SettingCard
                         icon="pi pi-shield"
                         title="Segurança"
-                        description="Adicione uma camada extra de segurança à sua conta de professor com 2FA."
+                        description="Adicione uma camada extra de segurança à sua conta com 2FA."
                         actionLabel="Configurar 2FA"
                         to="/configuracoes/2fa"
-                        highlight
-                    />
-                    <SettingCard
-                        icon="pi pi-star-fill"
-                        title="Status da conta"
-                        description="Período de teste expira em 5 dia(s)."
-                        actionLabel="Assinar agora"
                     />
                 </div>
                 <Card>
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h2 className="mb-2 text-lg font-medium text-gray-700">
+                            <h2 className="text-lg font-medium text-gray-700">
                                 Precisa de ajuda com as configurações?
                             </h2>
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 text-sm">
                                 Nossa equipe de suporte está disponível para tirar qualquer dúvida sobre a plataforma.
                             </p>
                         </div>
