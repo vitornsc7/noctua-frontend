@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, Table } from '../../../../components/UI';
 import AddAlunoModal from '../components/AddAlunoModal';
-import { criarAluno, atualizarAluno, excluirAluno } from '../../../../api/turmaApi';
+import { criarAluno, atualizarAluno, excluirAluno, importarAlunosComIA } from '../../../../api/turmaApi';
 import { ALUNO_INITIAL_VALUES } from '../cadastroTurmaSchema';
 
 const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showError }) => {
@@ -11,6 +11,8 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
     const [editingAluno, setEditingAluno] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
+    const [isImporting, setIsImporting] = useState(false);
+    const fileInputRef = useRef(null);
 
     const updateAlunos = (updated) => {
         setAlunos(updated);
@@ -66,6 +68,31 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
         }
     };
 
+    const handleImportarComIA = async (arquivo) => {
+        setIsImporting(true);
+        try {
+            const { nomes } = await importarAlunosComIA(turmaId, arquivo);
+            if (!nomes || nomes.length === 0) {
+                showError('Nenhum aluno identificado', 'Nenhum nome de aluno foi identificado na imagem. Tente com outro arquivo.');
+                return;
+            }
+            const criados = await Promise.all(
+                nomes.map((nome) => criarAluno(turmaId, { nome, observacao: '' }))
+            );
+            updateAlunos([
+                ...alunos,
+                ...criados.map((c) => ({ id: c.id, nome: c.nome, observacao: c.observacao ?? '' })),
+            ]);
+        } catch (err) {
+            showError('Recurso indisponível', 'Estamos com problemas com este recurso no momento. Entre em contato com o suporte.');
+        } finally {
+            setIsImporting(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
+    const isBusy = isSaving || deletingId !== null || isImporting;
+
     const footer = (
         <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">
@@ -73,10 +100,10 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
                 {alunos.length === 1 ? 'aluno adicionado' : 'alunos adicionados'}
             </p>
             <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={onBack} disabled={isSaving || deletingId !== null}>
+                <Button variant="outline" onClick={onBack} disabled={isBusy}>
                     Voltar
                 </Button>
-                <Button variant="primary" onClick={onNext} disabled={isSaving || deletingId !== null}>
+                <Button variant="primary" onClick={onNext} disabled={isBusy}>
                     Prosseguir
                 </Button>
             </div>
@@ -85,18 +112,47 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
 
     return (
         <>
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.size > 20 * 1024 * 1024) {
+                        showError('Arquivo muito grande', 'O arquivo deve ter no máximo 20MB.');
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                        return;
+                    }
+                    handleImportarComIA(file);
+                }}
+            />
             <Card
                 footer={footer}
                 header={
                     <div className="flex justify-between">
                         <h2 className="text-lg font-medium text-gray-700">Adicionar alunos à turma</h2>
-                        <Button
-                            variant="primary"
-                            onClick={openAddModal}
-                            disabled={isSaving || deletingId !== null}
-                        >
-                            <i className="pi pi-plus text-xs" /> Adicionar aluno
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isBusy}
+                                title="Importar lista de alunos a partir de uma imagem ou PDF usando IA"
+                            >
+                                {isImporting
+                                    ? <><i className="pi pi-spin pi-spinner text-xs" /> Importando...</>
+                                    : <><i className="pi pi-sparkles text-xs" /> Importar com IA</>
+                                }
+                            </Button>
+                            <Button
+                                variant="primary"
+                                onClick={openAddModal}
+                                disabled={isBusy}
+                            >
+                                <i className="pi pi-plus text-xs" /> Adicionar aluno
+                            </Button>
+                        </div>
                     </div>
                 }
             >
