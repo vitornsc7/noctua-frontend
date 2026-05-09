@@ -90,6 +90,7 @@ export default function App() {
                   <Route path="turmas/cadastro" element={<CadastroTurmaPage />} />
                   <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
                   <Route path="turmas/:id/avaliacoes/nova" element={<NovaAvaliacaoPage />} />
+                  <Route path="turmas/:id/avaliacoes/:avaliacaoId/editar" element={<NovaAvaliacaoPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
                   <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
