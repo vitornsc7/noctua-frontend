@@ -107,7 +107,9 @@ const ConfiguracoesPage = () => {
                                 Nossa equipe de suporte está disponível para tirar qualquer dúvida sobre a plataforma.
                             </p>
                         </div>
-                        <Button variant="outline">Falar com suporte</Button>
+                        <a href="mailto:contato.noctua.br@gmail.com">
+                            <Button variant="outline">Falar com suporte</Button>
+                        </a>
                     </div>
                 </Card>
             </div>
