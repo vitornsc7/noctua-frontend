@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { atualizarFalta, excluirFalta, listarFaltasPorTurma } from '../../../../api/turmaApi';
 import { Button, Table, useToast } from '../../../../components/UI';
 import EditarFaltaModal from '../EditarFaltaModal';
+import { Link } from 'react-router-dom';
 
 const formatarData = (data) => {
     if (!data) return '-';

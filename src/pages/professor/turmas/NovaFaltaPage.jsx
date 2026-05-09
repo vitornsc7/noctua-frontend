@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { buscarTurmaPorId, registrarFalta } from '../../../api/turmaApi';
 import { Button, Checkbox, DateInput, Input, Select, Tag, useToast } from '../../../components/UI';
-import { TURNO_DISPLAY } from '../../../utils/displayMaps';
+import { TURNO_DISPLAY, PERIODICIDADE_DISPLAY, displayLabel } from '../../../utils/displayMaps';
 
 const NovaFaltaPage = () => {
     const { id } = useParams();
@@ -16,6 +16,7 @@ const NovaFaltaPage = () => {
     const [form, setForm] = useState({
         periodo: '',
         dataFalta: '',
+        periodosFaltados: 1,
     });
 
     const [busca, setBusca] = useState('');
@@ -53,7 +54,64 @@ const NovaFaltaPage = () => {
         }));
     };
 
+    const handlePeriodosFaltadosChange = (e) => {
+        const value = Number(e.target.value);
+
+        if (value < 1) {
+            setForm((prev) => ({ ...prev, periodosFaltados: 1 }));
+            return;
+        }
+
+        if (value > 6) {
+            setForm((prev) => ({ ...prev, periodosFaltados: 6 }));
+            return;
+        }
+
+        setForm((prev) => ({ ...prev, periodosFaltados: value }));
+    };
+
+    const qtdePeriodos = Number(turma?.qtdePeriodos || 0);
+
+    const periodicidadeLabel =
+        displayLabel(PERIODICIDADE_DISPLAY, turma?.qtdePeriodos) ??
+        `${qtdePeriodos} períodos`;
+
+    const isBimestral = periodicidadeLabel === 'Bimestral' || qtdePeriodos === 4;
+    const totalPeriodos = isBimestral ? 4 : 3;
+    const periodoLabel = isBimestral ? 'Bimestre' : 'Trimestre';
+
+    const periodos = Array.from(
+        { length: totalPeriodos },
+        (_, i) => i + 1
+    );
+
     const handleSalvar = async () => {
+        if (!form.dataFalta) {
+            showError('Informe a data da falta');
+            return;
+        }
+
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        const dataFalta = new Date(form.dataFalta);
+        dataFalta.setHours(0, 0, 0, 0);
+
+        if (dataFalta > hoje) {
+            showError('Não é permitido registrar falta para uma data futura');
+            return;
+        }
+
+        if (!form.periodo) {
+            showError(`Selecione o ${periodoLabel.toLowerCase()}`);
+            return;
+        }
+
+        if (Number(form.periodosFaltados) < 1 || Number(form.periodosFaltados) > 6) {
+            showError('Informe uma quantidade de períodos faltados entre 1 e 6');
+            return;
+        }
+
         if (selecionados.length === 0) {
             showError('Selecione pelo menos um aluno');
             return;
@@ -68,11 +126,12 @@ const NovaFaltaPage = () => {
                         alunoId,
                         periodo: Number(form.periodo),
                         dataFalta: form.dataFalta,
+                        periodosFaltados: Number(form.periodosFaltados),
                     })
                 )
             );
 
-            showSuccess('Faltas registradas com sucesso');
+            showSuccess('Falta(s) registrada(s) com sucesso');
             navigate(`/turmas/${id}`, { state: { tab: 'faltas' } });
         } catch (err) {
             showError('Erro ao registrar faltas', err.message);
@@ -80,14 +139,6 @@ const NovaFaltaPage = () => {
             setSaving(false);
         }
     };
-
-    const isBimestral = turma?.qtdePeriodos === 4;
-    const periodoLabel = isBimestral ? 'Bimestre' : 'Trimestre';
-
-    const periodos = Array.from(
-        { length: turma?.qtdePeriodos || 0 },
-        (_, i) => i + 1
-    );
 
     if (loading) {
         return (
@@ -117,7 +168,7 @@ const NovaFaltaPage = () => {
             {turma && (
                 <div className="flex flex-wrap gap-2">
                     <Tag>{turma.anoLetivo?.slice(0, 4)}</Tag>
-                    <Tag>{isBimestral ? 'Bimestral' : 'Trimestral'}</Tag>
+                    <Tag>{periodicidadeLabel}</Tag>
                     <Tag>{TURNO_DISPLAY[turma.turno] ?? turma.turno}</Tag>
                     <Tag>{turma.alunos?.length ?? 0} alunos</Tag>
                     <Tag>
@@ -133,45 +184,36 @@ const NovaFaltaPage = () => {
                 <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
                     <h2 className="font-medium text-gray-700">Adicionar falta</h2>
 
-                    <Input
-                        label="Disciplina"
-                        value={turma?.disciplina ?? ''}
-                        disabled
+                    <DateInput
+                        label="Data"
+                        value={form.dataFalta}
+                        onChange={handleChange('dataFalta')}
                         fullWidth
                     />
 
-                    <Input
-                        label="Períodos"
-                        value={turma?.qtdeAulasPrevistasPeriodo ?? ''}
-                        disabled
+                    <Select
+                        label={periodoLabel}
+                        value={form.periodo}
+                        onChange={handleChange('periodo')}
                         fullWidth
+                    >
+                        {periodos.map((p) => (
+                            <Select.Option key={p} value={p}>
+                                {p}º {periodoLabel}
+                            </Select.Option>
+                        ))}
+                    </Select>
+
+                    <Input
+                        label="Períodos faltados"
+                        type="number"
+                        min={1}
+                        max={6}
+                        value={form.periodosFaltados}
+                        onChange={handlePeriodosFaltadosChange}
+                        fullWidth
+                        tooltip="Informe a quantidade de aulas que o aluno perdeu nesta data."
                     />
-
-                    <div className="flex gap-4">
-                        <div className="flex-1">
-                            <Select
-                                label={periodoLabel}
-                                value={form.periodo}
-                                onChange={handleChange('periodo')}
-                                fullWidth
-                            >
-                                {periodos.map((p) => (
-                                    <Select.Option key={p} value={p}>
-                                        {p}º {periodoLabel}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </div>
-
-                        <div className="flex-1">
-                            <DateInput
-                                label="Data"
-                                value={form.dataFalta}
-                                onChange={handleChange('dataFalta')}
-                                fullWidth
-                            />
-                        </div>
-                    </div>
                 </div>
 
                 <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
