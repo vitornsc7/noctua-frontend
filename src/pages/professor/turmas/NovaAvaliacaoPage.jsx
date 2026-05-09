@@ -2,21 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Checkbox, DateInput, Input, Select, useToast } from '../../../components/UI';
-import { buscarTurmaPorId, criarAvaliacao } from '../../../api/turmaApi';
-import { PERIODO_LABEL } from '../../../utils/displayMaps';
+import { Button, Checkbox, DateInput, Input, Select, Tooltip, useToast } from '../../../components/UI';
+import { buscarTurmaPorId, criarAvaliacao, atualizarAvaliacao, buscarAvaliacaoPorId, listarNotasPorAvaliacao } from '../../../api/turmaApi';
+import { PERIODO_LABEL, TIPO_AVALIACAO_DISPLAY } from '../../../utils/displayMaps';
 import { AVALIACAO_INITIAL_VALUES, TIPOS_AVALIACAO, novaAvaliacaoSchema } from './novaAvaliacaoSchema';
 import TurmaTags from './components/TurmaTags';
 
+const formatarDataParaInput = (data) => {
+    if (!data) return '';
+    if (Array.isArray(data)) {
+        const [year, month, day] = data;
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+    return String(data).slice(0, 10);
+};
+
 const NovaAvaliacaoPage = () => {
-    const { id: turmaId } = useParams();
+    const { id: turmaId, avaliacaoId } = useParams();
     const navigate = useNavigate();
     const { showError, showSuccess } = useToast();
+
+    const isEditMode = Boolean(avaliacaoId);
 
     const [turma, setTurma] = useState(null);
     const [loadingTurma, setLoadingTurma] = useState(true);
     const [saving, setSaving] = useState(false);
     const [alunosError, setAlunosError] = useState('');
+    const [notasExistentes, setNotasExistentes] = useState([]);
 
     const {
         watch,
@@ -36,14 +48,32 @@ const NovaAvaliacaoPage = () => {
     const [selecionados, setSelecionados] = useState([]);
 
     useEffect(() => {
-        buscarTurmaPorId(turmaId)
-            .then((t) => {
+        const promises = [
+            buscarTurmaPorId(turmaId),
+            ...(isEditMode
+                ? [buscarAvaliacaoPorId(turmaId, avaliacaoId), listarNotasPorAvaliacao(turmaId, avaliacaoId)]
+                : []),
+        ];
+
+        Promise.all(promises)
+            .then(([t, avaliacao, notas]) => {
                 setTurma(t);
-                if (t.qtdePeriodos) setValue('periodo', '1');
+                if (isEditMode && avaliacao) {
+                    const notasList = notas ?? [];
+                    setNotasExistentes(notasList);
+                    setValue('tipo', TIPO_AVALIACAO_DISPLAY[avaliacao.tipo] ?? avaliacao.tipo);
+                    setValue('tema', avaliacao.tema);
+                    setValue('peso', String(avaliacao.peso));
+                    setValue('data', formatarDataParaInput(avaliacao.data));
+                    setValue('periodo', String(avaliacao.periodo));
+                    setSelecionados(notasList.map((n) => n.alunoId));
+                } else if (!isEditMode && t.qtdePeriodos) {
+                    setValue('periodo', '1');
+                }
             })
-            .catch((err) => showError('Erro ao carregar turma', err.message))
+            .catch((err) => showError('Erro ao carregar dados', err.message))
             .finally(() => setLoadingTurma(false));
-    }, [turmaId, showError, setValue]);
+    }, [turmaId, avaliacaoId, isEditMode, showError, setValue]);
 
     const handleChange = (field) => (e) => {
         setValue(field, e.target.value, {
@@ -57,6 +87,21 @@ const NovaAvaliacaoPage = () => {
         .filter((a) => a.ativo)
         .sort((a, b) => a.nome.localeCompare(b.nome));
 
+    const disabledAlunosMap = React.useMemo(() => {
+        const map = new Map();
+        notasExistentes.forEach((n) => {
+            if (n.valor != null || n.naoRealizada) {
+                map.set(
+                    n.alunoId,
+                    n.naoRealizada
+                        ? 'Aluno(a) marcado(a) como não compareceu. Não é possível removê-lo(a) da avaliação.'
+                        : 'Aluno(a) já possui nota lançada. Não é possível removê-lo(a) da avaliação.',
+                );
+            }
+        });
+        return map;
+    }, [notasExistentes]);
+
     const alunosFiltrados = busca.trim()
         ? alunos.filter((a) => a.nome.toLowerCase().includes(busca.trim().toLowerCase()))
         : alunos;
@@ -64,6 +109,7 @@ const NovaAvaliacaoPage = () => {
     const todosSelecionados = alunos.length > 0 && alunos.every((a) => selecionados.includes(a.id));
 
     const toggleAluno = (alunoId) => {
+        if (disabledAlunosMap.has(alunoId)) return;
         setSelecionados((prev) =>
             prev.includes(alunoId) ? prev.filter((id) => id !== alunoId) : [...prev, alunoId]
         );
@@ -71,7 +117,11 @@ const NovaAvaliacaoPage = () => {
     };
 
     const toggleTodos = () => {
-        setSelecionados(todosSelecionados ? [] : alunos.map((a) => a.id));
+        if (todosSelecionados) {
+            setSelecionados(alunos.filter((a) => disabledAlunosMap.has(a.id)).map((a) => a.id));
+        } else {
+            setSelecionados(alunos.map((a) => a.id));
+        }
         setAlunosError('');
     };
 
@@ -93,18 +143,26 @@ const NovaAvaliacaoPage = () => {
 
         try {
             setSaving(true);
-            const avaliacao = await criarAvaliacao(turmaId, {
+            const payload = {
                 tipo: formValues.tipo,
                 peso: formValues.peso,
                 tema: formValues.tema,
                 data: formValues.data,
                 periodo: formValues.periodo,
                 alunosIds: selecionados,
-            });
-            showSuccess('Avaliação criada com sucesso', 'A avaliação foi adicionada à turma.');
-            navigate(`/turmas/${turmaId}/avaliacoes/${avaliacao.id}`);
+            };
+
+            if (isEditMode) {
+                await atualizarAvaliacao(turmaId, avaliacaoId, payload);
+                showSuccess('Avaliação atualizada com sucesso', 'As informações da avaliação foram salvas.');
+                navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`);
+            } else {
+                const avaliacao = await criarAvaliacao(turmaId, payload);
+                showSuccess('Avaliação criada com sucesso', 'A avaliação foi adicionada à turma.');
+                navigate(`/turmas/${turmaId}/avaliacoes/${avaliacao.id}`);
+            }
         } catch (err) {
-            showError('Erro ao criar avaliação', err.message);
+            showError(isEditMode ? 'Erro ao atualizar avaliação' : 'Erro ao criar avaliação', err.message);
         } finally {
             setSaving(false);
         }
@@ -129,7 +187,7 @@ const NovaAvaliacaoPage = () => {
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
                     <span>Avaliações</span>
                 </Link>
-                <h1 className="text-3xl font-semibold text-gray-700">Nova avaliação</h1>
+                <h1 className="text-3xl font-semibold text-gray-700">{isEditMode ? 'Editar avaliação' : 'Nova avaliação'}</h1>
             </div>
 
             {turma && <TurmaTags turma={turma} />}
@@ -227,16 +285,27 @@ const NovaAvaliacaoPage = () => {
                             className="px-2 pb-3 font-medium border-b border-gray-200"
                         />
 
-                        {alunosFiltrados.map((aluno) => (
-                            <Checkbox
-                                key={aluno.id}
-                                label={aluno.nome}
-                                checked={selecionados.includes(aluno.id)}
-                                onChange={() => toggleAluno(aluno.id)}
-                                variant="circle"
-                                className="px-2 py-1"
-                            />
-                        ))}
+                        {alunosFiltrados.map((aluno) => {
+                            const tooltipMsg = disabledAlunosMap.get(aluno.id);
+                            const isDisabled = Boolean(tooltipMsg);
+                            return (
+                                <div key={aluno.id} className="flex items-center">
+                                    <Checkbox
+                                        label={aluno.nome}
+                                        checked={selecionados.includes(aluno.id)}
+                                        onChange={() => toggleAluno(aluno.id)}
+                                        disabled={isDisabled}
+                                        variant="circle"
+                                        className="px-2 py-1 flex-1"
+                                    />
+                                    {isDisabled && (
+                                        <Tooltip content={tooltipMsg}>
+                                            <i className="pi pi-info-circle text-sm text-gray-400" aria-hidden="true" />
+                                        </Tooltip>
+                                    )}
+                                </div>
+                            );
+                        })}
 
                         {alunosFiltrados.length === 0 && (
                             <p className="text-sm text-gray-400 italic px-2 py-2">Nenhum aluno encontrado.</p>
@@ -263,7 +332,8 @@ const NovaAvaliacaoPage = () => {
                     onClick={handleSalvar}
                     disabled={saving}
                 >
-                    {saving ? 'Salvando...' : 'Salvar'}
+                    {saving && <i className="pi pi-spin pi-spinner" aria-hidden="true" />}
+                    Salvar
                 </Button>
             </div>
         </div>
