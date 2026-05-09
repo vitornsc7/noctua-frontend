@@ -91,18 +91,23 @@ export const listarFaltasPorTurma = (turmaId) =>
 export const listarFaltasPorAluno = (alunoId) =>
     client.get(`/frequencias/aluno/${alunoId}`);
 
+const formatarDataFalta = (dataFalta) =>
+    dataFalta?.includes('T') ? dataFalta : `${dataFalta}T00:00:00`;
+
 export const registrarFalta = (formData) =>
     client.post('/frequencias', {
-        dataFalta: `${formData.dataFalta}T00:00:00`,
+        dataFalta: formatarDataFalta(formData.dataFalta),
         periodo: Number(formData.periodo),
         alunoId: Number(formData.alunoId),
+        periodosFaltados: Number(formData.periodosFaltados),
     });
 
 export const atualizarFalta = (faltaId, formData) =>
     client.put(`/frequencias/${faltaId}`, {
-        dataFalta: `${formData.dataFalta}T00:00:00`,
+        dataFalta: formatarDataFalta(formData.dataFalta),
         periodo: Number(formData.periodo),
         alunoId: Number(formData.alunoId),
+        periodosFaltados: Number(formData.periodosFaltados),
     });
 
 export const excluirFalta = (faltaId) =>
