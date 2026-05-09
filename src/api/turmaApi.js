@@ -65,6 +65,23 @@ export const excluirTurma = (id) =>
 export const excluirAluno = (turmaId, alunoId) =>
     client.delete(`/turmas/${turmaId}/alunos/${alunoId}`);
 
+export const importarAlunosComIA = (turmaId, arquivo) => {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+    const token = localStorage.getItem('token');
+    return fetch(`/api/turmas/${turmaId}/alunos/importar`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+    }).then(async (response) => {
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || `Erro HTTP ${response.status}`);
+        }
+        return response.json();
+    });
+};
+
 export const listarAvaliacoes = (turmaId) =>
     client.get(`/turmas/${turmaId}/avaliacoes`);
 
