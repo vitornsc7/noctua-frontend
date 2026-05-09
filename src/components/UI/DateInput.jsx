@@ -52,7 +52,7 @@ const DateInput = ({
     const inputClass = [
         'w-full pl-4 pr-10 py-2 rounded-lg border focus:outline-none bg-white text-sm text-gray-700 placeholder-gray-400',
         hasError ? 'border-red-300 focus:border-red-300' : 'border-gray-300 focus:border-primary',
-        disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : '',
+        disabled ? 'bg-gray-100 opacity-60' : '',
     ].filter(Boolean).join(' ');
 
     return (
@@ -79,10 +79,10 @@ const DateInput = ({
                     pt={{
                         root: { className: fullWidth ? 'w-full' : '' },
                         panel: { className: 'text-xs font-sans' },
-                        header: { className: 'py-1.5 px-2' },
+                        header: { className: 'py-0 px-2' },
                         title: { className: 'text-xs flex items-center gap-1' },
-                        monthTitle: { className: 'text-xs capitalize' },
-                        yearTitle: { className: 'text-xs' },
+                        monthTitle: { className: 'text-sm capitalize' },
+                        yearTitle: { className: 'text-sm' },
                         table: { className: 'text-xs' },
                         day: { className: 'p-0' },
                         dayLabel: { className: 'w-7 h-7 text-xs' },
