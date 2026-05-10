@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card, Tag } from '../../../../components/UI';
+import { Button, Card, Pageable, Tag } from '../../../../components/UI';
+
+const PAGE_SIZE = 25;
 
 const VisaoGeralStep = ({ turmaInfo, turmaOverviewFields, alunos, onBack, onFinish }) => {
+    const [page, setPage] = useState(0);
     const footer = (
         <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onBack}>
@@ -49,25 +52,31 @@ const VisaoGeralStep = ({ turmaInfo, turmaOverviewFields, alunos, onBack, onFini
                             Nenhum aluno adicionado.
                         </p>
                     ) : (
-                        <ul className="space-y-2">
-                            {alunos.map((aluno) => (
-                                <li
-                                    key={aluno.id}
-                                    className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3"
-                                >
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-700">
-                                            <i className="pi pi-user text-xs" /> {aluno.nome}
+                        <>
+                            <ul className="grid grid-cols-5 gap-2">
+                                {alunos.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((aluno) => (
+                                    <li
+                                        key={aluno.id}
+                                        className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3"
+                                    >
+                                        <i className="pi pi-user shrink-0 text-xs text-gray-500" />
+                                        <p className="truncate text-sm font-medium text-gray-700" title={aluno.nome}>
+                                            {aluno.nome}
                                         </p>
-                                        {aluno.observacao && (
-                                            <p className="text-xs text-gray-400">
-                                                {aluno.observacao}
-                                            </p>
-                                        )}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            {alunos.length > PAGE_SIZE && (
+                                <Pageable
+                                    className="mt-3"
+                                    page={page}
+                                    pageSize={PAGE_SIZE}
+                                    totalItems={alunos.length}
+                                    onPageChange={setPage}
+                                />
+                            )}
+                        </>
                     )}
                 </div>
             </div>
