@@ -1,4 +1,5 @@
 import React, { forwardRef, useState, useRef, useEffect, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 /**
@@ -25,6 +26,7 @@ const Select = forwardRef(({
     className = '',
     helperText,
     required = false,
+    size = 'md',
     value,
     onChange,
     onBlur,
@@ -35,6 +37,7 @@ const Select = forwardRef(({
     const isBlocked = disabled || isLoading;
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
+    const [dropdownStyle, setDropdownStyle] = useState({});
     const selectAreaRef = useRef(null);
     const buttonRef = useRef(ref);
     const dropdownRef = useRef(null);
@@ -59,7 +62,9 @@ const Select = forwardRef(({
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (selectAreaRef.current && !selectAreaRef.current.contains(event.target)) {
+            const inButton = selectAreaRef.current && selectAreaRef.current.contains(event.target);
+            const inDropdown = dropdownRef.current && dropdownRef.current.contains(event.target);
+            if (!inButton && !inDropdown) {
                 setIsOpen(false);
                 setFocusedIndex(-1);
             }
@@ -71,6 +76,37 @@ const Select = forwardRef(({
 
         return () => {
             document.removeEventListener('mouseup', handleClickOutside);
+        };
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) return undefined;
+
+        const updatePosition = () => {
+            if (!buttonRef.current) return;
+            const rect = buttonRef.current.getBoundingClientRect();
+            setDropdownStyle({
+                position: 'fixed',
+                top: rect.bottom + 4,
+                left: rect.left,
+                width: rect.width,
+                zIndex: 9999,
+            });
+        };
+
+        updatePosition();
+
+        const handleScrollOrResize = () => {
+            setIsOpen(false);
+            setFocusedIndex(-1);
+        };
+
+        window.addEventListener('scroll', handleScrollOrResize, true);
+        window.addEventListener('resize', handleScrollOrResize);
+
+        return () => {
+            window.removeEventListener('scroll', handleScrollOrResize, true);
+            window.removeEventListener('resize', handleScrollOrResize);
         };
     }, [isOpen]);
 
@@ -194,7 +230,11 @@ const Select = forwardRef(({
         buttonRef.current?.focus();
     };
 
-    const baseButtonClasses = 'w-full px-4 py-2 rounded-lg border focus:outline-none transition-colors bg-white cursor-pointer text-sm text-left flex items-center';
+    const isSm = size === 'sm';
+
+    const baseButtonClasses = isSm
+        ? 'w-full px-3 py-1.5 rounded-md border focus:outline-none transition-colors bg-white cursor-pointer text-xs text-left flex items-center'
+        : 'w-full px-4 py-2 rounded-lg border focus:outline-none transition-colors bg-white cursor-pointer text-sm text-left flex items-center';
 
     const textColorClass = selectedLabel ? 'text-gray-700' : 'text-gray-400';
 
@@ -206,7 +246,7 @@ const Select = forwardRef(({
         ? 'bg-gray-100 opacity-60'
         : '';
 
-    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', 'pr-10']
+    const iconPaddingClasses = [leftIcon ? (isSm ? 'pl-7' : 'pl-10') : '', isSm ? 'pr-7' : 'pr-10']
         .filter(Boolean)
         .join(' ');
 
@@ -251,18 +291,19 @@ const Select = forwardRef(({
                     <span className="block w-full truncate">{selectedLabel || placeholder}</span>
                 </button>
 
-                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <div className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-gray-400 ${isSm ? 'right-2' : 'right-3'}`}>
                     {isLoading ? (
-                        <i className="pi pi-spin pi-spinner text-sm" aria-hidden="true"></i>
+                        <i className={`pi pi-spin pi-spinner ${isSm ? 'text-xs' : 'text-sm'}`} aria-hidden="true"></i>
                     ) : (
-                        <i className={`pi pi-chevron-down text-sm transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
+                        <i className={`pi pi-chevron-down ${isSm ? 'text-xs' : 'text-sm'} transition-transform ${isOpen ? 'rotate-180' : ''}`}></i>
                     )}
                 </div>
 
-                {isOpen && (
+                {isOpen && ReactDOM.createPortal(
                     <div
                         ref={dropdownRef}
-                        className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-auto p-1"
+                        style={dropdownStyle}
+                        className="bg-white border border-gray-200 rounded-lg max-h-60 overflow-auto p-1"
                     >
                         {React.Children.map(children, (child, index) => {
                             if (!child) return null;
@@ -277,7 +318,7 @@ const Select = forwardRef(({
                                     onClick={() => !isDisabled && handleOptionClick(child.props.value)}
                                     className={`
                                         flex items-center justify-between
-                                        px-3 py-2 rounded-md cursor-pointer transition-colors text-sm outline-none
+                                        ${isSm ? 'px-2 py-1.5 text-xs' : 'px-3 py-2 text-sm'} rounded-md cursor-pointer transition-colors outline-none
                                         ${isFocused ? 'bg-gray-100' : 'text-gray-700 hover:bg-gray-100'}
                                         ${isDisabled ? 'opacity-50' : ''}
                                     `}
@@ -286,7 +327,8 @@ const Select = forwardRef(({
                                 </div>
                             );
                         })}
-                    </div>
+                    </div>,
+                    document.body
                 )}
             </div>
 
@@ -326,6 +368,7 @@ Select.propTypes = {
     className: PropTypes.string,
     helperText: PropTypes.string,
     required: PropTypes.bool,
+    size: PropTypes.oneOf(['sm', 'md']),
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
