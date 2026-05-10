@@ -1,7 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, Table } from '../../../../components/UI';
 import AddAlunoModal from '../components/AddAlunoModal';
+import ExcluirAlunoModal from '../components/ExcluirAlunoModal';
+import ImportarComIAModal from '../components/ImportarComIAModal';
 import { criarAluno, atualizarAluno, excluirAluno, importarAlunosComIA } from '../../../../api/turmaApi';
 import { ALUNO_INITIAL_VALUES } from '../cadastroTurmaSchema';
 
@@ -10,9 +12,12 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
     const [modalOpen, setModalOpen] = useState(false);
     const [editingAluno, setEditingAluno] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
-    const [deletingId, setDeletingId] = useState(null);
+    const [alunoParaExcluir, setAlunoParaExcluir] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
-    const fileInputRef = useRef(null);
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
 
     const updateAlunos = (updated) => {
         setAlunos(updated);
@@ -56,15 +61,17 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
         }
     };
 
-    const handleDelete = async (aluno) => {
-        setDeletingId(aluno.id);
+    const handleConfirmDelete = async () => {
+        if (!alunoParaExcluir) return;
+        setIsDeleting(true);
         try {
-            await excluirAluno(turmaId, aluno.id);
-            updateAlunos(alunos.filter((a) => a.id !== aluno.id));
+            await excluirAluno(turmaId, alunoParaExcluir.id);
+            updateAlunos(alunos.filter((a) => a.id !== alunoParaExcluir.id));
+            setAlunoParaExcluir(null);
         } catch (err) {
             showError('Erro ao remover aluno.', err.message);
         } finally {
-            setDeletingId(null);
+            setIsDeleting(false);
         }
     };
 
@@ -83,15 +90,15 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
                 ...alunos,
                 ...criados.map((c) => ({ id: c.id, nome: c.nome, observacao: c.observacao ?? '' })),
             ]);
+            setImportModalOpen(false);
         } catch (err) {
             showError('Recurso indisponível', 'Estamos com problemas com este recurso no momento. Entre em contato com o suporte.');
         } finally {
             setIsImporting(false);
-            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
-    const isBusy = isSaving || deletingId !== null || isImporting;
+    const isBusy = isSaving || isDeleting || isImporting;
 
     const footer = (
         <div className="flex items-center justify-between">
@@ -112,22 +119,6 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
 
     return (
         <>
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*,.pdf"
-                className="hidden"
-                onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    if (file.size > 20 * 1024 * 1024) {
-                        showError('Arquivo muito grande', 'O arquivo deve ter no máximo 20MB.');
-                        if (fileInputRef.current) fileInputRef.current.value = '';
-                        return;
-                    }
-                    handleImportarComIA(file);
-                }}
-            />
             <Card
                 footer={footer}
                 header={
@@ -136,14 +127,11 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
                         <div className="flex items-center gap-2">
                             <Button
                                 variant="outline"
-                                onClick={() => fileInputRef.current?.click()}
+                                onClick={() => setImportModalOpen(true)}
                                 disabled={isBusy}
                                 title="Importar lista de alunos a partir de uma imagem ou PDF usando IA"
                             >
-                                {isImporting
-                                    ? <><i className="pi pi-spin pi-spinner text-xs" /> Importando...</>
-                                    : <><i className="pi pi-sparkles text-xs" /> Importar com IA</>
-                                }
+                                <i className="pi pi-sparkles text-xs" /> Importar com IA
                             </Button>
                             <Button
                                 variant="primary"
@@ -157,12 +145,19 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
                 }
             >
                 <Table
-                    data={alunos}
+                    data={alunos.slice(page * pageSize, (page + 1) * pageSize)}
                     rowKey="id"
                     emptyMessage="Nenhum aluno adicionado ainda."
                     onEdit={openEditModal}
-                    onDelete={handleDelete}
+                    onDelete={(aluno) => setAlunoParaExcluir(aluno)}
                     actionTooltips={{ edit: 'Editar aluno', delete: 'Remover aluno' }}
+                    pageable={{
+                        page,
+                        pageSize,
+                        totalItems: alunos.length,
+                        onPageChange: setPage,
+                        onPageSizeChange: (size) => { setPageSize(size); setPage(0); },
+                    }}
                 >
                     <Table.Column header="Nome" accessor="nome" />
                     <Table.Column
@@ -184,6 +179,21 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
                 }
                 onClose={() => setModalOpen(false)}
                 onSave={handleSave}
+            />
+
+            <ExcluirAlunoModal
+                isOpen={Boolean(alunoParaExcluir)}
+                alunoNome={alunoParaExcluir?.nome}
+                isDeleting={isDeleting}
+                onClose={() => setAlunoParaExcluir(null)}
+                onConfirm={handleConfirmDelete}
+            />
+
+            <ImportarComIAModal
+                isOpen={importModalOpen}
+                onClose={() => setImportModalOpen(false)}
+                onImport={handleImportarComIA}
+                isLoading={isImporting}
             />
         </>
     );

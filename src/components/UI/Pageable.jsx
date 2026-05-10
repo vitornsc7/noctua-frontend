@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button';
+import Select from './Select';
+
+const DEFAULT_PAGE_SIZE_OPTIONS = [10, 25, 50];
 
 const Pageable = ({
     page,
@@ -8,6 +11,8 @@ const Pageable = ({
     totalItems,
     currentItemsCount,
     onPageChange,
+    onPageSizeChange,
+    pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
     className = '',
 }) => {
     const safeTotal = Math.max(0, totalItems);
@@ -26,10 +31,25 @@ const Pageable = ({
 
     return (
         <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${className}`.trim()}>
-            <p className="text-sm text-gray-600">
-                Mostrando {start}-{end} de{' '}
-                {safeTotal} resultados
-            </p>
+            <div className="flex items-center gap-3">
+                <p className="text-sm text-gray-600">
+                    Mostrando {start}-{end} de{' '}
+                    {safeTotal} resultados
+                </p>
+
+                {onPageSizeChange && (
+                    <Select
+                        size="sm"
+                        value={pageSize}
+                        onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                        aria-label="Itens por página"
+                    >
+                        {pageSizeOptions.map((size) => (
+                            <Select.Option key={size} value={size}>{size} por página</Select.Option>
+                        ))}
+                    </Select>
+                )}
+            </div>
 
             <div className="inline-flex items-center gap-2">
                 <Button
@@ -66,7 +86,10 @@ Pageable.propTypes = {
     totalItems: PropTypes.number.isRequired,
     currentItemsCount: PropTypes.number,
     onPageChange: PropTypes.func.isRequired,
+    onPageSizeChange: PropTypes.func,
+    pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
     className: PropTypes.string,
 };
 
 export default Pageable;
+

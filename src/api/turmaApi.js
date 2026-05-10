@@ -30,11 +30,10 @@ export const listarTurmas = ({ page = 0, size = 10, turno, anoLetivo, instituica
     return client.get(`/turmas?${params}`);
 };
 
-export const listarAlunos = (turmaId, { ativo } = {}) => {
-    const params = new URLSearchParams();
+export const listarAlunos = (turmaId, { ativo, page = 0, size = 10 } = {}) => {
+    const params = new URLSearchParams({ page, size });
     if (ativo !== undefined && ativo !== null) params.set('ativo', ativo);
-    const query = params.toString();
-    return client.get(`/turmas/${turmaId}/alunos${query ? `?${query}` : ''}`);
+    return client.get(`/turmas/${turmaId}/alunos?${params}`);
 };
 
 export const criarAluno = (turmaId, alunoData) =>

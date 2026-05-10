@@ -98,76 +98,76 @@ const Table = ({
         <div className={`w-full overflow-hidden rounded-lg border border-gray-200 ${className}`.trim()}>
             <div className="overflow-x-auto overflow-y-visible">
                 <table className="min-w-full text-sm text-gray-700">
-                <thead className="bg-gray-100 border-b text-gray-700">
-                    <tr>
-                        {columns.map((column) => (
-                            <th
-                                key={column.props.id || column.props.accessor || column.props.header}
-                                scope="col"
-                                className={`px-4 py-3 text-left font-medium text-xs uppercase ${column.props.headerClassName || ''}`.trim()}
-                            >
-                                {column.props.header}
-                            </th>
+                    <thead className="bg-gray-100 border-b text-gray-700">
+                        <tr>
+                            {columns.map((column) => (
+                                <th
+                                    key={column.props.id || column.props.accessor || column.props.header}
+                                    scope="col"
+                                    className={`px-4 py-3 text-left font-medium text-xs uppercase ${column.props.headerClassName || ''}`.trim()}
+                                >
+                                    {column.props.header}
+                                </th>
+                            ))}
+
+                            {hasActions && (
+                                <th
+                                    scope="col"
+                                    className="sticky right-0 z-10 w-px whitespace-nowrap border-l border-b border-gray-200 uppercase bg-gray-100 px-4 py-3 text-center font-medium text-xs"
+                                >
+                                    {actionsHeader}
+                                </th>
+                            )}
+                        </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-gray-200 bg-white">
+                        {loading && Array.from({ length: loadingRows }).map((_, rowIndex) => (
+                            <tr key={`loading-row-${rowIndex}`} className="animate-pulse">
+                                {columns.map((column, columnIndex) => (
+                                    <td
+                                        key={`loading-cell-${rowIndex}-${column.props.id || column.props.accessor || columnIndex}`}
+                                        className="px-4 py-3 align-middle"
+                                    >
+                                        <div className="h-4 w-full max-w-[180px] rounded bg-gray-200" />
+                                    </td>
+                                ))}
+
+                                {hasActions && (
+                                    <td className="sticky right-0 w-px whitespace-nowrap border-l border-gray-200 bg-white px-4 py-3 text-right align-middle">
+                                        <div className="ml-auto h-4 w-20 rounded bg-gray-200" />
+                                    </td>
+                                )}
+                            </tr>
                         ))}
 
-                        {hasActions && (
-                            <th
-                                scope="col"
-                                className="sticky right-0 z-10 w-px whitespace-nowrap border-l border-b border-gray-200 uppercase bg-gray-100 px-4 py-3 text-center font-medium text-xs"
-                            >
-                                {actionsHeader}
-                            </th>
+                        {!loading && data.length === 0 && (
+                            <tr>
+                                <td colSpan={columns.length + (hasActions ? 1 : 0)} className="px-4 py-6 text-center text-gray-500">
+                                    {emptyMessage}
+                                </td>
+                            </tr>
                         )}
-                    </tr>
-                </thead>
 
-                <tbody className="divide-y divide-gray-200 bg-white">
-                    {loading && Array.from({ length: loadingRows }).map((_, rowIndex) => (
-                        <tr key={`loading-row-${rowIndex}`} className="animate-pulse">
-                            {columns.map((column, columnIndex) => (
-                                <td
-                                    key={`loading-cell-${rowIndex}-${column.props.id || column.props.accessor || columnIndex}`}
-                                    className="px-4 py-3 align-middle"
-                                >
-                                    <div className="h-4 w-full max-w-[180px] rounded bg-gray-200" />
-                                </td>
-                            ))}
+                        {!loading && data.map((row, index) => (
+                            <tr key={resolveRowKey(row, index)} className="hover:bg-gray-50">
+                                {columns.map((column) => (
+                                    <td
+                                        key={`${resolveRowKey(row, index)}-${column.props.id || column.props.accessor || column.props.header}`}
+                                        className={`px-4 py-3 align-middle ${column.props.className || ''}`.trim()}
+                                    >
+                                        {getCellValue(row, column)}
+                                    </td>
+                                ))}
 
-                            {hasActions && (
-                                <td className="sticky right-0 w-px whitespace-nowrap border-l border-gray-200 bg-white px-4 py-3 text-right align-middle">
-                                    <div className="ml-auto h-4 w-20 rounded bg-gray-200" />
-                                </td>
-                            )}
-                        </tr>
-                    ))}
-
-                    {!loading && data.length === 0 && (
-                        <tr>
-                            <td colSpan={columns.length + (hasActions ? 1 : 0)} className="px-4 py-6 text-center text-gray-500">
-                                {emptyMessage}
-                            </td>
-                        </tr>
-                    )}
-
-                    {!loading && data.map((row, index) => (
-                        <tr key={resolveRowKey(row, index)} className="hover:bg-gray-50">
-                            {columns.map((column) => (
-                                <td
-                                    key={`${resolveRowKey(row, index)}-${column.props.id || column.props.accessor || column.props.header}`}
-                                    className={`px-4 py-3 align-middle ${column.props.className || ''}`.trim()}
-                                >
-                                    {getCellValue(row, column)}
-                                </td>
-                            ))}
-
-                            {hasActions && (
-                                <td className="group/actions sticky right-0 z-20 w-px overflow-visible whitespace-nowrap border-l border-gray-200 bg-white px-4 py-3 text-right align-middle hover:z-50">
-                                    {actions ? actions(row) : renderBuiltInActions(row)}
-                                </td>
-                            )}
-                        </tr>
-                    ))}
-                </tbody>
+                                {hasActions && (
+                                    <td className="group/actions sticky right-0 z-20 w-px overflow-visible whitespace-nowrap border-l border-gray-200 bg-white px-4 py-3 text-right align-middle hover:z-50">
+                                        {actions ? actions(row) : renderBuiltInActions(row)}
+                                    </td>
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </div>
 
@@ -179,6 +179,7 @@ const Table = ({
                         totalItems={pageable.totalItems}
                         currentItemsCount={pageable.currentItemsCount}
                         onPageChange={pageable.onPageChange}
+                        onPageSizeChange={pageable.onPageSizeChange}
                     />
                 </div>
             )}
@@ -209,6 +210,7 @@ Table.propTypes = {
         totalItems: PropTypes.number.isRequired,
         currentItemsCount: PropTypes.number,
         onPageChange: PropTypes.func.isRequired,
+        onPageSizeChange: PropTypes.func,
     }),
     className: PropTypes.string,
 };
