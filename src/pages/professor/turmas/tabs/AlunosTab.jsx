@@ -15,18 +15,24 @@ const AlunosTab = ({ turma }) => {
     const [editingAluno, setEditingAluno] = useState(null);
     const [filtroMatricula, setFiltroMatricula] = useState('ativa');
     const [alunos, setAlunos] = useState([]);
+    const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
     const { showError, showSuccess } = useToast();
 
     const fetchAlunos = useCallback(() => {
         if (!turma?.id) return;
         setLoading(true);
-        listarAlunos(turma.id, { ativo: FILTRO_TO_ATIVO[filtroMatricula] })
-            .then((data) => setAlunos([...data].sort((a, b) => a.nome.localeCompare(b.nome))))
+        listarAlunos(turma.id, { ativo: FILTRO_TO_ATIVO[filtroMatricula], page, size: pageSize })
+            .then((data) => {
+                setAlunos(data.content);
+                setTotalElements(data.totalElements);
+            })
             .catch((err) => showError('Erro ao carregar alunos', err.message))
             .finally(() => setLoading(false));
-    }, [turma?.id, filtroMatricula, showError]);
+    }, [turma?.id, filtroMatricula, page, pageSize, showError]);
 
     useEffect(() => {
         fetchAlunos();
@@ -65,7 +71,7 @@ const AlunosTab = ({ turma }) => {
 
     return (
         <>
-            <div className='space-y-6'>
+            <div className='space-y-6 mb-10'>
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-700">Alunos</h2>
                     <p
@@ -81,7 +87,7 @@ const AlunosTab = ({ turma }) => {
                         <Select
                             label="Matrícula"
                             value={filtroMatricula}
-                            onChange={(e) => setFiltroMatricula(e.target.value)}
+                            onChange={(e) => { setFiltroMatricula(e.target.value); setPage(0); }}
                             fullWidth
                         >
                             {FILTRO_MATRICULA_OPTIONS.map((op) => (
@@ -98,6 +104,13 @@ const AlunosTab = ({ turma }) => {
                     loading={loading}
                     emptyMessage="Nenhum aluno encontrado."
                     onEdit={handleEdit}
+                    pageable={{
+                        page,
+                        pageSize,
+                        totalItems: totalElements,
+                        onPageChange: setPage,
+                        onPageSizeChange: (size) => { setPageSize(size); setPage(0); },
+                    }}
                 >
                     <Table.Column header="Nome" accessor="nome" />
                     <Table.Column header="Observação" accessor="observacao" />
