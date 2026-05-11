@@ -19,6 +19,7 @@ import ForgotPasswordPage from "./pages/authentication/forgotPassword/ForgotPass
 import ResetPasswordPage from "./pages/authentication/forgotPassword/ResetPasswordPage";
 import MonitoramentoOperacionalPage from './pages/admin/MonitoramentoOperacionalPage';
 import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
+import CentralDeAjudaPage from "./pages/ajuda/CentralDeAjudaPage";
 import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
 
 function PrivateRoute() {
@@ -94,6 +95,7 @@ export default function App() {
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
                   <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
+                  <Route path="ajuda" element={<CentralDeAjudaPage />} />
                 </Route>
 
                 <Route element={<RoleRoute allowedRoles={["ADMIN"]} />}>
