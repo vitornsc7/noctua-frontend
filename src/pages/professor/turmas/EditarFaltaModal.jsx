@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DateInput, Modal, Select } from '../../../components/UI';
+import { Button, DateInput, Input, Modal, Select } from '../../../components/UI';
 
 const formatarDataParaInput = (data) => {
     if (!data) return '';
@@ -11,6 +11,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
         alunoId: '',
         periodo: '',
         dataFalta: '',
+        periodosFaltados: 1,
     });
 
     useEffect(() => {
@@ -19,6 +20,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                 alunoId: falta.alunoId,
                 periodo: falta.periodo,
                 dataFalta: formatarDataParaInput(falta.dataFalta),
+                periodosFaltados: falta.periodosFaltados ?? 1,
             });
         }
     }, [isOpen, falta]);
@@ -28,6 +30,22 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
             ...current,
             [field]: event.target.value,
         }));
+    };
+
+    const handlePeriodosFaltadosChange = (event) => {
+        const value = Number(event.target.value);
+
+        if (value < 1) {
+            setForm((current) => ({ ...current, periodosFaltados: 1 }));
+            return;
+        }
+
+        if (value > 6) {
+            setForm((current) => ({ ...current, periodosFaltados: 6 }));
+            return;
+        }
+
+        setForm((current) => ({ ...current, periodosFaltados: value }));
     };
 
     const periodos = Array.from(
@@ -49,7 +67,12 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     <Button
                         variant="primary"
                         onClick={() => onSave(form)}
-                        disabled={!form.alunoId || !form.periodo || !form.dataFalta}
+                        disabled={
+                            !form.alunoId ||
+                            !form.periodo ||
+                            !form.dataFalta ||
+                            !form.periodosFaltados
+                        }
                     >
                         Salvar
                     </Button>
@@ -93,6 +116,17 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     value={form.dataFalta}
                     onChange={handleChange('dataFalta')}
                     fullWidth
+                />
+
+                <Input
+                    label="Períodos faltados"
+                    type="number"
+                    min={1}
+                    max={6}
+                    value={form.periodosFaltados}
+                    onChange={handlePeriodosFaltadosChange}
+                    fullWidth
+                    tooltip="Informe a quantidade de aulas que o aluno perdeu nesta data."
                 />
             </div>
         </Modal>
