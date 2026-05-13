@@ -115,8 +115,12 @@ export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
 export const atualizarNota = (turmaId, avaliacaoId, notaId, payload) =>
     client.put(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas/${notaId}`, payload);
 
-export const listarFaltasPorTurma = (turmaId) =>
-    client.get(`/frequencias/turma/${turmaId}`);
+export const listarFaltasPorTurma = (turmaId, periodo) => {
+    const url = periodo != null
+        ? `/frequencias/turma/${turmaId}?periodo=${periodo}`
+        : `/frequencias/turma/${turmaId}`;
+    return client.get(url);
+};
 
 export const listarFaltasPorAluno = (alunoId) =>
     client.get(`/frequencias/aluno/${alunoId}`);
