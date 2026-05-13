@@ -123,7 +123,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
 
                 <Input
                     label="Períodos faltados"
-                    type="number"
+                    integerOnly
                     min={1}
                     max={6}
                     value={form.periodosFaltados}
