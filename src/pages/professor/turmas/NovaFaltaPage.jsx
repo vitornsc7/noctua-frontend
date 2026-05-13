@@ -131,7 +131,7 @@ const NovaFaltaPage = () => {
                 )
             );
 
-            showSuccess('Falta(s) registrada(s) com sucesso');
+            showSuccess('Falta(s) registrada(s) com sucesso', 'As faltas foram adicionadas aos alunos selecionados.');
             navigate(`/turmas/${id}`, { state: { tab: 'faltas' } });
         } catch (err) {
             showError('Erro ao registrar faltas', err.message);
@@ -206,7 +206,7 @@ const NovaFaltaPage = () => {
 
                     <Input
                         label="Períodos faltados"
-                        type="number"
+                        integerOnly
                         min={1}
                         max={6}
                         value={form.periodosFaltados}
