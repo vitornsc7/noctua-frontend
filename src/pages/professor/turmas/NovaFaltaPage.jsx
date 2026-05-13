@@ -180,8 +180,8 @@ const NovaFaltaPage = () => {
                 </div>
             )}
 
-            <div className="flex gap-6 flex-wrap lg:flex-nowrap">
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+            <div className="flex gap-2 flex-wrap lg:flex-nowrap">
+                <div className="flex-1 min-w-72 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
                     <h2 className="font-medium text-gray-700">Adicionar falta</h2>
 
                     <DateInput
@@ -216,19 +216,18 @@ const NovaFaltaPage = () => {
                     />
                 </div>
 
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-                    <div className="flex justify-between">
+                <div className="flex-1 min-w-72 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+                    <div className="flex items-center justify-between">
                         <h2 className="font-medium text-gray-700">Selecionar alunos</h2>
-                        <span className="text-sm text-gray-500">
-                            {alunos.length} alunos
-                        </span>
+                        <span className="text-sm text-gray-500">{alunos.length} alunos na turma</span>
                     </div>
 
                     <Input
                         value={busca}
                         onChange={(e) => setBusca(e.target.value)}
                         placeholder="Buscar aluno..."
-                        leftIcon={<i className="pi pi-search" />}
+                        leftIcon={<i className="pi pi-search text-sm" />}
+                        disabled={alunos.length === 0}
                         fullWidth
                     />
 
@@ -237,19 +236,26 @@ const NovaFaltaPage = () => {
                             label="Selecionar todos"
                             checked={todosSelecionados}
                             onChange={toggleTodos}
+                            disabled={alunos.length === 0}
                             variant="circle"
-                            className="pb-2 border-b"
+                            className="px-2 pb-3 font-medium border-b border-gray-200"
                         />
 
                         {alunosFiltrados.map((aluno) => (
-                            <Checkbox
-                                key={aluno.id}
-                                label={aluno.nome}
-                                checked={selecionados.includes(aluno.id)}
-                                onChange={() => toggleAluno(aluno.id)}
-                                variant="circle"
-                            />
+                            <div key={aluno.id} className="flex items-center">
+                                <Checkbox
+                                    label={aluno.nome}
+                                    checked={selecionados.includes(aluno.id)}
+                                    onChange={() => toggleAluno(aluno.id)}
+                                    variant="circle"
+                                    className="px-2 py-1 flex-1"
+                                />
+                            </div>
                         ))}
+
+                        {alunosFiltrados.length === 0 && (
+                            <p className="text-sm text-gray-400 italic px-2 py-2">Nenhum aluno encontrado.</p>
+                        )}
                     </div>
                 </div>
             </div>
