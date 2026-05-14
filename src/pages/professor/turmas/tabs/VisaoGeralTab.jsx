@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { listarAlunos } from '../../../../api/turmaApi';
+import { listarAlunos, listarFaltasPorTurma } from '../../../../api/turmaApi';
 import { useToast } from '../../../../components/UI';
 import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
 
 const VisaoGeralTab = ({ turma }) => {
     const [alunos, setAlunos] = useState([]);
+    const [faltas, setFaltas] = useState([]);
     const [loading, setLoading] = useState(true);
     const { showError } = useToast();
 
@@ -13,11 +14,15 @@ const VisaoGeralTab = ({ turma }) => {
 
         setLoading(true);
 
-        listarAlunos(turma.id, { ativo: true, page: 0, size: 100 })
-            .then((data) => {
-                setAlunos(data.content ?? []);
+        Promise.all([
+            listarAlunos(turma.id, { ativo: true, page: 0, size: 100 }),
+            listarFaltasPorTurma(turma.id),
+        ])
+            .then(([alunosData, faltasData]) => {
+                setAlunos(alunosData.content ?? []);
+                setFaltas(faltasData ?? []);
             })
-            .catch((err) => showError('Erro ao carregar alunos', err.message))
+            .catch((err) => showError('Erro ao carregar visão geral', err.message))
             .finally(() => setLoading(false));
     }, [turma?.id, showError]);
 
@@ -32,7 +37,13 @@ const VisaoGeralTab = ({ turma }) => {
                 </p>
             </div>
 
-            <BoletimProgressivoTable alunos={alunos} turma={turma} loading={loading} />        </div>
+            <BoletimProgressivoTable
+                alunos={alunos}
+                faltas={faltas}
+                turma={turma}
+                loading={loading}
+            />
+        </div>
     );
 };
 
