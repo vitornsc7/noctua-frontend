@@ -25,6 +25,7 @@ const FaltasTab = ({ turma }) => {
     const [faltaSelecionada, setFaltaSelecionada] = useState(null);
     const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
     const [filtroData, setFiltroData] = useState('');
+    const [filtroAluno, setFiltroAluno] = useState('todos');
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const { showSuccess, showError } = useToast();
@@ -34,15 +35,16 @@ const FaltasTab = ({ turma }) => {
         return aluno?.nome ?? `Aluno ID: ${alunoId}`;
     };
 
-    const carregarFaltas = (periodoFiltro, dataFiltro, currentPage, currentSize) => {
+    const carregarFaltas = (periodoFiltro, dataFiltro, alunoFiltro, currentPage, currentSize) => {
         if (!turma?.id) return;
 
         setLoading(true);
 
         const periodo = periodoFiltro !== 'todos' ? Number(periodoFiltro) : null;
         const data = dataFiltro || null;
+        const alunoId = alunoFiltro !== 'todos' ? Number(alunoFiltro) : null;
 
-        listarFaltasPorTurma(turma.id, periodo, data, { page: currentPage, size: currentSize })
+        listarFaltasPorTurma(turma.id, periodo, data, alunoId, { page: currentPage, size: currentSize })
             .then((res) => {
                 setFaltas(res.content);
                 setTotalElements(res.totalElements);
@@ -61,12 +63,21 @@ const FaltasTab = ({ turma }) => {
         setFiltroData(e.target.value);
     };
 
+    const handleLimparFiltros = () => {
+        setFiltroPeriodo('todos');
+        setFiltroData('');
+        setFiltroAluno('todos');
+        setPage(0);
+    };
+
+    const temFiltroAtivo = filtroPeriodo !== 'todos' || filtroData !== '' || filtroAluno !== 'todos';
+
     const handleSalvarEdicao = async (formData) => {
         try {
             await atualizarFalta(faltaSelecionada.id, formData);
             showSuccess('Falta atualizada com sucesso');
             setFaltaSelecionada(null);
-            carregarFaltas(filtroPeriodo, filtroData, page, pageSize);
+            carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
         } catch (err) {
             showError('Erro ao atualizar falta', err.message);
         }
@@ -76,15 +87,15 @@ const FaltasTab = ({ turma }) => {
         try {
             await excluirFalta(falta.id);
             showSuccess('Falta excluída com sucesso');
-            carregarFaltas(filtroPeriodo, filtroData, page, pageSize);
+            carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
         } catch (err) {
             showError('Erro ao excluir falta', err.message);
         }
     };
 
     useEffect(() => {
-        carregarFaltas(filtroPeriodo, filtroData, page, pageSize);
-    }, [turma?.id, filtroPeriodo, filtroData, page, pageSize]);
+        carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
+    }, [turma?.id, filtroPeriodo, filtroData, filtroAluno, page, pageSize]);
 
     return (
         <>
@@ -98,7 +109,7 @@ const FaltasTab = ({ turma }) => {
                         Nova falta
                     </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     <Select
                         label={periodoLabel}
                         value={filtroPeriodo}
@@ -118,6 +129,29 @@ const FaltasTab = ({ turma }) => {
                         onChange={handleDataChange}
                         fullWidth
                     />
+                    <Select
+                        label="Aluno"
+                        value={filtroAluno}
+                        onChange={(e) => { setFiltroAluno(e.target.value); setPage(0); }}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todos os alunos</Select.Option>
+                        {(turma?.alunos ?? []).map((aluno) => (
+                            <Select.Option key={aluno.id} value={String(aluno.id)}>
+                                {aluno.nome}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </div>
+                <div className='flex flex-row justify-end'>
+                    {temFiltroAtivo && (
+                        <p
+                            onClick={handleLimparFiltros}
+                            className="text-sm text-gray-600 hover:text-gray-700 transition cursor-pointer"
+                        >
+                            Limpar filtros
+                        </p>
+                    )}
                 </div>
                 <Table
                     data={faltas}
