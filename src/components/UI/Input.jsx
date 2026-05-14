@@ -143,6 +143,7 @@ const Input = forwardRef(({
     value,
     onChange,
     onKeyDown,
+    onBlur,
     minLength,
     maxLength,
     ...rest
@@ -252,6 +253,34 @@ const Input = forwardRef(({
         onChange?.(event);
     };
 
+    const handleBlur = (event) => {
+        if (!integerOnly && !numericOnly) {
+            onBlur?.(event);
+            return;
+        }
+
+        let raw = String(event.target.value ?? '').trim().replace(',', '.');
+        let num = integerOnly ? parseInt(raw, 10) : parseFloat(raw);
+
+        if (Number.isNaN(num)) {
+            onBlur?.(event);
+            return;
+        }
+
+        const numMin = min != null ? Number(min) : null;
+        const numMax = max != null ? Number(max) : null;
+
+        if (numMax !== null && num > numMax) num = numMax;
+        if (numMin !== null && num < numMin) num = numMin;
+
+        const clamped = String(num);
+        if (clamped !== String(event.target.value)) {
+            onChange?.({ target: { value: clamped } });
+        }
+
+        onBlur?.(event);
+    };
+
     const handleKeyDown = (event) => {
         onKeyDown?.(event);
 
@@ -349,6 +378,7 @@ const Input = forwardRef(({
                         className={`flex-1 min-w-0 px-4 py-2 bg-white text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBlocked ? 'bg-gray-100' : ''} ${leftIcon ? 'pl-2' : ''}`}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
+                        onBlur={handleBlur}
                         inputMode="numeric"
                         {...rest}
                     />
@@ -399,6 +429,7 @@ const Input = forwardRef(({
                         className={`flex-1 min-w-0 px-4 py-2 bg-white text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBlocked ? 'bg-gray-100' : ''} ${leftIcon ? 'pl-2' : ''}`}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
+                        onBlur={handleBlur}
                         inputMode="decimal"
                         {...rest}
                     />
@@ -444,6 +475,7 @@ const Input = forwardRef(({
                         className={inputClasses}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
+                        onBlur={onBlur}
                         minLength={resolvedMinLength}
                         maxLength={resolvedMaxLength}
                         inputMode={inputMode}
