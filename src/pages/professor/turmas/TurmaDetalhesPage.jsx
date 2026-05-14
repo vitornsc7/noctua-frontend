@@ -157,7 +157,7 @@ const TurmaDetalhesPage = () => {
 
                 <Tabs defaultTab={initialTab}>
                     <Tabs.Tab id="visao-geral" label="Visão geral">
-                        <VisaoGeralTab />
+                        <VisaoGeralTab turma={turma} />
                     </Tabs.Tab>
 
                     <Tabs.Tab id="alunos" label="Alunos">

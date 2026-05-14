@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function BoletimProgressivoTable() {
+export default function BoletimProgressivoTable({ alunos = [], loading = false }) {
     const periodos = ['1º Bimestre', '2º Bimestre', '3º Bimestre', '4º Bimestre'];
 
-    const alunos = [
+    /*const alunos = [
         {
             id: 1,
             nome: 'Ana Souza',
@@ -64,7 +64,32 @@ export default function BoletimProgressivoTable() {
             final: { media: 4.95, frequencia: 67 },
             intervencao: 'Urgente',
         },
-    ];
+        {
+            id: 6,
+            nome: 'Felipe Alves',
+            periodos: {
+                1: { media: null, frequencia: null },
+                2: { media: null, frequencia: null },
+                3: { media: null, frequencia: null },
+                4: { media: null, frequencia: null },
+            },
+            final: { media: null, frequencia: null },
+            intervencao: 'Aguardando dados',
+        },
+    ];*/
+
+    const alunosBoletim = alunos.map((aluno) => ({
+        id: aluno.id,
+        nome: aluno.nome,
+        periodos: {
+            1: { media: null, frequencia: null },
+            2: { media: null, frequencia: null },
+            3: { media: null, frequencia: null },
+            4: { media: null, frequencia: null },
+        },
+        final: { media: null, frequencia: null },
+        intervencao: 'Aguardando dados',
+    }));
 
     const formatarNumero = (valor) => {
         if (valor === null || valor === undefined) return '—';
@@ -73,6 +98,7 @@ export default function BoletimProgressivoTable() {
 
     const getIntervencaoClass = (intervencao) => {
         const classes = {
+            'Aguardando dados': 'bg-gray-50 text-gray-500 ring-1 ring-gray-200',
             'Não necessária': 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
             'Em monitoramento': 'bg-sky-50 text-sky-700 ring-1 ring-sky-200',
             Pedagógica: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
@@ -85,10 +111,15 @@ export default function BoletimProgressivoTable() {
 
     return (
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+            {loading && (
+                <div className="px-4 py-6 text-sm text-gray-400 italic">
+                    Carregando boletim progressivo anual...
+                </div>
+            )}
             <table className="min-w-full border-collapse text-sm">
                 <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-600">
                     <tr>
-                        <th rowSpan={2} className="sticky left-0 z-20 bg-gray-50 px-4 py-3 text-left">
+                        <th rowSpan={2} className="sticky left-0 z-20 bg-gray-50 px-4 py-3 text-center">
                             Aluno
                         </th>
 
@@ -121,45 +152,47 @@ export default function BoletimProgressivoTable() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-100">
-                    {alunos.map((aluno) => (
-                        <tr key={aluno.id} className="hover:bg-gray-50">
-                            <td className="sticky left-0 z-10 bg-white px-4 py-3 font-medium text-gray-800">
-                                {aluno.nome}
-                            </td>
+                    {alunosBoletim.map((aluno) =>
+                    (<tr key={aluno.id} className="hover:bg-gray-50">
+                        <td className="sticky left-0 z-10 bg-white px-4 py-3 font-medium text-gray-800">
+                            {aluno.nome}
+                        </td>
 
-                            {periodos.map((_, index) => {
-                                const numeroPeriodo = index + 1;
-                                const dados = aluno.periodos[numeroPeriodo];
+                        {periodos.map((_, index) => {
+                            const numeroPeriodo = index + 1;
+                            const dados = aluno.periodos[numeroPeriodo];
 
-                                return (
-                                    <React.Fragment key={numeroPeriodo}>
-                                        <td className="border-l border-gray-100 px-3 py-3 text-center font-semibold text-gray-800">
-                                            {formatarNumero(dados?.media)}
-                                        </td>
-                                        <td className="px-3 py-3 text-center text-gray-600">
-                                            {dados?.frequencia ? `${formatarNumero(dados.frequencia)}%` : '—'}
-                                        </td>
-                                    </React.Fragment>
-                                );
-                            })}
+                            return (
+                                <React.Fragment key={numeroPeriodo}>
+                                    <td className="border-l border-gray-100 px-3 py-3 text-center font-semibold text-gray-800">
+                                        {formatarNumero(dados?.media)}
+                                    </td>
+                                    <td className="px-3 py-3 text-center text-gray-600">
+                                        {dados?.frequencia ? `${formatarNumero(dados.frequencia)}%` : '—'}
+                                    </td>
+                                </React.Fragment>
+                            );
+                        })}
 
-                            <td className="border-l border-gray-100 px-3 py-3 text-center font-semibold text-gray-800">
-                                {formatarNumero(aluno.final.media)}
-                            </td>
-                            <td className="px-3 py-3 text-center text-gray-600">
-                                {formatarNumero(aluno.final.frequencia)}%
-                            </td>
+                        <td className="border-l border-gray-100 px-3 py-3 text-center font-semibold text-gray-800">
+                            {formatarNumero(aluno.final.media)}
+                        </td>
+                        <td className="px-3 py-3 text-center text-gray-600">
+                            {aluno.final.frequencia !== null && aluno.final.frequencia !== undefined
+                                ? `${formatarNumero(aluno.final.frequencia)}%`
+                                : '—'}
+                        </td>
 
-                            <td className="border-l border-gray-100 px-4 py-3 text-center">
-                                <span
-                                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${getIntervencaoClass(
-                                        aluno.intervencao
-                                    )}`}
-                                >
-                                    {aluno.intervencao}
-                                </span>
-                            </td>
-                        </tr>
+                        <td className="border-l border-gray-100 px-4 py-3 text-center">
+                            <span
+                                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${getIntervencaoClass(
+                                    aluno.intervencao
+                                )}`}
+                            >
+                                {aluno.intervencao}
+                            </span>
+                        </td>
+                    </tr>
                     ))}
                 </tbody>
             </table>
