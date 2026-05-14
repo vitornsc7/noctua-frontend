@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
 
 const VisaoGeralTab = () => {
     return (
-        <p className="text-sm text-gray-400 italic py-8">
-            A visão geral ainda não está disponível.
-        </p>
+        <div className="space-y-6 py-4">
+            <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                    Visão geral da turma
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                    Boletim progressivo anual
+                </p>
+            </div>
+
+            <BoletimProgressivoTable />
+        </div>
     );
 };
 
