@@ -63,6 +63,11 @@ const AvaliacaoDetalhesPage = () => {
     };
 
     useEffect(() => {
+        setAvaliacao(null);
+        setNotas([]);
+        setLoadingAvaliacao(true);
+        setLoadingNotas(true);
+
         buscarAvaliacaoPorId(turmaId, avaliacaoId)
             .then(setAvaliacao)
             .catch((err) => showError('Erro ao carregar avaliação', err.message))
@@ -114,6 +119,7 @@ const AvaliacaoDetalhesPage = () => {
     const alunosNaoCompareceram = notas.filter((n) => Boolean(n.naoRealizada));
     const proximaChamada = (avaliacao.numeroChamada ?? 1) + 1;
     const temNaoCompareceram = alunosNaoCompareceram.length > 0;
+    const temChamadaFilha = Boolean(avaliacao.temChamadaFilha);
     const chamadaLabel = `${proximaChamada}ª Chamada`;
 
     return (
@@ -128,6 +134,24 @@ const AvaliacaoDetalhesPage = () => {
                         <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
                         <span>Avaliações</span>
                     </Link>
+                    {avaliacao.avaliacaoPaiId && (
+                        <Link
+                            to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoPaiId}`}
+                            className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                        >
+                            <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
+                            <span>{avaliacao.numeroChamada - 1}ª Chamada</span>
+                        </Link>
+                    )}
+                    {avaliacao.avaliacaoFilhaId && (
+                        <Link
+                            to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoFilhaId}`}
+                            className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                        >
+                            <i className="pi pi-chevron-right text-xs" aria-hidden="true" />
+                            <span>{proximaChamada}ª Chamada</span>
+                        </Link>
+                    )}
                     <h1 className="text-3xl font-semibold text-gray-700">{titulo}</h1>
                 </div>
                 <div className="pt-1">
@@ -156,7 +180,7 @@ const AvaliacaoDetalhesPage = () => {
                                     <i className="pi pi-upload text-xs" aria-hidden="true" />
                                     <span>Lançar notas</span>
                                 </button>
-                                {temNaoCompareceram ? (
+                                {!temChamadaFilha && temNaoCompareceram && (
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -168,8 +192,21 @@ const AvaliacaoDetalhesPage = () => {
                                         <i className="pi pi-refresh text-xs" aria-hidden="true" />
                                         <span>{chamadaLabel}</span>
                                     </button>
-                                ) : (
+                                )}
+                                {!temChamadaFilha && !temNaoCompareceram && (
                                     <Tooltip className='w-full' content="Nenhum aluno marcado como não compareceu.">
+                                        <button
+                                            type="button"
+                                            disabled
+                                            className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
+                                        >
+                                            <i className="pi pi-refresh text-xs" aria-hidden="true" />
+                                            <span>{chamadaLabel}</span>
+                                        </button>
+                                    </Tooltip>
+                                )}
+                                {temChamadaFilha && (
+                                    <Tooltip className='w-full' content="Esta avaliação já possui uma chamada subsequente.">
                                         <button
                                             type="button"
                                             disabled
@@ -187,7 +224,10 @@ const AvaliacaoDetalhesPage = () => {
             </div>
 
             <div className="flex flex-wrap gap-2">
-                <Tag>Tipo: {tipoDisplay}</Tag>
+                {(avaliacao.numeroChamada ?? 1) > 1 && (
+                    <Tag>{avaliacao.numeroChamada}ª Chamada</Tag>
+                )}
+                <Tag>{tipoDisplay}</Tag>
                 <Tag>Peso: {avaliacao.peso}</Tag>
                 <Tag>Data aplicação: {formatarData(avaliacao.data)}</Tag>
                 <Tag>Média mínima da instituição: {mediaMinima}</Tag>
@@ -235,6 +275,7 @@ const AvaliacaoDetalhesPage = () => {
                 onSave={handleSaveNota}
                 nota={notaEditando}
                 saving={savingNota}
+                temChamadaFilha={temChamadaFilha}
             />
 
             <Modal
