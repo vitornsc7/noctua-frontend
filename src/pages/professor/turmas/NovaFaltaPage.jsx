@@ -55,19 +55,7 @@ const NovaFaltaPage = () => {
     };
 
     const handlePeriodosFaltadosChange = (e) => {
-        const value = Number(e.target.value);
-
-        if (value < 1) {
-            setForm((prev) => ({ ...prev, periodosFaltados: 1 }));
-            return;
-        }
-
-        if (value > 6) {
-            setForm((prev) => ({ ...prev, periodosFaltados: 6 }));
-            return;
-        }
-
-        setForm((prev) => ({ ...prev, periodosFaltados: value }));
+        setForm((prev) => ({ ...prev, periodosFaltados: e.target.value }));
     };
 
     const qtdePeriodos = Number(turma?.qtdePeriodos || 0);
@@ -185,6 +173,7 @@ const NovaFaltaPage = () => {
                     <h2 className="font-medium text-gray-700">Adicionar falta</h2>
 
                     <DateInput
+                        required
                         label="Data"
                         value={form.dataFalta}
                         onChange={handleChange('dataFalta')}
@@ -192,6 +181,7 @@ const NovaFaltaPage = () => {
                     />
 
                     <Select
+                        required
                         label={periodoLabel}
                         value={form.periodo}
                         onChange={handleChange('periodo')}
@@ -205,6 +195,7 @@ const NovaFaltaPage = () => {
                     </Select>
 
                     <Input
+                        required
                         label="Períodos faltados"
                         integerOnly
                         min={1}
@@ -270,8 +261,8 @@ const NovaFaltaPage = () => {
                     Cancelar
                 </Button>
 
-                <Button onClick={handleSalvar} disabled={saving}>
-                    {saving ? 'Salvando...' : 'Salvar'}
+                <Button onClick={handleSalvar} disabled={saving} isLoading={saving}>
+                    Salvar
                 </Button>
             </div>
         </div>
