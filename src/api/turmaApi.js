@@ -115,11 +115,15 @@ export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
 export const atualizarNota = (turmaId, avaliacaoId, notaId, payload) =>
     client.put(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas/${notaId}`, payload);
 
-export const listarFaltasPorTurma = (turmaId, periodo) => {
-    const url = periodo != null
-        ? `/frequencias/turma/${turmaId}?periodo=${periodo}`
-        : `/frequencias/turma/${turmaId}`;
-    return client.get(url);
+export const criarChamada = (turmaId, avaliacaoId) =>
+    client.post(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/chamada`);
+
+export const listarFaltasPorTurma = (turmaId, periodo, dataFalta) => {
+    const params = [];
+    if (periodo != null) params.push(`periodo=${periodo}`);
+    if (dataFalta != null) params.push(`dataFalta=${dataFalta}`);
+    const query = params.length > 0 ? `?${params.join('&')}` : '';
+    return client.get(`/frequencias/turma/${turmaId}${query}`);
 };
 
 export const listarFaltasPorAluno = (alunoId) =>

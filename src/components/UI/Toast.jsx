@@ -72,22 +72,25 @@ const Toast = ({
 
     const styles = variantStyles[variant];
 
+    const hasDescription = Boolean(description);
+
     return (
         <div className={`transition-all duration-300 ${isExiting ? 'opacity-0 translate-x-full' : 'animate-slide-in-right'}`}>
             <div className={`
                 bg-white border-gray-200 ${styles.text}
-                border rounded-lg p-4 pr-12
+                border rounded-lg pr-12
+                ${hasDescription ? 'p-4' : 'px-4 py-3'}
                 min-w-[320px] max-w-md
                 relative
             `}>
-                <div className="flex items-start gap-3">
-                    <i className={`pi ${styles.icon} text-lg flex-shrink-0 mt-0.5`}></i>
+                <div className={`flex gap-3 ${hasDescription ? 'items-start' : 'items-center'}`}>
+                    <i className={`pi ${styles.icon} text-lg flex-shrink-0 ${hasDescription ? 'mt-0.5' : ''}`}></i>
 
                     <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm leading-tight">
                             {message}
                         </p>
-                        {description && (
+                        {hasDescription && (
                             <p className="text-xs mt-1 opacity-90">
                                 {description}
                             </p>
@@ -98,7 +101,7 @@ const Toast = ({
                 <button
                     onClick={handleClose}
                     className={`
-                        absolute top-3 right-3
+                        absolute ${hasDescription ? 'top-3' : 'top-1/2 -translate-y-1/2'} right-3
                         ${styles.text} hover:opacity-70
                         transition-opacity
                         p-1

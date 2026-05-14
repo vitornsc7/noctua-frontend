@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const TIPOS_AVALIACAO = ['Prova', 'Trabalho', 'Atividade', 'Recuperação'];
+export const TIPOS_AVALIACAO = ['Prova', 'Trabalho', 'Atividade'];
 
 export const AVALIACAO_INITIAL_VALUES = {
     tipo: 'Prova',

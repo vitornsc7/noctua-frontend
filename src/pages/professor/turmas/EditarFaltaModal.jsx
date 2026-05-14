@@ -8,6 +8,7 @@ const formatarDataParaInput = (data) => {
 };
 
 const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
+    const [isSaving, setIsSaving] = useState(false);
     const [form, setForm] = useState({
         alunoId: '',
         periodo: '',
@@ -34,19 +35,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
     };
 
     const handlePeriodosFaltadosChange = (event) => {
-        const value = Number(event.target.value);
-
-        if (value < 1) {
-            setForm((current) => ({ ...current, periodosFaltados: 1 }));
-            return;
-        }
-
-        if (value > 6) {
-            setForm((current) => ({ ...current, periodosFaltados: 6 }));
-            return;
-        }
-
-        setForm((current) => ({ ...current, periodosFaltados: value }));
+        setForm((current) => ({ ...current, periodosFaltados: event.target.value }));
     };
 
     const periodos = Array.from(
@@ -69,13 +58,22 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     </Button>
                     <Button
                         variant="primary"
-                        onClick={() => onSave(form)}
+                        onClick={async () => {
+                            setIsSaving(true);
+                            try {
+                                await onSave(form);
+                            } finally {
+                                setIsSaving(false);
+                            }
+                        }}
                         disabled={
+                            isSaving ||
                             !form.alunoId ||
                             !form.periodo ||
                             !form.dataFalta ||
                             !form.periodosFaltados
                         }
+                        isLoading={isSaving}
                     >
                         Salvar
                     </Button>
@@ -124,6 +122,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                 <Input
                     label="Períodos faltados"
                     integerOnly
+                    required
                     min={1}
                     max={6}
                     value={form.periodosFaltados}

@@ -61,7 +61,7 @@ const AvaliacoesTab = ({ turma }) => {
                 <h2 className="text-lg font-semibold text-gray-700">Avaliações</h2>
                 <Link
                     to={`/turmas/${turma?.id}/avaliacoes/nova`}
-                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
+                    className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
                 >
                     Nova avaliação
                 </Link>
@@ -94,15 +94,15 @@ const AvaliacoesTab = ({ turma }) => {
                     Nenhuma avaliação encontrada.
                 </p>
             ) : (
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                     {avaliacoesPaginadas.map((av) => (
                         <Link
                             key={av.id}
                             to={`/turmas/${turma.id}/avaliacoes/${av.id}`}
                             className="block bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition"
                         >
-                            <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-lg">
-                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            <div className="px-4 py-3 border-b boder-b border-gray-200 bg-gray-100 rounded-t-lg">
+                                <p className="text-xs uppercase tracking-wide">
                                     {displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}: {av.tema}
                                 </p>
                             </div>
@@ -111,7 +111,7 @@ const AvaliacoesTab = ({ turma }) => {
                                     <span className="font-medium">Média: </span>
                                     {av.media != null
                                         ? `${Number(av.media).toLocaleString('pt-BR', { minimumFractionDigits: 1 })} / 10`
-                                        : '— / 10'}
+                                        : '- / 10'}
                                 </p>
                                 <div className="flex flex-wrap gap-1 mt-1">
                                     <Tag>Peso: {av.peso}</Tag>

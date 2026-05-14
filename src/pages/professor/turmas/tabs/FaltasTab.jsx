@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { atualizarFalta, excluirFalta, listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Pageable, Select, Table, useToast } from '../../../../components/UI';
+import { Pageable, Select, DateInput, Table, useToast } from '../../../../components/UI';
 import EditarFaltaModal from '../EditarFaltaModal';
 import { Link } from 'react-router-dom';
 import { PERIODO_LABEL } from '../../../../utils/displayMaps';
@@ -29,6 +29,7 @@ const FaltasTab = ({ turma }) => {
     const [faltaSelecionada, setFaltaSelecionada] = useState(null);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
+    const [filtroData, setFiltroData] = useState('');
     const [page, setPage] = useState(0);
     const { showSuccess, showError } = useToast();
 
@@ -37,14 +38,15 @@ const FaltasTab = ({ turma }) => {
         return aluno?.nome ?? `Aluno ID: ${alunoId}`;
     };
 
-    const carregarFaltas = (periodoFiltro) => {
+    const carregarFaltas = (periodoFiltro, dataFiltro) => {
         if (!turma?.id) return;
 
         setLoading(true);
 
         const periodo = periodoFiltro !== 'todos' ? Number(periodoFiltro) : null;
+        const data = dataFiltro || null;
 
-        listarFaltasPorTurma(turma.id, periodo)
+        listarFaltasPorTurma(turma.id, periodo, data)
             .then(setFaltas)
             .catch((err) => showError('Erro ao carregar faltas', err.message))
             .finally(() => setLoading(false));
@@ -53,6 +55,11 @@ const FaltasTab = ({ turma }) => {
     const handleFilterChange = (value) => {
         setPage(0);
         setFiltroPeriodo(value);
+    };
+
+    const handleDataChange = (e) => {
+        setPage(0);
+        setFiltroData(e.target.value);
     };
 
     const handleOpenEditModal = (falta) => {
@@ -66,7 +73,7 @@ const FaltasTab = ({ turma }) => {
             showSuccess('Falta atualizada com sucesso');
             setEditModalOpen(false);
             setFaltaSelecionada(null);
-            carregarFaltas(filtroPeriodo);
+            carregarFaltas(filtroPeriodo, filtroData);
         } catch (err) {
             showError('Erro ao atualizar falta', err.message);
         }
@@ -76,15 +83,15 @@ const FaltasTab = ({ turma }) => {
         try {
             await excluirFalta(falta.id);
             showSuccess('Falta excluída com sucesso');
-            carregarFaltas(filtroPeriodo);
+            carregarFaltas(filtroPeriodo, filtroData);
         } catch (err) {
             showError('Erro ao excluir falta', err.message);
         }
     };
 
     useEffect(() => {
-        carregarFaltas(filtroPeriodo);
-    }, [turma?.id, filtroPeriodo]);
+        carregarFaltas(filtroPeriodo, filtroData);
+    }, [turma?.id, filtroPeriodo, filtroData]);
 
     const faltasPaginadas = faltas.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
@@ -95,7 +102,8 @@ const FaltasTab = ({ turma }) => {
 
                 <Link
                     to={`/turmas/${turma.id}/faltas/nova`}
-                    className="text-sm text-primary underline"                >
+                    className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
+                >
                     Nova falta
                 </Link>
             </div>
@@ -115,6 +123,14 @@ const FaltasTab = ({ turma }) => {
                             </Select.Option>
                         ))}
                     </Select>
+                </div>
+                <div className="w-72">
+                    <DateInput
+                        label="Data"
+                        value={filtroData}
+                        onChange={handleDataChange}
+                        fullWidth
+                    />
                 </div>
             </div>
 
