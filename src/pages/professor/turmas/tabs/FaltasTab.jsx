@@ -147,7 +147,7 @@ const FaltasTab = ({ turma }) => {
                     {temFiltroAtivo && (
                         <p
                             onClick={handleLimparFiltros}
-                            className="text-sm text-gray-600 hover:text-gray-700 transition cursor-pointer"
+                            className="text-sm text-gray-500 hover:text-gray-600 transition cursor-pointer"
                         >
                             Limpar filtros
                         </p>

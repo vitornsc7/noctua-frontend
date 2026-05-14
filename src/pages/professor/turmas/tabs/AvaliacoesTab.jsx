@@ -118,7 +118,7 @@ const AvaliacoesTab = ({ turma }) => {
                 {temFiltroAtivo && (
                     <p
                         onClick={handleLimparFiltros}
-                        className="text-sm text-gray-600 hover:text-gray-700 transition cursor-pointer"
+                        className="text-sm text-gray-500 hover:text-gray-600 transition cursor-pointer"
                     >
                         Limpar filtros
                     </p>
@@ -157,7 +157,7 @@ const AvaliacoesTab = ({ turma }) => {
                                     <div className="flex flex-wrap gap-1 mt-1">
                                         <Tag>Peso: {av.peso}</Tag>
                                         <Tag>{formatarData(av.data)}</Tag>
-                                        <Tag className={av.concluida ? 'bg-green-100 text-green-700' : ''}>
+                                        <Tag>
                                             {av.concluida ? 'Concluída' : 'Não concluída'}
                                         </Tag>
                                     </div>
