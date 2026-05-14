@@ -1,92 +1,31 @@
 import React from 'react';
 
-export default function BoletimProgressivoTable({ alunos = [], loading = false }) {
-    const periodos = ['1º Bimestre', '2º Bimestre', '3º Bimestre', '4º Bimestre'];
+export default function BoletimProgressivoTable({ alunos = [], turma, loading = false }) {
+    const periodicidade = String(turma?.periodicidade ?? '').toUpperCase();
+    const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
 
-    /*const alunos = [
-        {
-            id: 1,
-            nome: 'Ana Souza',
-            periodos: {
-                1: { media: 9.2, frequencia: 96 },
-                2: { media: 8.8, frequencia: 94 },
-                3: { media: null, frequencia: null },
-                4: { media: null, frequencia: null },
-            },
-            final: { media: 9.0, frequencia: 95 },
-            intervencao: 'Não necessária',
-        },
-        {
-            id: 2,
-            nome: 'Bruno Lima',
-            periodos: {
-                1: { media: 7.4, frequencia: 88 },
-                2: { media: 7.1, frequencia: 85 },
-                3: { media: null, frequencia: null },
-                4: { media: null, frequencia: null },
-            },
-            final: { media: 7.25, frequencia: 86.5 },
-            intervencao: 'Em monitoramento',
-        },
-        {
-            id: 3,
-            nome: 'Carla Mendes',
-            periodos: {
-                1: { media: 6.2, frequencia: 82 },
-                2: { media: null, frequencia: null },
-                3: { media: null, frequencia: null },
-                4: { media: null, frequencia: null },
-            },
-            final: { media: 6.2, frequencia: 82 },
-            intervencao: 'Pedagógica',
-        },
-        {
-            id: 4,
-            nome: 'Diego Santos',
-            periodos: {
-                1: { media: 8.0, frequencia: 72 },
-                2: { media: 7.8, frequencia: 70 },
-                3: { media: null, frequencia: null },
-                4: { media: null, frequencia: null },
-            },
-            final: { media: 7.9, frequencia: 71 },
-            intervencao: 'Psicossocial',
-        },
-        {
-            id: 5,
-            nome: 'Eduarda Rocha',
-            periodos: {
-                1: { media: 4.8, frequencia: 68 },
-                2: { media: 5.1, frequencia: 66 },
-                3: { media: null, frequencia: null },
-                4: { media: null, frequencia: null },
-            },
-            final: { media: 4.95, frequencia: 67 },
-            intervencao: 'Urgente',
-        },
-        {
-            id: 6,
-            nome: 'Felipe Alves',
-            periodos: {
-                1: { media: null, frequencia: null },
-                2: { media: null, frequencia: null },
-                3: { media: null, frequencia: null },
-                4: { media: null, frequencia: null },
-            },
-            final: { media: null, frequencia: null },
-            intervencao: 'Aguardando dados',
-        },
-    ];*/
+    const isTrimestral =
+        periodicidade.includes('TRIMEST') || qtdePeriodosTurma === 3;
+
+    const qtdePeriodos = isTrimestral ? 3 : 4;
+
+    const periodos = Array.from({ length: qtdePeriodos }, (_, index) => {
+        const numero = index + 1;
+
+        return isTrimestral
+            ? `${numero}º Trimestre`
+            : `${numero}º Bimestre`;
+    });
+
+    const periodosBoletim = periodos.reduce((acc, _, index) => {
+        acc[index + 1] = { media: null, frequencia: null };
+        return acc;
+    }, {});
 
     const alunosBoletim = alunos.map((aluno) => ({
         id: aluno.id,
         nome: aluno.nome,
-        periodos: {
-            1: { media: null, frequencia: null },
-            2: { media: null, frequencia: null },
-            3: { media: null, frequencia: null },
-            4: { media: null, frequencia: null },
-        },
+        periodos: periodosBoletim,
         final: { media: null, frequencia: null },
         intervencao: 'Aguardando dados',
     }));

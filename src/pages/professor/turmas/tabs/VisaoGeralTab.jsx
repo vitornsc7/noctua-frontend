@@ -32,8 +32,7 @@ const VisaoGeralTab = ({ turma }) => {
                 </p>
             </div>
 
-            <BoletimProgressivoTable alunos={alunos} loading={loading} />
-        </div>
+            <BoletimProgressivoTable alunos={alunos} turma={turma} loading={loading} />        </div>
     );
 };
 
