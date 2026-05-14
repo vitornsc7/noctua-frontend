@@ -34,7 +34,7 @@ const editarNotaSchema = z
 
 const INITIAL_VALUES = { naoRealizada: false, valor: '' };
 
-const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving }) => {
+const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilha = false }) => {
     const {
         watch,
         setValue,
@@ -51,6 +51,10 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving }) => {
 
     const naoRealizada = watch('naoRealizada');
     const valor = watch('valor');
+    const isNaoRealizadaAtual = nota?.naoRealizada ?? false;
+    const temValorAtual = nota?.valor != null;
+    const checkboxDisabled = temChamadaFilha && (isNaoRealizadaAtual || temValorAtual);
+    const valorDisabled = temChamadaFilha && isNaoRealizadaAtual;
 
     useEffect(() => {
         if (isOpen && nota) {
@@ -122,8 +126,10 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving }) => {
 
                 <Checkbox
                     label="Aluno não compareceu na realização da prova"
+                    tooltip={checkboxDisabled ? "Aluno associado à uma nova chamada." : undefined}
                     checked={naoRealizada}
                     onChange={handleNaoRealizadaChange}
+                    disabled={checkboxDisabled}
                 />
 
                 {!naoRealizada && (
@@ -141,6 +147,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving }) => {
                         error={errors.valor?.message}
                         fullWidth
                         placeholder="0 a 10"
+                        disabled={valorDisabled}
                     />
                 )}
             </div>
