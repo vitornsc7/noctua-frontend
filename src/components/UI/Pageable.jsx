@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from './Button';
 import Select from './Select';
 
-const DEFAULT_PAGE_SIZE_OPTIONS = [10, 25, 50];
+const DEFAULT_PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
 const Pageable = ({
     page,
