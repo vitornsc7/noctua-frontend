@@ -115,6 +115,9 @@ export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
 export const atualizarNota = (turmaId, avaliacaoId, notaId, payload) =>
     client.put(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas/${notaId}`, payload);
 
+export const criarChamada = (turmaId, avaliacaoId) =>
+    client.post(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/chamada`);
+
 export const listarFaltasPorTurma = (turmaId, periodo) => {
     const url = periodo != null
         ? `/frequencias/turma/${turmaId}?periodo=${periodo}`
