@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { buscarAvaliacaoPorId, listarNotasPorAvaliacao, atualizarNota } from '../../../api/turmaApi';
-import { Button, Input, useToast } from '../../../components/UI';
+import { Button, Checkbox, Input, useToast } from '../../../components/UI';
 import { TIPO_AVALIACAO_DISPLAY, displayLabel } from '../../../utils/displayMaps';
 
 const LancarNotasPage = () => {
@@ -14,6 +14,7 @@ const LancarNotasPage = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [valores, setValores] = useState({});
+    const [naoRealizadas, setNaoRealizadas] = useState({});
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -26,8 +27,10 @@ const LancarNotasPage = () => {
                 const semNota = ns.filter((n) => n.valor == null && !n.naoRealizada);
                 setNotas(semNota);
                 const initial = {};
-                semNota.forEach((n) => { initial[n.id] = ''; });
+                const initialNaoR = {};
+                semNota.forEach((n) => { initial[n.id] = ''; initialNaoR[n.id] = false; });
                 setValores(initial);
+                setNaoRealizadas(initialNaoR);
             })
             .catch((err) => showError('Erro ao carregar avaliação', err.message))
             .finally(() => setLoading(false));
@@ -38,9 +41,18 @@ const LancarNotasPage = () => {
         setErrors((prev) => ({ ...prev, [notaId]: undefined }));
     };
 
+    const handleNaoRealizadaChange = (notaId, checked) => {
+        setNaoRealizadas((prev) => ({ ...prev, [notaId]: checked }));
+        if (checked) {
+            setValores((prev) => ({ ...prev, [notaId]: '' }));
+            setErrors((prev) => ({ ...prev, [notaId]: undefined }));
+        }
+    };
+
     const validate = () => {
         const newErrors = {};
         notas.forEach((nota) => {
+            if (naoRealizadas[nota.id]) return;
             const raw = (valores[nota.id] ?? '').trim().replace(',', '.');
             if (!raw) {
                 newErrors[nota.id] = 'Informe a nota.';
@@ -62,6 +74,12 @@ const LancarNotasPage = () => {
         try {
             await Promise.all(
                 notas.map((nota) => {
+                    if (naoRealizadas[nota.id]) {
+                        return atualizarNota(turmaId, avaliacaoId, nota.id, {
+                            valor: null,
+                            naoRealizada: true,
+                        });
+                    }
                     const raw = (valores[nota.id] ?? '').trim().replace(',', '.');
                     return atualizarNota(turmaId, avaliacaoId, nota.id, {
                         valor: parseFloat(raw),
@@ -116,6 +134,11 @@ const LancarNotasPage = () => {
                             <span className="flex-1 text-sm text-gray-700 font-medium">
                                 {nota.alunoNome}
                             </span>
+                            <Checkbox
+                                label="Não compareceu"
+                                checked={naoRealizadas[nota.id] ?? false}
+                                onChange={(e) => handleNaoRealizadaChange(nota.id, e.target.checked)}
+                            />
                             <div className="w-36">
                                 <Input
                                     placeholder="0 - 10"
@@ -126,6 +149,7 @@ const LancarNotasPage = () => {
                                     onChange={(e) => handleChange(nota.id, e.target.value)}
                                     error={errors[nota.id]}
                                     fullWidth
+                                    disabled={naoRealizadas[nota.id] ?? false}
                                 />
                             </div>
                         </div>
