@@ -134,6 +134,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving }) => {
                         maxIntegerDigits={2}
                         maxDecimalDigits={2}
                         min={0}
+                        max={10}
                         value={valor}
                         onChange={handleValorChange}
                         onBlur={() => trigger('valor')}
