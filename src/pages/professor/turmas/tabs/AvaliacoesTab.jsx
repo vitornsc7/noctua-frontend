@@ -144,7 +144,7 @@ const AvaliacoesTab = ({ turma }) => {
                             >
                                 <div className="px-4 py-3 border-b border-gray-200 bg-gray-100 rounded-t-lg">
                                     <p className="text-xs uppercase tracking-wide">
-                                        {displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}: {av.tema}
+                                        {displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}: {av.tema}{(av.numeroChamada ?? 1) > 1 ? ` - ${av.numeroChamada}ª Chamada` : ''}
                                     </p>
                                 </div>
                                 <div className="px-4 py-3 space-y-2">
