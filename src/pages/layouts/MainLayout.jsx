@@ -20,6 +20,7 @@ const MainLayout = () => {
             return [
                 { label: 'Dashboard', to: '/dashboard' },
                 { label: 'Turmas', to: '/turmas' },
+                { label: 'Ajuda', to: '/ajuda' },
                 { label: 'Configurações', to: '/configuracoes' },
             ];
         }
@@ -35,7 +36,7 @@ const MainLayout = () => {
     };
 
     return (
-        <div className="flex min-h-screen flex-col bg-[#F6F6F8]">
+        <div className="flex h-screen flex-col bg-[#F6F6F8] overflow-hidden">
             <Header
                 logo={
                     <Link to={homeLink}>
@@ -81,7 +82,7 @@ const MainLayout = () => {
                 fixed
             />
 
-            <main className="flex-1">
+            <main className="flex-1 overflow-y-auto [scrollbar-gutter:stable]">
                 <div className="max-w-6xl mx-auto p-8">
                     <Outlet />
                 </div>
