@@ -12,7 +12,8 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
         return isTrimestral ? `${numero}º Trimestre` : `${numero}º Bimestre`;
     });
 
-    const aulasPrevistasPorPeriodo = Number(turma?.qtdeAulasPrevistasPeriodo) || 0;
+    const aulasPrevistasPorPeriodo =
+        Number(turma?.qtdeAulasPrevistasPeriodo ?? turma?.aulasPrevistasPeriodo ?? turma?.aulasPorPeriodo) || 0;
 
     const calcularFrequencia = (alunoId, periodo) => {
         if (aulasPrevistasPorPeriodo <= 0) return null;
@@ -34,6 +35,24 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
         return Math.max(0, Number(frequencia.toFixed(1)));
     };
 
+    const calcularFrequenciaFinalParcial = (alunoId) => {
+        if (aulasPrevistasPorPeriodo <= 0) return null;
+
+        const totalAulasPrevistas = aulasPrevistasPorPeriodo * qtdePeriodos;
+
+        const totalFaltas = faltas
+            .filter((falta) => {
+                const faltaAlunoId = falta.alunoId ?? falta.aluno?.id;
+                return Number(faltaAlunoId) === Number(alunoId);
+            })
+            .reduce((total, falta) => total + Number(falta.periodosFaltados ?? 1), 0);
+
+        const frequencia =
+            ((totalAulasPrevistas - totalFaltas) / totalAulasPrevistas) * 100;
+
+        return Math.max(0, Number(frequencia.toFixed(1)));
+    };
+
     const alunosBoletim = alunos.map((aluno) => ({
         id: aluno.id,
         nome: aluno.nome,
@@ -49,7 +68,7 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
         }, {}),
         final: {
             media: null,
-            frequencia: null,
+            frequencia: calcularFrequenciaFinalParcial(aluno.id),
         },
         intervencao: 'Aguardando dados',
     }));
