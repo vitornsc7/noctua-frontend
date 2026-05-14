@@ -12,7 +12,7 @@ const MainLayout = () => {
         if (role === 'ADMIN') {
             return [
                 { label: 'Monitoramento operacional', to: '/admin' },
-                { label: 'Configurações', to: '/admin/configuracoes' },
+                //{ label: 'Configurações', to: '/admin/configuracoes' },
             ];
         }
 

@@ -106,8 +106,9 @@ const AvaliacaoDetalhesPage = () => {
     const titulo = `${tipoDisplay}: ${avaliacao.tema}`;
 
     const notasComValor = notas.filter((n) => n.valor != null);
-    const media = avaliacao.media != null
-        ? Number(avaliacao.media).toLocaleString('pt-BR', { minimumFractionDigits: 1 })
+    const media = notasComValor.length > 0
+        ? (notasComValor.reduce((sum, n) => sum + Number(n.valor), 0) / notasComValor.length)
+            .toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 })
         : null;
 
     const alunosNaoCompareceram = notas.filter((n) => Boolean(n.naoRealizada));

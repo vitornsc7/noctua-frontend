@@ -109,7 +109,8 @@ const Select = forwardRef(({
 
         updatePosition();
 
-        const handleScrollOrResize = () => {
+        const handleScrollOrResize = (event) => {
+            if (dropdownRef.current && dropdownRef.current.contains(event.target)) return;
             setIsOpen(false);
             setFocusedIndex(-1);
         };

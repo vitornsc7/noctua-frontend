@@ -81,8 +81,13 @@ export const importarAlunosComIA = (turmaId, arquivo) => {
     });
 };
 
-export const listarAvaliacoes = (turmaId) =>
-    client.get(`/turmas/${turmaId}/avaliacoes`);
+export const listarAvaliacoes = (turmaId, periodo, tipo, concluida, { page = 0, size = 10 } = {}) => {
+    const params = new URLSearchParams({ page, size });
+    if (periodo != null) params.set('periodo', periodo);
+    if (tipo != null) params.set('tipo', tipo);
+    if (concluida != null) params.set('concluida', concluida);
+    return client.get(`/turmas/${turmaId}/avaliacoes?${params}`);
+};
 
 export const criarAvaliacao = (turmaId, formData) =>
     client.post(`/turmas/${turmaId}/avaliacoes`, {
@@ -118,10 +123,11 @@ export const atualizarNota = (turmaId, avaliacaoId, notaId, payload) =>
 export const criarChamada = (turmaId, avaliacaoId) =>
     client.post(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/chamada`);
 
-export const listarFaltasPorTurma = (turmaId, periodo, dataFalta, { page = 0, size = 10 } = {}) => {
+export const listarFaltasPorTurma = (turmaId, periodo, dataFalta, alunoId, { page = 0, size = 10 } = {}) => {
     const params = new URLSearchParams({ page, size });
     if (periodo != null) params.set('periodo', periodo);
     if (dataFalta != null) params.set('dataFalta', dataFalta);
+    if (alunoId != null) params.set('alunoId', alunoId);
     return client.get(`/frequencias/turma/${turmaId}?${params}`);
 };
 
