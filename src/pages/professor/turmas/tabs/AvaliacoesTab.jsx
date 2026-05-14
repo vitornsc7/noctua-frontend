@@ -67,22 +67,20 @@ const AvaliacoesTab = ({ turma }) => {
                 </Link>
             </div>
 
-            <div className="flex gap-4 flex-wrap">
-                <div className="w-72">
-                    <Select
-                        label={periodoLabel}
-                        value={filtroPeriodo}
-                        onChange={(e) => handleFilterChange(e.target.value)}
-                        fullWidth
-                    >
-                        <Select.Option value="todos">Todos os períodos</Select.Option>
-                        {periodoOptions.map((op) => (
-                            <Select.Option key={op.value} value={op.value}>
-                                {op.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                <Select
+                    label={periodoLabel}
+                    value={filtroPeriodo}
+                    onChange={(e) => handleFilterChange(e.target.value)}
+                    fullWidth
+                >
+                    <Select.Option value="todos">Todos os períodos</Select.Option>
+                    {periodoOptions.map((op) => (
+                        <Select.Option key={op.value} value={op.value}>
+                            {op.label}
+                        </Select.Option>
+                    ))}
+                </Select>
             </div>
 
             {loading ? (
@@ -94,7 +92,7 @@ const AvaliacoesTab = ({ turma }) => {
                     Nenhuma avaliação encontrada.
                 </p>
             ) : (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {avaliacoesPaginadas.map((av) => (
                         <Link
                             key={av.id}
