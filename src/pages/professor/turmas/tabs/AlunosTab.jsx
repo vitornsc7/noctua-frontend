@@ -75,7 +75,7 @@ const AlunosTab = ({ turma }) => {
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-700">Alunos</h2>
                     <p
-                        className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition hover:cursor-pointer"
+                        className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition hover:cursor-pointer"
                         onClick={() => setIsAddModalOpen(true)}
                     >
                         Adicionar aluno
