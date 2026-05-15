@@ -6,14 +6,6 @@ export default function TermosUsoPage() {
     return (
         <div className="space-y-8">
             <div>
-                <Link
-                    to="/dashboard"
-                    className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
-                >
-                    <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
-                    <span>Dashboard</span>
-                </Link>
-
                 <h1 className="mb-2 text-3xl font-semibold text-gray-700">
                     Termos de Uso
                 </h1>
