@@ -126,54 +126,60 @@ const FaltasTab = ({ turma }) => {
                         Nova falta
                     </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    <Select
-                        label={periodoLabel}
-                        value={filtroPeriodo}
-                        onChange={(e) => handleFilterChange(e.target.value)}
-                        fullWidth
-                    >
-                        <Select.Option value="todos">Todos os períodos</Select.Option>
-                        {periodoOptions.map((op) => (
-                            <Select.Option key={op.value} value={op.value}>
-                                {op.label}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                    <DateInput
-                        label="Data"
-                        value={filtroData}
-                        onChange={handleDataChange}
-                        fullWidth
-                    />
-                    <Select
-                        label="Aluno"
-                        value={filtroAluno}
-                        onChange={(e) => { setFiltroAluno(e.target.value); setPage(0); }}
-                        fullWidth
-                    >
-                        <Select.Option value="todos">Todos os alunos</Select.Option>
-                        {(alunos).map((aluno) => (
-                            <Select.Option key={aluno.id} value={String(aluno.id)}>
-                                {aluno.nome}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </div>
-                <div className='flex flex-row justify-end'>
-                    {temFiltroAtivo && (
-                        <p
-                            onClick={handleLimparFiltros}
-                            className="text-sm text-gray-500 hover:text-gray-600 transition cursor-pointer"
-                        >
-                            Limpar filtros
+                <div className='space-y-2'>
+                    <div className='flex flex-row justify-between items-center'>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-2">
+                            <i className="pi pi-filter text-[10px]"></i>
+                            Filtros
                         </p>
-                    )}
+                        {temFiltroAtivo && (
+                            <p
+                                onClick={handleLimparFiltros}
+                                className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer"
+                            >
+                                Limpar filtros
+                            </p>
+                        )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <Select
+                            label={periodoLabel}
+                            value={filtroPeriodo}
+                            onChange={(e) => handleFilterChange(e.target.value)}
+                            fullWidth
+                        >
+                            <Select.Option value="todos">Todos os períodos</Select.Option>
+                            {periodoOptions.map((op) => (
+                                <Select.Option key={op.value} value={op.value}>
+                                    {op.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <DateInput
+                            label="Data"
+                            value={filtroData}
+                            onChange={handleDataChange}
+                            fullWidth
+                        />
+                        <Select
+                            label="Aluno"
+                            value={filtroAluno}
+                            onChange={(e) => { setFiltroAluno(e.target.value); setPage(0); }}
+                            fullWidth
+                        >
+                            <Select.Option value="todos">Todos os alunos</Select.Option>
+                            {(alunos).map((aluno) => (
+                                <Select.Option key={aluno.id} value={String(aluno.id)}>
+                                    {aluno.nome}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </div>
                 </div>
                 <Table
                     data={faltas}
                     loading={loading}
-                    emptyMessage="Nenhuma falta cadastrada."
+                    emptyMessage="Nenhuma falta encontrada."
                     onEdit={setFaltaSelecionada}
                     onDelete={handleExcluirFalta}
                     actionTooltips={{
