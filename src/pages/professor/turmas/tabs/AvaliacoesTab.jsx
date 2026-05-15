@@ -131,7 +131,7 @@ const AvaliacoesTab = ({ turma }) => {
                 </div>
             ) : avaliacoes.length === 0 ? (
                 <p className="text-sm text-gray-400 italic">
-                    Nenhuma avaliação encontrada.
+                    Nenhuma avaliação cadastrada.
                 </p>
             ) : (
                 <>

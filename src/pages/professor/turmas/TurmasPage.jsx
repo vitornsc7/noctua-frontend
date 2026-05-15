@@ -149,7 +149,7 @@ const TurmasPage = () => {
                 ) : (
                     <>
                         {turmas.length === 0 && (
-                            <p className="text-sm text-gray-400 italic">Turmas não encontradas.</p>
+                            <p className="text-sm text-gray-500 italic">Nenhuma turma cadastrada.</p>
                         )}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
