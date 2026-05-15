@@ -11,8 +11,6 @@ const formatarData = (data) => {
 };
 
 const FaltasTab = ({ turma }) => {
-    const navigate = useNavigate();
-
     const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
 
     const isTrimestral = qtdePeriodosTurma === 3;

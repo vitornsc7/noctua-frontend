@@ -54,10 +54,9 @@ export const displayLabel = (map, value) => map[value] ?? String(value ?? '');
  * @returns {string}
  */
 export const normalizeNumber = (value) => {
-    const text = String(value ?? '').trim();
+    const text = String(value ?? '').trim().replace(',', '.');
     if (!text) return '';
-    const [whole = '', decimal] = text.split('.');
-    const limitedWhole = whole.slice(0, 2);
-    if (decimal === undefined) return `${limitedWhole}.0`;
-    return `${limitedWhole}.${decimal.slice(0, 2)}`;
+    const num = parseFloat(text);
+    if (Number.isNaN(num)) return '';
+    return num.toFixed(2).replace('.', ',');
 };

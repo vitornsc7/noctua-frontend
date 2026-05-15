@@ -9,7 +9,7 @@ export const TURMA_INITIAL_VALUES = {
     anoLetivo: String(new Date().getFullYear()),
     turno: '',
     disciplina: '',
-    mediaMinima: '7.0',
+    mediaMinima: '7',
     qtdeAulasPrevistasPeriodo: '',
     instituicao: '',
 };
@@ -60,9 +60,9 @@ export const turmaSchema = z.object({
         }),
     mediaMinima: z.string().trim()
         .min(1, 'Informe a média mínima da turma.')
-        .regex(/^\d+(\.\d+)?$/, 'A média mínima deve ser numérica.')
+        .regex(/^\d+(,\d+)?$/, 'A média mínima deve ser numérica.')
         .refine((value) => {
-            const grade = Number(value);
+            const grade = parseFloat(value.replace(',', '.'));
             return !Number.isNaN(grade) && grade >= 0 && grade <= 10;
         }, {
             message: 'A média mínima deve estar entre 0 e 10.',
