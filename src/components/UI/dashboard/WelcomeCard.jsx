@@ -1,27 +1,32 @@
-import React from "react";
-import Card from "../Card";
+import React from 'react';
+import Card from '../Card';
+import wavingNoctua from '../../../assets/waving-noctua.gif';
 
-const WelcomeCard = ({ professorName, totalTurmas, pendingEvaluations }) => {
+const WelcomeCard = () => {
     return (
-        <Card>
-            <div className="flex items-center gap-5">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10">
-                    <i className="pi pi-moon text-3xl text-primary" />
+        <Card className="relative h-full overflow-hidden">
+            <div className="relative flex h-full min-h-[150px] items-center">
+                <div className="absolute -left-10 top-1/2 flex h-28 w-36 -translate-y-1/2 items-center justify-start">
+                    <img
+                        src={wavingNoctua}
+                        alt="Noctua acenando"
+                        className="h-28 w-28 scale-x-[-1] object-contain"
+                    />
                 </div>
 
-                <div>
-                    <p className="text-sm font-medium text-gray-500">Bem-vindo ao portal da Noctua</p>
+                <div className="ml-32 max-w-[300px] pr-3">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-semibold leading-tight text-gray-800">
+                            Olá!
+                        </h2>
 
-                    <h2 className="mt-1 text-xl font-semibold text-gray-800">
-                        Olá{professorName ? `, ${professorName}` : ''}!
-                    </h2>
+                        <p className="text-sm font-medium text-gray-500">
+                            Bem-vindo à Noctua.
+                        </p>
+                    </div>
 
-                    <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                        Você possui{' '}
-                        <span className="font-semibold text-gray-800">{totalTurmas}</span>{' '}
-                        turmas ativas e{' '}
-                        <span className="font-semibold text-gray-800">{pendingEvaluations}</span>{' '}
-                        avaliações pendentes de lançamento de notas.
+                    <p className="mt-4 text-sm leading-relaxed text-gray-600">
+                        Seu portal para visualização de análises educacionais.
                     </p>
                 </div>
             </div>

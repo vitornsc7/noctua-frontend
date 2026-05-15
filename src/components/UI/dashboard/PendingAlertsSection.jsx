@@ -1,6 +1,6 @@
-import React from "react";
-import Card from "../Card";
-import PendingEvaluationAlert from "./PendingEvaluationCard";
+import React from 'react';
+import Card from '../Card';
+import PendingEvaluationAlert from './PendingEvaluationCard';
 
 const PendingAlertsSection = ({ alerts }) => {
     return (
