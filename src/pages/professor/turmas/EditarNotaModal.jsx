@@ -22,7 +22,7 @@ const editarNotaSchema = z
             return;
         }
 
-        const num = parseFloat(trimmed);
+        const num = parseFloat(trimmed.replace(',', '.'));
         if (Number.isNaN(num) || num < 0 || num > 10) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -60,7 +60,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilh
         if (isOpen && nota) {
             reset({
                 naoRealizada: nota.naoRealizada ?? false,
-                valor: nota.valor != null ? String(nota.valor) : '',
+                valor: nota.valor != null ? Number(nota.valor).toFixed(2).replace('.', ',') : '',
             });
         }
         if (!isOpen) {
@@ -89,7 +89,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilh
 
     const onSubmit = (data) => {
         onSave({
-            valor: data.naoRealizada ? null : parseFloat(data.valor),
+            valor: data.naoRealizada ? null : parseFloat(String(data.valor).replace(',', '.')),
             naoRealizada: data.naoRealizada,
         });
     };
