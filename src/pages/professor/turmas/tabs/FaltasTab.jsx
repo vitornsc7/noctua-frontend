@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { atualizarFalta, excluirFalta, listarFaltasPorTurma } from '../../../../api/turmaApi';
+import { atualizarFalta, excluirFalta, listarAlunos, listarFaltasPorTurma } from '../../../../api/turmaApi';
 import { Select, DateInput, Table, useToast } from '../../../../components/UI';
 import EditarFaltaModal from '../EditarFaltaModal';
 import { Link } from 'react-router-dom';
@@ -25,6 +25,7 @@ const FaltasTab = ({ turma }) => {
     }));
 
     const [faltas, setFaltas] = useState([]);
+    const [alunos, setAlunos] = useState([]);
     const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(true);
     const [faltaSelecionada, setFaltaSelecionada] = useState(null);
@@ -36,8 +37,15 @@ const FaltasTab = ({ turma }) => {
     const { showSuccess, showError } = useToast();
 
     const getNomeAluno = (alunoId) => {
-        const aluno = turma?.alunos?.find((item) => item.id === alunoId);
+        const aluno = alunos.find((item) => item.id === alunoId);
         return aluno?.nome ?? `Aluno ID: ${alunoId}`;
+    };
+
+    const carregarAlunos = () => {
+        if (!turma?.id) return;
+        listarAlunos(turma.id, { ativo: true, page: 0, size: 500 })
+            .then((data) => setAlunos(data.content ?? []))
+            .catch(() => { });
     };
 
     const carregarFaltas = (periodoFiltro, dataFiltro, alunoFiltro, currentPage, currentSize) => {
@@ -99,6 +107,10 @@ const FaltasTab = ({ turma }) => {
     };
 
     useEffect(() => {
+        carregarAlunos();
+    }, [turma?.id]);
+
+    useEffect(() => {
         carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
     }, [turma?.id, filtroPeriodo, filtroData, filtroAluno, page, pageSize]);
 
@@ -141,7 +153,7 @@ const FaltasTab = ({ turma }) => {
                         fullWidth
                     >
                         <Select.Option value="todos">Todos os alunos</Select.Option>
-                        {(turma?.alunos ?? []).map((aluno) => (
+                        {(alunos).map((aluno) => (
                             <Select.Option key={aluno.id} value={String(aluno.id)}>
                                 {aluno.nome}
                             </Select.Option>
