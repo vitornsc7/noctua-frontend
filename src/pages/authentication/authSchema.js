@@ -33,8 +33,9 @@ export const registerSchema = z.object({
         .trim()
         .refine((value) => {
             const partes = value.split(/\s+/);
-            return partes.length >= 2 && partes.every((parte) => parte.length >= 3);
-        }, 'Informe nome e sobrenome, ambos com pelo menos 3 letras.'),
+
+            return partes.length >= 2 && value.length >= 5;
+        }, 'Informe nome e sobrenome.'),
     email: z.string().trim()
         .min(1, 'Informe o e-mail.')
         .regex(EMAIL_REGEX, 'Informe um e-mail válido.'),

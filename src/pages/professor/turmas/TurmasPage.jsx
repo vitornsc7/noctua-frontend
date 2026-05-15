@@ -82,63 +82,69 @@ const TurmasPage = () => {
                 </Link>
             </div>
 
-            <div className="grid sm:grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4 ">
-                <Select
-                    label="Filtrar por turno"
-                    value={turnoSelecionado}
-                    onChange={handleFilterChange(setTurnoSelecionado)}
-                    leftIcon={<i className="pi pi-clock text-sm"></i>}
-                    fullWidth
-                >
-                    <Select.Option value="todos">Todos os turnos</Select.Option>
-                    <Select.Option value="MATUTINO">Matutino</Select.Option>
-                    <Select.Option value="VESPERTINO">Vespertino</Select.Option>
-                    <Select.Option value="NOTURNO">Noturno</Select.Option>
-                    <Select.Option value="INTEGRAL">Integral</Select.Option>
-                </Select>
-
-                <Select
-                    label="Filtrar por ano"
-                    value={anoSelecionado}
-                    onChange={handleFilterChange(setAnoSelecionado)}
-                    leftIcon={<i className="pi pi-calendar text-sm"></i>}
-                    fullWidth
-                >
-                    <Select.Option value="todos">Todos os anos</Select.Option>
-                    {anosDisponiveis.map((ano) => (
-                        <Select.Option key={ano} value={String(ano)}>{ano}</Select.Option>
-                    ))}
-                </Select>
-
-                {instituicoesDisponiveis.length > 0 && (
+            <div>
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+                    <i className="pi pi-filter text-xs"></i>
+                    Filtros
+                </p>
+                <div className="grid sm:grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
                     <Select
-                        label="Filtrar por instituição"
-                        value={instituicaoSelecionada}
-                        onChange={handleFilterChange(setInstituicaoSelecionada)}
-                        leftIcon={<i className="pi pi-building text-sm"></i>}
+                        label="Filtrar por turno"
+                        value={turnoSelecionado}
+                        onChange={handleFilterChange(setTurnoSelecionado)}
+                        leftIcon={<i className="pi pi-clock text-sm"></i>}
                         fullWidth
                     >
-                        <Select.Option value="todos">Todas as instituições</Select.Option>
-                        {instituicoesDisponiveis.map((inst) => (
-                            <Select.Option key={inst} value={inst}>{inst}</Select.Option>
-                        ))}
+                        <Select.Option value="todos">Todos os turnos</Select.Option>
+                        <Select.Option value="MATUTINO">Matutino</Select.Option>
+                        <Select.Option value="VESPERTINO">Vespertino</Select.Option>
+                        <Select.Option value="NOTURNO">Noturno</Select.Option>
+                        <Select.Option value="INTEGRAL">Integral</Select.Option>
                     </Select>
-                )}
 
-                {disciplinasDisponiveis.length > 0 && (
                     <Select
-                        label="Filtrar por disciplina"
-                        value={disciplinaSelecionada}
-                        onChange={handleFilterChange(setDisciplinaSelecionada)}
-                        leftIcon={<i className="pi pi-book text-sm"></i>}
+                        label="Filtrar por ano"
+                        value={anoSelecionado}
+                        onChange={handleFilterChange(setAnoSelecionado)}
+                        leftIcon={<i className="pi pi-calendar text-sm"></i>}
                         fullWidth
                     >
-                        <Select.Option value="todos">Todas as disciplinas</Select.Option>
-                        {disciplinasDisponiveis.map((disc) => (
-                            <Select.Option key={disc} value={disc}>{disc}</Select.Option>
+                        <Select.Option value="todos">Todos os anos</Select.Option>
+                        {anosDisponiveis.map((ano) => (
+                            <Select.Option key={ano} value={String(ano)}>{ano}</Select.Option>
                         ))}
                     </Select>
-                )}
+
+                    {instituicoesDisponiveis.length > 0 && (
+                        <Select
+                            label="Filtrar por instituição"
+                            value={instituicaoSelecionada}
+                            onChange={handleFilterChange(setInstituicaoSelecionada)}
+                            leftIcon={<i className="pi pi-building text-sm"></i>}
+                            fullWidth
+                        >
+                            <Select.Option value="todos">Todas as instituições</Select.Option>
+                            {instituicoesDisponiveis.map((inst) => (
+                                <Select.Option key={inst} value={inst}>{inst}</Select.Option>
+                            ))}
+                        </Select>
+                    )}
+
+                    {disciplinasDisponiveis.length > 0 && (
+                        <Select
+                            label="Filtrar por disciplina"
+                            value={disciplinaSelecionada}
+                            onChange={handleFilterChange(setDisciplinaSelecionada)}
+                            leftIcon={<i className="pi pi-book text-sm"></i>}
+                            fullWidth
+                        >
+                            <Select.Option value="todos">Todas as disciplinas</Select.Option>
+                            {disciplinasDisponiveis.map((disc) => (
+                                <Select.Option key={disc} value={disc}>{disc}</Select.Option>
+                            ))}
+                        </Select>
+                    )}
+                </div>
             </div>
 
             <div className="relative">
@@ -149,14 +155,19 @@ const TurmasPage = () => {
                 ) : (
                     <>
                         {turmas.length === 0 && (
-                            <p className="text-sm text-gray-400 italic">Turmas não encontradas.</p>
+                            <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+                                <div className='flex flex-row gap-3 items-center'>
+                                    <i className="pi pi-users text-2xl text-gray-500"></i>
+                                    <p className="text-gray-500 font-medium">Nenhuma turma encontrada</p>
+                                </div>
+                                <p className="text-sm text-gray-400">Ajuste os filtros ou crie uma nova turma para começar.</p>
+                            </div>
                         )}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             {turmas.map((turma) => (
                                 <Link key={turma.id} to={`/turmas/${turma.id}`} className="block">
-                                    <Card className="hover:border-gray-300 transition-colors cursor-pointer
-                                    h-full">
+                                    <Card className="hover:border-gray-300 transition-colors cursor-pointer h-full">
                                         <div className="flex items-start justify-between mb-3">
                                             <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>
                                             <p className="text-gray-600 text-sm shrink-0 ml-2">

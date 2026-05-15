@@ -78,51 +78,57 @@ const AvaliacoesTab = ({ turma }) => {
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                <Select
-                    label={periodoLabel}
-                    value={filtroPeriodo}
-                    onChange={(e) => { setFiltroPeriodo(e.target.value); setPage(0); }}
-                    fullWidth
-                >
-                    <Select.Option value="todos">Todos os períodos</Select.Option>
-                    {periodoOptions.map((op) => (
-                        <Select.Option key={op.value} value={op.value}>
-                            {op.label}
-                        </Select.Option>
-                    ))}
-                </Select>
-                <Select
-                    label="Tipo"
-                    value={filtroTipo}
-                    onChange={(e) => { setFiltroTipo(e.target.value); setPage(0); }}
-                    fullWidth
-                >
-                    <Select.Option value="todos">Todos os tipos</Select.Option>
-                    {Object.entries(TIPO_AVALIACAO_DISPLAY).map(([key, label]) => (
-                        <Select.Option key={key} value={key}>{label}</Select.Option>
-                    ))}
-                </Select>
-                <Select
-                    label="Status"
-                    value={filtroConcluida}
-                    onChange={(e) => { setFiltroConcluida(e.target.value); setPage(0); }}
-                    fullWidth
-                >
-                    <Select.Option value="todos">Todos</Select.Option>
-                    <Select.Option value="true">Concluída</Select.Option>
-                    <Select.Option value="false">Não concluída</Select.Option>
-                </Select>
-            </div>
-            <div className='flex flex-row justify-end'>
-                {temFiltroAtivo && (
-                    <p
-                        onClick={handleLimparFiltros}
-                        className="text-sm text-gray-500 hover:text-gray-600 transition cursor-pointer"
-                    >
-                        Limpar filtros
+            <div className='space-y-2'>
+                <div className='flex flex-row justify-between items-center'>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-2">
+                        <i className="pi pi-filter text-[10px]"></i>
+                        Filtros
                     </p>
-                )}
+                    {temFiltroAtivo && (
+                        <p
+                            onClick={handleLimparFiltros}
+                            className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer"
+                        >
+                            Limpar filtros
+                        </p>
+                    )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <Select
+                        label={periodoLabel}
+                        value={filtroPeriodo}
+                        onChange={(e) => { setFiltroPeriodo(e.target.value); setPage(0); }}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todos os períodos</Select.Option>
+                        {periodoOptions.map((op) => (
+                            <Select.Option key={op.value} value={op.value}>
+                                {op.label}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                    <Select
+                        label="Tipo"
+                        value={filtroTipo}
+                        onChange={(e) => { setFiltroTipo(e.target.value); setPage(0); }}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todos os tipos</Select.Option>
+                        {Object.entries(TIPO_AVALIACAO_DISPLAY).map(([key, label]) => (
+                            <Select.Option key={key} value={key}>{label}</Select.Option>
+                        ))}
+                    </Select>
+                    <Select
+                        label="Status"
+                        value={filtroConcluida}
+                        onChange={(e) => { setFiltroConcluida(e.target.value); setPage(0); }}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todos</Select.Option>
+                        <Select.Option value="true">Concluída</Select.Option>
+                        <Select.Option value="false">Não concluída</Select.Option>
+                    </Select>
+                </div>
             </div>
 
             {loading ? (
@@ -130,9 +136,13 @@ const AvaliacoesTab = ({ turma }) => {
                     <i className="pi pi-spin pi-spinner text-2xl text-gray-400" />
                 </div>
             ) : avaliacoes.length === 0 ? (
-                <p className="text-sm text-gray-400 italic">
-                    Nenhuma avaliação encontrada.
-                </p>
+                <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
+                    <div className='flex flex-row gap-3 items-center'>
+                        <i className="pi pi-file text-1xl text-gray-500"></i>
+                        <p className="text-gray-500 font-medium">Nenhuma avaliação encontrada</p>
+                    </div>
+                    <p className="text-sm text-gray-400">Ajuste os filtros ou crie uma nova avaliação.</p>
+                </div>
             ) : (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">

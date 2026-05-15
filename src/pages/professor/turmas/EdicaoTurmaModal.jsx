@@ -69,7 +69,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
             qtdePeriodos: turma.qtdePeriodos,
             qtdeAulasPrevistasPeriodo: Number(form.qtdeAulasPrevistasPeriodo),
             turno: TURNO_TO_ENUM[form.turno] ?? form.turno,
-            mediaMinima: parseFloat(form.mediaMinima),
+            mediaMinima: parseFloat(String(form.mediaMinima).replace(',', '.')),
             disciplina: form.disciplina?.trim() || null,
             instituicao: form.instituicao?.trim() || null,
         });
