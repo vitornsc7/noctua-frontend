@@ -152,7 +152,7 @@ const VisaoGeralTab = ({ turma }) => {
     };
 
     const formatarValorResumo = (valor, suffix = '') => {
-        if (valor === null || valor === undefined) return '—';
+        if (valor === null || valor === undefined) return '-';
         return `${String(valor).replace('.', ',')}${suffix}`;
     };
 
@@ -174,7 +174,7 @@ const VisaoGeralTab = ({ turma }) => {
                             {periodo.titulo}
                         </h3>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
                             <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média das provas
@@ -230,7 +230,7 @@ const VisaoGeralTab = ({ turma }) => {
                         <div
                             key={item.titulo}
                             className={`
-                                flex min-h-[190px] flex-col justify-between rounded-2xl border p-5
+                                flex flex-col justify-between rounded-2xl border p-5
                                 ${item.color === 'emerald' && 'border-emerald-200 bg-emerald-50'}
                                 ${item.color === 'sky' && 'border-sky-200 bg-sky-50'}
                                 ${item.color === 'amber' && 'border-amber-200 bg-amber-50'}
