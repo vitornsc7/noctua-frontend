@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { atualizarFalta, excluirFalta, listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Pageable, Select, Table, useToast } from '../../../../components/UI';
+import { Select, DateInput, Table, useToast } from '../../../../components/UI';
 import EditarFaltaModal from '../EditarFaltaModal';
 import { Link } from 'react-router-dom';
 import { PERIODO_LABEL } from '../../../../utils/displayMaps';
-
-const PAGE_SIZE = 10;
 
 const formatarData = (data) => {
     if (!data) return '-';
@@ -30,11 +27,14 @@ const FaltasTab = ({ turma }) => {
     }));
 
     const [faltas, setFaltas] = useState([]);
+    const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(true);
     const [faltaSelecionada, setFaltaSelecionada] = useState(null);
-    const [editModalOpen, setEditModalOpen] = useState(false);
     const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
+    const [filtroData, setFiltroData] = useState('');
+    const [filtroAluno, setFiltroAluno] = useState('todos');
     const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
     const { showSuccess, showError } = useToast();
 
     const getNomeAluno = (alunoId) => {
@@ -42,15 +42,20 @@ const FaltasTab = ({ turma }) => {
         return aluno?.nome ?? `Aluno ID: ${alunoId}`;
     };
 
-    const carregarFaltas = (periodoFiltro) => {
+    const carregarFaltas = (periodoFiltro, dataFiltro, alunoFiltro, currentPage, currentSize) => {
         if (!turma?.id) return;
 
         setLoading(true);
 
         const periodo = periodoFiltro !== 'todos' ? Number(periodoFiltro) : null;
+        const data = dataFiltro || null;
+        const alunoId = alunoFiltro !== 'todos' ? Number(alunoFiltro) : null;
 
-        listarFaltasPorTurma(turma.id, periodo)
-            .then(setFaltas)
+        listarFaltasPorTurma(turma.id, periodo, data, alunoId, { page: currentPage, size: currentSize })
+            .then((res) => {
+                setFaltas(res.content);
+                setTotalElements(res.totalElements);
+            })
             .catch((err) => showError('Erro ao carregar faltas', err.message))
             .finally(() => setLoading(false));
     };
@@ -60,18 +65,26 @@ const FaltasTab = ({ turma }) => {
         setFiltroPeriodo(value);
     };
 
-    const handleOpenEditModal = (falta) => {
-        setFaltaSelecionada(falta);
-        setEditModalOpen(true);
+    const handleDataChange = (e) => {
+        setPage(0);
+        setFiltroData(e.target.value);
     };
+
+    const handleLimparFiltros = () => {
+        setFiltroPeriodo('todos');
+        setFiltroData('');
+        setFiltroAluno('todos');
+        setPage(0);
+    };
+
+    const temFiltroAtivo = filtroPeriodo !== 'todos' || filtroData !== '' || filtroAluno !== 'todos';
 
     const handleSalvarEdicao = async (formData) => {
         try {
             await atualizarFalta(faltaSelecionada.id, formData);
             showSuccess('Falta atualizada com sucesso');
-            setEditModalOpen(false);
             setFaltaSelecionada(null);
-            carregarFaltas(filtroPeriodo);
+            carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
         } catch (err) {
             showError('Erro ao atualizar falta', err.message);
         }
@@ -81,32 +94,29 @@ const FaltasTab = ({ turma }) => {
         try {
             await excluirFalta(falta.id);
             showSuccess('Falta excluída com sucesso');
-            carregarFaltas(filtroPeriodo);
+            carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
         } catch (err) {
             showError('Erro ao excluir falta', err.message);
         }
     };
 
     useEffect(() => {
-        carregarFaltas(filtroPeriodo);
-    }, [turma?.id, filtroPeriodo]);
-
-    const faltasPaginadas = faltas.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+        carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
+    }, [turma?.id, filtroPeriodo, filtroData, filtroAluno, page, pageSize]);
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between gap-4">
-                <h2 className="text-lg font-semibold text-gray-700">Faltas</h2>
-
-                <Link
-                    to={`/turmas/${turma.id}/faltas/nova`}
-                    className="text-sm text-primary underline"                >
-                    Nova falta
-                </Link>
-            </div>
-
-            <div className="flex gap-4 flex-wrap">
-                <div className="w-72">
+        <>
+            <div className="space-y-4">
+                <div className="flex items-center justify-between gap-4">
+                    <h2 className="text-lg font-semibold text-gray-700">Faltas</h2>
+                    <Link
+                        to={`/turmas/${turma.id}/faltas/nova`}
+                        className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
+                    >
+                        Nova falta
+                    </Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     <Select
                         label={periodoLabel}
                         value={filtroPeriodo}
@@ -120,59 +130,80 @@ const FaltasTab = ({ turma }) => {
                             </Select.Option>
                         ))}
                     </Select>
+                    <DateInput
+                        label="Data"
+                        value={filtroData}
+                        onChange={handleDataChange}
+                        fullWidth
+                    />
+                    <Select
+                        label="Aluno"
+                        value={filtroAluno}
+                        onChange={(e) => { setFiltroAluno(e.target.value); setPage(0); }}
+                        fullWidth
+                    >
+                        <Select.Option value="todos">Todos os alunos</Select.Option>
+                        {(turma?.alunos ?? []).map((aluno) => (
+                            <Select.Option key={aluno.id} value={String(aluno.id)}>
+                                {aluno.nome}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </div>
+                <div className='flex flex-row justify-end'>
+                    {temFiltroAtivo && (
+                        <p
+                            onClick={handleLimparFiltros}
+                            className="text-sm text-gray-500 hover:text-gray-600 transition cursor-pointer"
+                        >
+                            Limpar filtros
+                        </p>
+                    )}
+                </div>
+                <Table
+                    data={faltas}
+                    loading={loading}
+                    emptyMessage="Nenhuma falta cadastrada."
+                    onEdit={setFaltaSelecionada}
+                    onDelete={handleExcluirFalta}
+                    actionTooltips={{
+                        edit: 'Editar falta',
+                        delete: 'Excluir falta',
+                    }}
+                    pageable={{
+                        page,
+                        pageSize,
+                        totalItems: totalElements,
+                        onPageChange: setPage,
+                        onPageSizeChange: (size) => { setPageSize(size); setPage(0); },
+                    }}
+                >
+                    <Table.Column
+                        header="Aluno"
+                        render={(falta) => getNomeAluno(falta.alunoId)}
+                    />
+                    <Table.Column
+                        header={periodoLabel}
+                        render={(falta) => `${falta.periodo}º ${periodoLabel}`}
+                    />
+                    <Table.Column
+                        header="Períodos faltados"
+                        accessor="periodosFaltados"
+                    />
+                    <Table.Column
+                        header="Data da falta"
+                        render={(falta) => formatarData(falta.dataFalta)}
+                    />
+                </Table>
             </div>
-
-            <Table
-                data={faltasPaginadas}
-                loading={loading}
-                emptyMessage="Nenhuma falta cadastrada."
-                onEdit={handleOpenEditModal}
-                onDelete={handleExcluirFalta}
-                actionTooltips={{
-                    edit: 'Editar falta',
-                    delete: 'Excluir falta',
-                }}
-            >
-                <Table.Column
-                    header="Aluno"
-                    render={(falta) => getNomeAluno(falta.alunoId)}
-                />
-
-                <Table.Column
-                    header={periodoLabel}
-                    render={(falta) => `${falta.periodo}º ${periodoLabel}`}
-                />
-
-                <Table.Column
-                    header="Períodos faltados"
-                    accessor="periodosFaltados"
-                />
-
-                <Table.Column
-                    header="Data da falta"
-                    render={(falta) => formatarData(falta.dataFalta)}
-                />
-            </Table>
-
-            {faltas.length > PAGE_SIZE && (
-                <Pageable
-                    page={page}
-                    pageSize={PAGE_SIZE}
-                    totalItems={faltas.length}
-                    currentItemsCount={faltasPaginadas.length}
-                    onPageChange={setPage}
-                />
-            )}
-
             <EditarFaltaModal
-                isOpen={editModalOpen}
-                onClose={() => setEditModalOpen(false)}
+                isOpen={Boolean(faltaSelecionada)}
+                onClose={() => setFaltaSelecionada(null)}
                 onSave={handleSalvarEdicao}
                 falta={faltaSelecionada}
                 turma={turma}
             />
-        </div>
+        </>
     );
 };
 

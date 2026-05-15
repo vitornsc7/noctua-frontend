@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
 const Button = ({
     variant = 'primary',
     disabled = false,
+    isLoading = false,
     fullWidth = false,
     leftIcon,
     rightIcon,
@@ -46,13 +47,16 @@ const Button = ({
         <button
             type={type}
             className={classes}
-            disabled={disabled}
+            disabled={disabled || isLoading}
             onClick={onClick}
             {...rest}
         >
-            {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
+            {isLoading
+                ? <i className="pi pi-spin pi-spinner flex-shrink-0" />
+                : leftIcon && <span className="flex-shrink-0">{leftIcon}</span>
+            }
             {children}
-            {rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}
+            {!isLoading && rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}
         </button>
     );
 };
@@ -60,6 +64,7 @@ const Button = ({
 Button.propTypes = {
     variant: PropTypes.oneOf(['primary', 'outline']),
     disabled: PropTypes.bool,
+    isLoading: PropTypes.bool,
     fullWidth: PropTypes.bool,
     leftIcon: PropTypes.node,
     rightIcon: PropTypes.node,

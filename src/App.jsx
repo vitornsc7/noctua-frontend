@@ -21,6 +21,7 @@ import MonitoramentoOperacionalPage from './pages/admin/MonitoramentoOperacional
 import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
 import CentralDeAjudaPage from "./pages/ajuda/CentralDeAjudaPage";
 import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
+import LancarNotasPage from "./pages/professor/turmas/LancarNotasPage";
 
 function PrivateRoute() {
   return isTokenValid() ? <Outlet /> : <Navigate to="/login" replace />;
@@ -92,6 +93,7 @@ export default function App() {
                   <Route path="turmas/:id" element={<TurmaDetalhesPage />} />
                   <Route path="turmas/:id/avaliacoes/nova" element={<NovaAvaliacaoPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId/editar" element={<NovaAvaliacaoPage />} />
+                  <Route path="turmas/:id/avaliacoes/:avaliacaoId/lancar-notas" element={<LancarNotasPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
                   <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />

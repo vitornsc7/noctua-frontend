@@ -31,14 +31,12 @@ export const TIPO_AVALIACAO_DISPLAY = {
     PROVA: 'Prova',
     TRABALHO: 'Trabalho',
     ATIVIDADE: 'Atividade',
-    RECUPERACAO: 'Recuperação',
 };
 
 export const TIPO_AVALIACAO_TO_ENUM = {
     Prova: 'PROVA',
     Trabalho: 'TRABALHO',
     Atividade: 'ATIVIDADE',
-    'Recuperação': 'RECUPERACAO',
 };
 
 /**

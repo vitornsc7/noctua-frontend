@@ -85,18 +85,32 @@ const Select = forwardRef(({
         const updatePosition = () => {
             if (!buttonRef.current) return;
             const rect = buttonRef.current.getBoundingClientRect();
-            setDropdownStyle({
-                position: 'fixed',
-                top: rect.bottom + 4,
-                left: rect.left,
-                width: rect.width,
-                zIndex: 9999,
-            });
+            const dropdownMaxHeight = 240;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const openUpward = spaceBelow < dropdownMaxHeight + 8 && rect.top > spaceBelow;
+
+            setDropdownStyle(openUpward
+                ? {
+                    position: 'fixed',
+                    bottom: window.innerHeight - rect.top + 4,
+                    left: rect.left,
+                    width: rect.width,
+                    zIndex: 9999,
+                }
+                : {
+                    position: 'fixed',
+                    top: rect.bottom + 4,
+                    left: rect.left,
+                    width: rect.width,
+                    zIndex: 9999,
+                }
+            );
         };
 
         updatePosition();
 
-        const handleScrollOrResize = () => {
+        const handleScrollOrResize = (event) => {
+            if (dropdownRef.current && dropdownRef.current.contains(event.target)) return;
             setIsOpen(false);
             setFocusedIndex(-1);
         };

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Tooltip from './Tooltip';
 
 const Checkbox = ({
     label,
@@ -9,6 +10,7 @@ const Checkbox = ({
     error,
     variant = 'square',
     className = '',
+    tooltip,
     ...rest
 }) => {
     const shape = variant === 'circle' ? `rounded-full h-5 w-5 ${checked
@@ -52,6 +54,11 @@ const Checkbox = ({
                     {checked && <i className="pi pi-check text-white text-[10px]" />}
                 </div>
                 {label}
+                {tooltip && (
+                    <Tooltip content={tooltip}>
+                        <i className="pi pi-info-circle text-sm text-gray-400 cursor-default" />
+                    </Tooltip>
+                )}
             </label>
             {error && (
                 <span className="text-xs text-red-500">{error}</span>
@@ -66,6 +73,7 @@ Checkbox.propTypes = {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     error: PropTypes.string,
+    tooltip: PropTypes.string,
     variant: PropTypes.oneOf(['square', 'circle']),
     className: PropTypes.string,
 };
