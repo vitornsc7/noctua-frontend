@@ -11,10 +11,6 @@ const VisaoGeralTab = ({ turma }) => {
     const { showError } = useToast();
 
     const avaliacoesMockadas = [
-        { periodo: 1, tipo: 'PROVA', media: 7.5 },
-        { periodo: 1, tipo: 'TRABALHO', media: 8.2 },
-        { periodo: 1, tipo: 'ATIVIDADE', media: 9.0 },
-        { periodo: 2, tipo: 'PROVA', media: 6.8 },
     ];
 
     useEffect(() => {
