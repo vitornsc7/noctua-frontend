@@ -28,7 +28,7 @@ const VisaoGeralTab = ({ turma }) => {
         ])
             .then(([alunosData, faltasData]) => {
                 setAlunos(alunosData.content ?? []);
-                setFaltas(faltasData ?? []);
+                setFaltas(Array.isArray(faltasData) ? faltasData : (faltasData?.content ?? []));
             })
             .catch((err) => showError('Erro ao carregar visão geral', err.message))
             .finally(() => setLoading(false));
