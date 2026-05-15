@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { listarAlunos, listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Button, Modal, useToast } from '../../../../components/UI';
+import { Button, Card, Modal, useToast } from '../../../../components/UI';
 import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
 
 const VisaoGeralTab = ({ turma }) => {
@@ -11,10 +11,6 @@ const VisaoGeralTab = ({ turma }) => {
     const { showError } = useToast();
 
     const avaliacoesMockadas = [
-        { periodo: 1, tipo: 'PROVA', media: 7.5 },
-        { periodo: 1, tipo: 'TRABALHO', media: 8.2 },
-        { periodo: 1, tipo: 'ATIVIDADE', media: 9.0 },
-        { periodo: 2, tipo: 'PROVA', media: 6.8 },
     ];
 
     useEffect(() => {
@@ -28,7 +24,7 @@ const VisaoGeralTab = ({ turma }) => {
         ])
             .then(([alunosData, faltasData]) => {
                 setAlunos(alunosData.content ?? []);
-                setFaltas(faltasData ?? []);
+                setFaltas(Array.isArray(faltasData) ? faltasData : (faltasData?.content ?? []));
             })
             .catch((err) => showError('Erro ao carregar visão geral', err.message))
             .finally(() => setLoading(false));
@@ -152,7 +148,7 @@ const VisaoGeralTab = ({ turma }) => {
     };
 
     const formatarValorResumo = (valor, suffix = '') => {
-        if (valor === null || valor === undefined) return '—';
+        if (valor === null || valor === undefined) return '-';
         return `${String(valor).replace('.', ',')}${suffix}`;
     };
 
@@ -174,42 +170,42 @@ const VisaoGeralTab = ({ turma }) => {
                             {periodo.titulo}
                         </h3>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média das provas
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'PROVA'))}
                                 </p>
-                            </div>
+                            </Card>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média dos trabalhos
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'TRABALHO'))}
                                 </p>
-                            </div>
+                            </Card>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média das atividades
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'ATIVIDADE'))}
                                 </p>
-                            </div>
+                            </Card>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Frequência média
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularFrequenciaMedia(periodo.numero), '%')}
                                 </p>
-                            </div>
+                            </Card>
                         </div>
                     </div>
                 ))}
@@ -230,7 +226,7 @@ const VisaoGeralTab = ({ turma }) => {
                         <div
                             key={item.titulo}
                             className={`
-                                flex min-h-[190px] flex-col justify-between rounded-2xl border p-5
+                                flex flex-col justify-between rounded-2xl border p-5
                                 ${item.color === 'emerald' && 'border-emerald-200 bg-emerald-50'}
                                 ${item.color === 'sky' && 'border-sky-200 bg-sky-50'}
                                 ${item.color === 'amber' && 'border-amber-200 bg-amber-50'}

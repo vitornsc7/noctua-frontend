@@ -40,7 +40,7 @@ const sanitizeByMode = (value, { numericOnly, integerOnly, maxIntegerDigits, max
 
     const decimal = decimalParts.join('');
     const limitedDecimal = maxDecimalDigits != null ? decimal.slice(0, maxDecimalDigits) : decimal;
-    return `${limitedWhole}.${limitedDecimal}`;
+    return `${limitedWhole},${limitedDecimal}`;
 };
 
 const applyMask = (value, mask, digitsOnly) => {
@@ -177,7 +177,7 @@ const Input = forwardRef(({
         onChange?.({ target: { value: String(numValue - step) } });
     };
 
-    const numFloatValue = numericOnly ? (parseFloat(value) || 0) : 0;
+    const numFloatValue = numericOnly ? (parseFloat(String(value ?? '').replace(',', '.')) || 0) : 0;
     const floatMax = maxIntegerDigits != null ? Math.pow(10, maxIntegerDigits) - 0.01 : null;
     const effectiveMax = max != null ? Number(max) : floatMax;
     const canIncrementFloat = numericOnly && !isBlocked && (effectiveMax == null || numFloatValue < effectiveMax);
@@ -273,9 +273,12 @@ const Input = forwardRef(({
         if (numMax !== null && num > numMax) num = numMax;
         if (numMin !== null && num < numMin) num = numMin;
 
-        const clamped = String(num);
-        if (clamped !== String(event.target.value)) {
-            onChange?.({ target: { value: clamped } });
+        const formatted = numericOnly
+            ? num.toFixed(2).replace('.', ',')
+            : String(num);
+
+        if (formatted !== String(event.target.value)) {
+            onChange?.({ target: { value: formatted } });
         }
 
         onBlur?.(event);

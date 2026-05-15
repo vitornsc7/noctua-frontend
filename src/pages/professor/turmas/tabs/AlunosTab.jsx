@@ -82,8 +82,22 @@ const AlunosTab = ({ turma }) => {
                     </p>
                 </div>
 
-                <div className="flex gap-4 flex-wrap">
-                    <div className="w-72">
+                <div className='space-y-2'>
+                    <div className='flex flex-row justify-between items-center'>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-2">
+                            <i className="pi pi-filter text-[10px]"></i>
+                            Filtros
+                        </p>
+                        {/* {temFiltroAtivo && (
+                            <p
+                                onClick={handleLimparFiltros}
+                                className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer"
+                            >
+                                Limpar filtros
+                            </p>
+                        )} */}
+                    </div>
+                    <div className="grid grid-cols-3">
                         <Select
                             label="Matrícula"
                             value={filtroMatricula}

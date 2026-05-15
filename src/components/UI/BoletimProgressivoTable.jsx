@@ -104,7 +104,7 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
                 </div>
             ) : (
                 <table className="min-w-full border-collapse text-sm">
-                    <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-600">
+                    <thead className="bg-gray-50 border-b text-xs font-semibold uppercase text-gray-600">
                         <tr>
                             <th rowSpan={2} className="sticky left-0 z-20 bg-gray-50 px-4 py-3 text-center">
                                 Aluno

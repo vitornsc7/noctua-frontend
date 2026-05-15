@@ -8,7 +8,7 @@ const buildTurmaPayload = (formData) => ({
     qtdeAulasPrevistasPeriodo: Number(formData.qtdeAulasPrevistasPeriodo),
     turno: TURNO_TO_ENUM[formData.turno],
     disciplina: formData.disciplina?.trim() || null,
-    mediaMinima: parseFloat(formData.mediaMinima),
+    mediaMinima: parseFloat(String(formData.mediaMinima).replace(',', '.')),
     instituicao: formData.instituicao?.trim() || null,
 });
 

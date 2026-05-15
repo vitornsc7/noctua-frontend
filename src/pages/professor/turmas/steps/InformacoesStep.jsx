@@ -89,12 +89,13 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                     label="Média mínima"
                     required
                     tooltip="Média mínima da instituição, utilizada no cálculo da matriz de intervenção."
-                    placeholder="Ex: 7.0"
+                    placeholder="Ex: 7,00"
                     {...getTurmaFieldProps('mediaMinima')}
                     numericOnly
                     maxIntegerDigits={2}
                     maxDecimalDigits={2}
                     min={0}
+                    max={10}
                     fullWidth
                 />
 
