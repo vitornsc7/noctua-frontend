@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { listarAlunos, listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Button, Modal, useToast } from '../../../../components/UI';
+import { Button, Card, Modal, useToast } from '../../../../components/UI';
 import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
 
 const VisaoGeralTab = ({ turma }) => {
@@ -175,41 +175,41 @@ const VisaoGeralTab = ({ turma }) => {
                         </h3>
 
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média das provas
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'PROVA'))}
                                 </p>
-                            </div>
+                            </Card>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média dos trabalhos
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'TRABALHO'))}
                                 </p>
-                            </div>
+                            </Card>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Média das atividades
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'ATIVIDADE'))}
                                 </p>
-                            </div>
+                            </Card>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <Card>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
                                     Frequência média
                                 </p>
                                 <p className="mt-2 text-2xl font-semibold text-gray-800">
                                     {formatarValorResumo(calcularFrequenciaMedia(periodo.numero), '%')}
                                 </p>
-                            </div>
+                            </Card>
                         </div>
                     </div>
                 ))}
