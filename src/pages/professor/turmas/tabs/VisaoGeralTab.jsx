@@ -10,6 +10,13 @@ const VisaoGeralTab = ({ turma }) => {
     const [intervencaoSelecionada, setIntervencaoSelecionada] = useState(null);
     const { showError } = useToast();
 
+    const avaliacoesMockadas = [
+        { periodo: 1, tipo: 'PROVA', media: 7.5 },
+        { periodo: 1, tipo: 'TRABALHO', media: 8.2 },
+        { periodo: 1, tipo: 'ATIVIDADE', media: 9.0 },
+        { periodo: 2, tipo: 'PROVA', media: 6.8 },
+    ];
+
     useEffect(() => {
         if (!turma?.id) return;
 
@@ -70,9 +77,145 @@ const VisaoGeralTab = ({ turma }) => {
         },
     ];
 
+    const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
+    const isTrimestral = qtdePeriodosTurma === 3;
+    const qtdePeriodos = isTrimestral ? 3 : 4;
+    const periodoLabel = isTrimestral ? 'Trimestre' : 'Bimestre';
+
+    const periodos = Array.from({ length: qtdePeriodos }, (_, index) => {
+        const numero = index + 1;
+
+        return {
+            numero,
+            titulo: `${numero}º ${periodoLabel}`,
+        };
+    });
+
+    const avaliacaoTemNota = (avaliacao) => {
+        return avaliacao.media !== null && avaliacao.media !== undefined;
+    };
+
+    const periodosVisiveis = periodos.filter((periodo) => {
+        if (periodo.numero === 1) return true;
+
+        return avaliacoesMockadas.some(
+            (avaliacao) =>
+                Number(avaliacao.periodo) === periodo.numero &&
+                avaliacaoTemNota(avaliacao)
+        );
+    });
+
+    const calcularMediaAvaliacoes = (periodo, tipo) => {
+        const avaliacoesDoTipo = avaliacoesMockadas.filter(
+            (avaliacao) =>
+                Number(avaliacao.periodo) === periodo &&
+                avaliacao.tipo === tipo &&
+                avaliacaoTemNota(avaliacao)
+        );
+
+        if (avaliacoesDoTipo.length === 0) return null;
+
+        const soma = avaliacoesDoTipo.reduce(
+            (total, avaliacao) => total + Number(avaliacao.media),
+            0
+        );
+
+        return Number((soma / avaliacoesDoTipo.length).toFixed(1));
+    };
+
+    const calcularFrequenciaMedia = (periodo) => {
+        const aulasPrevistas = Number(turma?.qtdeAulasPrevistasPeriodo) || 0;
+
+        if (aulasPrevistas <= 0 || alunos.length === 0) return null;
+
+        const frequencias = alunos.map((aluno) => {
+            const totalFaltas = faltas
+                .filter((falta) => {
+                    const faltaAlunoId = falta.alunoId ?? falta.aluno?.id;
+
+                    return (
+                        Number(faltaAlunoId) === Number(aluno.id) &&
+                        Number(falta.periodo) === Number(periodo)
+                    );
+                })
+                .reduce(
+                    (total, falta) => total + Number(falta.periodosFaltados ?? 1),
+                    0
+                );
+
+            return ((aulasPrevistas - totalFaltas) / aulasPrevistas) * 100;
+        });
+
+        const soma = frequencias.reduce((total, frequencia) => total + frequencia, 0);
+
+        return Number((soma / frequencias.length).toFixed(1));
+    };
+
+    const formatarValorResumo = (valor, suffix = '') => {
+        if (valor === null || valor === undefined) return '—';
+        return `${String(valor).replace('.', ',')}${suffix}`;
+    };
+
     return (
-        <div className="space-y-8">
-            <section className="space-y-3">
+        <div className="space-y-12">
+            <section className="space-y-6">
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                        Resumo por {periodoLabel.toLowerCase()}
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Indicadores calculados a partir das avaliações e frequências registradas em cada {periodoLabel.toLowerCase()}.
+                    </p>
+                </div>
+
+                {periodosVisiveis.map((periodo) => (
+                    <div key={periodo.numero} className="space-y-4">
+                        <h3 className="text-sm font-semibold uppercase text-gray-700">
+                            {periodo.titulo}
+                        </h3>
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                                    Média das provas
+                                </p>
+                                <p className="mt-2 text-2xl font-semibold text-gray-800">
+                                    {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'PROVA'))}
+                                </p>
+                            </div>
+
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                                    Média dos trabalhos
+                                </p>
+                                <p className="mt-2 text-2xl font-semibold text-gray-800">
+                                    {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'TRABALHO'))}
+                                </p>
+                            </div>
+
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                                    Média das atividades
+                                </p>
+                                <p className="mt-2 text-2xl font-semibold text-gray-800">
+                                    {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'ATIVIDADE'))}
+                                </p>
+                            </div>
+
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                                    Frequência média
+                                </p>
+                                <p className="mt-2 text-2xl font-semibold text-gray-800">
+                                    {formatarValorResumo(calcularFrequenciaMedia(periodo.numero), '%')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </section>
+
+            <section className="space-y-5">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">
                         Tipos de intervenção
@@ -99,24 +242,24 @@ const VisaoGeralTab = ({ turma }) => {
                                 <div className="flex items-center gap-2">
                                     <i
                                         className={`
-        ${item.icon} text-sm
-        ${item.color === 'emerald' && 'text-emerald-700'}
-        ${item.color === 'sky' && 'text-sky-700'}
-        ${item.color === 'amber' && 'text-amber-700'}
-        ${item.color === 'orange' && 'text-orange-700'}
-        ${item.color === 'red' && 'text-red-700'}
-    `}
+                                            ${item.icon} text-sm
+                                            ${item.color === 'emerald' && 'text-emerald-700'}
+                                            ${item.color === 'sky' && 'text-sky-700'}
+                                            ${item.color === 'amber' && 'text-amber-700'}
+                                            ${item.color === 'orange' && 'text-orange-700'}
+                                            ${item.color === 'red' && 'text-red-700'}
+                                        `}
                                     />
 
                                     <h4
                                         className={`
-        text-sm font-semibold
-        ${item.color === 'emerald' && 'text-emerald-700'}
-        ${item.color === 'sky' && 'text-sky-700'}
-        ${item.color === 'amber' && 'text-amber-700'}
-        ${item.color === 'orange' && 'text-orange-700'}
-        ${item.color === 'red' && 'text-red-700'}
-    `}
+                                            text-sm font-semibold
+                                            ${item.color === 'emerald' && 'text-emerald-700'}
+                                            ${item.color === 'sky' && 'text-sky-700'}
+                                            ${item.color === 'amber' && 'text-amber-700'}
+                                            ${item.color === 'orange' && 'text-orange-700'}
+                                            ${item.color === 'red' && 'text-red-700'}
+                                        `}
                                     >
                                         {item.titulo}
                                     </h4>
@@ -147,7 +290,7 @@ const VisaoGeralTab = ({ turma }) => {
                 </div>
             </section>
 
-            <section className="space-y-3">
+            <section className="space-y-5">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">
                         Boletim progressivo anual
@@ -172,7 +315,8 @@ const VisaoGeralTab = ({ turma }) => {
                     intervencaoSelecionada
                         ? `Intervenção: ${intervencaoSelecionada.titulo.toLowerCase()}`
                         : ''
-                } footer={
+                }
+                footer={
                     <div className="flex justify-end">
                         <Button variant="outline" onClick={() => setIntervencaoSelecionada(null)}>
                             Fechar
