@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, DateInput, Input, Modal, Select } from '../../../components/UI';
-import { PERIODO_LABEL } from '../../../utils/displayMaps';
 
 const formatarDataParaInput = (data) => {
     if (!data) return '';
@@ -38,12 +37,18 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
         setForm((current) => ({ ...current, periodosFaltados: event.target.value }));
     };
 
+    const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
+
+    const isTrimestral = qtdePeriodosTurma === 3;
+
+    const quantidadePeriodos = isTrimestral ? 3 : 4;
+
+    const periodoLabel = isTrimestral ? 'Trimestre' : 'Bimestre';
+
     const periodos = Array.from(
-        { length: turma?.qtdePeriodos || 0 },
+        { length: quantidadePeriodos },
         (_, index) => index + 1
     );
-
-    const periodoLabel = PERIODO_LABEL[turma?.qtdePeriodos] ?? 'Período';
 
     return (
         <Modal

@@ -11,10 +11,17 @@ const formatarData = (data) => {
 };
 
 const FaltasTab = ({ turma }) => {
-    const qtdePeriodos = Number(turma?.qtdePeriodos) || 4;
-    const periodoLabel = PERIODO_LABEL[qtdePeriodos] ?? 'Período';
+    const navigate = useNavigate();
 
-    const periodoOptions = Array.from({ length: qtdePeriodos }, (_, i) => ({
+    const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
+
+    const isTrimestral = qtdePeriodosTurma === 3;
+
+    const quantidadePeriodos = isTrimestral ? 3 : 4;
+
+    const periodoLabel = isTrimestral ? 'Trimestre' : 'Bimestre';
+
+    const periodoOptions = Array.from({ length: quantidadePeriodos }, (_, i) => ({
         value: String(i + 1),
         label: `${i + 1}º ${periodoLabel}`,
     }));
