@@ -14,7 +14,7 @@ const WelcomeCard = () => {
                     />
                 </div>
 
-                <div className="ml-32 max-w-[300px] pr-3">
+                <div className="ml-24 max-w-[300px] pr-3">
                     <div className="space-y-1">
                         <h2 className="text-2xl font-semibold leading-tight text-gray-800">
                             Olá!
@@ -25,7 +25,7 @@ const WelcomeCard = () => {
                         </p>
                     </div>
 
-                    <p className="mt-4 text-sm leading-relaxed text-gray-600">
+                    <p className="mt-4 text-base leading-relaxed text-gray-600">
                         Seu portal para visualização de análises educacionais.
                     </p>
                 </div>
