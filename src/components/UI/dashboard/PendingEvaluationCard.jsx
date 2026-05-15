@@ -3,14 +3,14 @@ import React from 'react';
 const PendingEvaluationAlert = ({
     turma,
     tipo,
-    titulo,
+    tema,
     diasPendentes,
     onAdjust,
 }) => {
     return (
-        <div className="flex flex-col gap-4 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-4 shadow-sm transition hover:shadow-md sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
-                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
                     <i className="pi pi-exclamation-triangle text-sm" />
                 </div>
 
@@ -18,7 +18,7 @@ const PendingEvaluationAlert = ({
                     <p className="text-sm font-semibold text-gray-800">{turma}</p>
 
                     <p className="mt-1 text-sm text-gray-700">
-                        {tipo}: <span className="font-medium">{titulo}</span>
+                        {tipo}: <span className="font-medium">{tema}</span>
                     </p>
 
                     <p className="mt-1 text-xs text-gray-500">

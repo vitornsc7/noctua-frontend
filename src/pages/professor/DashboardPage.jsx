@@ -11,22 +11,32 @@ const DashboardPage = () => {
     };
 
     const pendingAlerts = [
+
         {
             id: 1,
             turma: '2º ano A',
             tipo: 'Prova',
-            titulo: 'Reações orgânicas',
+            tema: 'Reações orgânicas',
             diasPendentes: 18,
-            onAdjust: () => console.log('Ajustar avaliação 1'),
+            onAdjust: () => window.alert('Direcionar para a tela de cadastro de notas dessa avaliação.'),
         },
         {
             id: 2,
             turma: '7º ano A',
             tipo: 'Atividade',
-            titulo: 'Questionário sobre II Guerra Mundial',
+            tema: 'Questionário sobre II Guerra Mundial',
             diasPendentes: 15,
-            onAdjust: () => console.log('Ajustar avaliação 2'),
+            onAdjust: () => window.alert('Direcionar para a tela de cadastro de notas dessa avaliação.'),
         },
+        {
+            id: 3,
+            turma: '5º ano B',
+            tipo: 'Trabalho',
+            tema: 'Sistema solar',
+            diasPendentes: 21,
+            onAdjust: () => window.alert('Direcionar para a tela de cadastro de notas dessa avaliação.'),
+        },
+
     ];
 
     return (
