@@ -22,6 +22,8 @@ import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
 import CentralDeAjudaPage from "./pages/ajuda/CentralDeAjudaPage";
 import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
 import LancarNotasPage from "./pages/professor/turmas/LancarNotasPage";
+import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
+import TermosUsoPage from "./pages/TermosUsoPage";
 
 function PrivateRoute() {
   return isTokenValid() ? <Outlet /> : <Navigate to="/login" replace />;
@@ -84,6 +86,8 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<RoleHomeRedirect />} />
+                <Route path="politica-de-privacidade" element={<PoliticaPrivacidadePage />} />
+                <Route path="termos-de-uso" element={<TermosUsoPage />} />
 
                 <Route element={<RoleRoute allowedRoles={["PROFESSOR"]} />}>
                   <Route path="dashboard" element={<DashboardPage />} />

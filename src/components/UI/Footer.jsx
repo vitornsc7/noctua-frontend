@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 const Footer = ({ className = '' }) => {
     return (
@@ -9,6 +10,18 @@ const Footer = ({ className = '' }) => {
                 <p>Plataforma de analises educacionais</p>
                 <p>&copy; 2026</p>
                 <p>Todos os direitos reservados</p>
+                <Link
+                    to="/politica-de-privacidade"
+                    className="transition-colors hover:text-gray-900 hover:underline"
+                >
+                    Política de Privacidade
+                </Link>
+                <Link
+                    to="/termos-de-uso"
+                    className="transition-colors hover:text-gray-900 hover:underline"
+                >
+                    Termos de Uso
+                </Link>
             </div>
         </footer>
     );

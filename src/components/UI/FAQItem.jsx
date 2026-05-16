@@ -11,7 +11,7 @@ const FAQItem = ({ pergunta, resposta }) => {
                 className="flex w-full items-center justify-between px-5 py-3 text-left text-sm text-slate-700"
                 aria-expanded={aberto}
             >
-                <span>{pergunta}</span>
+                <span className="font-semibold">{pergunta}</span>
 
                 <i
                     className={`pi ${aberto ? 'pi-chevron-up' : 'pi-chevron-down'
