@@ -51,8 +51,10 @@ const DashboardPage = () => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-[4fr_2fr_2fr_2fr]">
-                <WelcomeCard />
+            <div className="grid grid-cols-1 items-stretch gap-2 xl:grid-cols-5 md:grid-cols-3">
+                <div className="md:col-span-3 xl:col-span-2">
+                    <WelcomeCard />
+                </div>
 
                 <MetricCard
                     title="Alunos"

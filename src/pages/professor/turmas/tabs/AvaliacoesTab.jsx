@@ -80,8 +80,8 @@ const AvaliacoesTab = ({ turma }) => {
 
             <div className='space-y-2'>
                 <div className='flex flex-row justify-between items-center'>
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-2">
-                        <i className="pi pi-filter text-[10px]"></i>
+                    <p className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                        <i className="pi pi-filter text-xs"></i>
                         Filtros
                     </p>
                     {temFiltroAtivo && (

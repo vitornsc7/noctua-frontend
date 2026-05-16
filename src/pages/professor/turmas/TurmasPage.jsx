@@ -83,7 +83,7 @@ const TurmasPage = () => {
             </div>
 
             <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+                <p className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                     <i className="pi pi-filter text-xs"></i>
                     Filtros
                 </p>
