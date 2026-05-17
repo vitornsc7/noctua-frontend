@@ -24,6 +24,7 @@ import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
 import LancarNotasPage from "./pages/professor/turmas/LancarNotasPage";
 import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
 import TermosUsoPage from "./pages/TermosUsoPage";
+import LandingPage from "./pages/LandingPage";
 
 function PrivateRoute() {
   return isTokenValid() ? <Outlet /> : <Navigate to="/login" replace />;
@@ -35,21 +36,6 @@ function AuthLoadingScreen() {
       <i className="pi pi-spin pi-spinner text-2xl text-gray-400"></i>
     </div>
   );
-}
-
-function RoleHomeRedirect() {
-  const { loading, role } = useAuth();
-  const isResolvingRole = isTokenValid() && !role;
-
-  if (loading || isResolvingRole) {
-    return <AuthLoadingScreen />;
-  }
-
-  if (role === 'ADMIN') {
-    return <Navigate to="/admin" replace />;
-  }
-
-  return <Navigate to="/dashboard" replace />;
 }
 
 function RoleRoute({ allowedRoles }) {
@@ -77,6 +63,7 @@ export default function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/cadastro" element={<RegisterPage />} />
             <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage />} />
@@ -85,7 +72,6 @@ export default function App() {
 
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<MainLayout />}>
-                <Route index element={<RoleHomeRedirect />} />
                 <Route path="politica-de-privacidade" element={<PoliticaPrivacidadePage />} />
                 <Route path="termos-de-uso" element={<TermosUsoPage />} />
 
