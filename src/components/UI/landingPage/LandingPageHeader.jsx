@@ -8,7 +8,7 @@ export default function LandingPageHeader() {
 
     return (
         <header className="w-full border-b border-gray-200 bg-white">
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+            <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-6 px-10 py-2">
                 <div className="flex items-center gap-8">
                     <Link to="/" className="flex items-center gap-2 text-gray-900">
                         <span className="text-xl font-semibold leading-none">
