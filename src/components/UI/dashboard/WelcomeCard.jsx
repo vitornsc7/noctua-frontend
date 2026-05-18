@@ -25,7 +25,7 @@ const WelcomeCard = () => {
                         </p>
                     </div>
 
-                    <p className="mt-4 text-base leading-relaxed text-gray-600">
+                    <p className="mt-4 text-gray-600">
                         Seu portal para visualização de análises educacionais.
                     </p>
                 </div>
