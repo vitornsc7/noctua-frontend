@@ -3,6 +3,8 @@ import Button from '../Button';
 
 const shortcuts = [
     { label: 'Início', href: '#inicio' },
+    { label: 'Como funciona', href: '#como-funciona' },
+    { label: 'Segurança', href: '#seguranca' },
     { label: 'FAQ', href: '#faq' },
 ];
 

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import LandingPageHeader from "../components/UI/landingPage/LandingPageHeader";
 import HeroSection from "../components/UI/landingPage/HeroSection";
+import ComoFuncionaLandingPage from "../components/UI/landingPage/ComoFuncionaLandingPage";
+import SegurancaLandingPage from "../components/UI/landingPage/SegurancaLandingPage";
 import FaqLandingPage from "../components/UI/landingPage/FaqLandingPage";
 
 export default function LandingPage() {
@@ -27,6 +29,8 @@ export default function LandingPage() {
         <main className="min-h-screen bg-white">
             <LandingPageHeader />
             <HeroSection />
+            <ComoFuncionaLandingPage />
+            <SegurancaLandingPage />
             <FaqLandingPage />
         </main>
     );
