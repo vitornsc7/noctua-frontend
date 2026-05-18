@@ -24,7 +24,7 @@ export default function LandingPage() {
     }, []);
 
     return (
-        <main className="min-h-screen overflow-x-hidden bg-white">
+        <main className="min-h-screen bg-white">
             <LandingPageHeader />
             <HeroSection />
             <FaqLandingPage />
