@@ -15,11 +15,11 @@ export default function LandingPageHeader() {
         <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
             <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-6 px-10 py-2">
                 <div className="flex items-center gap-8">
-                    <Link to="/" className="flex items-center gap-2 text-gray-900">
+                    <a href="#inicio" className="flex items-center gap-2 text-gray-900">
                         <span className="text-xl font-semibold leading-none">
                             Noctua
                         </span>
-                    </Link>
+                    </a>
 
                     <nav className="hidden items-center gap-2 sm:flex" aria-label="Atalhos principais">
                         {shortcuts.map((shortcut) => (
