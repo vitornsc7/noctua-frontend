@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function BoletimProgressivoTable({ alunos = [], faltas = [], turma, loading = false }) {
+export default function BoletimProgressivoTable({ alunos = [], faltas = [], turma, mediasAlunos = [], loading = false }) {
     const periodicidade = String(turma?.periodicidade ?? '').toUpperCase();
     const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
 
@@ -14,6 +14,10 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
 
     const aulasPrevistasPorPeriodo =
         Number(turma?.qtdeAulasPrevistasPeriodo ?? turma?.aulasPrevistasPeriodo ?? turma?.aulasPorPeriodo) || 0;
+
+    const mediasPorAlunoId = Object.fromEntries(
+        mediasAlunos.map((m) => [m.alunoId, m.mediaPorPeriodo ?? {}])
+    );
 
     const calcularFrequencia = (alunoId, periodo) => {
         if (aulasPrevistasPorPeriodo <= 0) return null;
@@ -53,25 +57,39 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
         return Math.max(0, Number(frequencia.toFixed(1)));
     };
 
-    const alunosBoletim = alunos.map((aluno) => ({
-        id: aluno.id,
-        nome: aluno.nome,
-        periodos: periodos.reduce((acc, _, index) => {
-            const numeroPeriodo = index + 1;
+    const alunosBoletim = alunos.map((aluno) => {
+        const mediasDoAluno = mediasPorAlunoId[aluno.id] ?? {};
 
-            acc[numeroPeriodo] = {
-                media: null,
-                frequencia: calcularFrequencia(aluno.id, numeroPeriodo),
-            };
+        const mediasComValor = periodos
+            .map((_, index) => mediasDoAluno[index + 1])
+            .filter((v) => v != null);
+        const mediaFinal =
+            mediasComValor.length > 0
+                ? Number(
+                    (
+                        mediasComValor.reduce((s, v) => s + Number(v), 0) / mediasComValor.length
+                    ).toFixed(2)
+                )
+                : null;
 
-            return acc;
-        }, {}),
-        final: {
-            media: null,
-            frequencia: calcularFrequenciaFinalParcial(aluno.id),
-        },
-        intervencao: 'Aguardando dados',
-    }));
+        return {
+            id: aluno.id,
+            nome: aluno.nome,
+            periodos: periodos.reduce((acc, _, index) => {
+                const numeroPeriodo = index + 1;
+                acc[numeroPeriodo] = {
+                    media: mediasDoAluno[numeroPeriodo] ?? null,
+                    frequencia: calcularFrequencia(aluno.id, numeroPeriodo),
+                };
+                return acc;
+            }, {}),
+            final: {
+                media: mediaFinal,
+                frequencia: calcularFrequenciaFinalParcial(aluno.id),
+            },
+            intervencao: 'Aguardando dados',
+        };
+    });
 
     const formatarNumero = (valor) => {
         if (valor === null || valor === undefined) return '—';

@@ -159,5 +159,8 @@ export const excluirFalta = (faltaId) =>
 export const calcularPercentualFrequencia = (alunoId, periodo) =>
     client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/percentual`);
 
+export const calcularMediaPonderadaTurma = (turmaId) =>
+    client.get(`/turmas/${turmaId}/avaliacoes/media-ponderada`);
+
 export const classificarFrequencia = (alunoId, periodo) =>
     client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/classificacao`);

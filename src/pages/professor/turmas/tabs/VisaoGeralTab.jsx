@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { listarAlunos, listarFaltasPorTurma } from '../../../../api/turmaApi';
+import { listarAlunos, listarFaltasPorTurma, calcularMediaPonderadaTurma } from '../../../../api/turmaApi';
 import { Button, Card, Modal, useToast } from '../../../../components/UI';
 import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
 
 const VisaoGeralTab = ({ turma }) => {
     const [alunos, setAlunos] = useState([]);
     const [faltas, setFaltas] = useState([]);
+    const [mediaPonderadaData, setMediaPonderadaData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [intervencaoSelecionada, setIntervencaoSelecionada] = useState(null);
     const { showError } = useToast();
-
-    const avaliacoesMockadas = [
-    ];
 
     useEffect(() => {
         if (!turma?.id) return;
@@ -21,10 +19,12 @@ const VisaoGeralTab = ({ turma }) => {
         Promise.all([
             listarAlunos(turma.id, { ativo: true, page: 0, size: 100 }),
             listarFaltasPorTurma(turma.id),
+            calcularMediaPonderadaTurma(turma.id),
         ])
-            .then(([alunosData, faltasData]) => {
+            .then(([alunosData, faltasData, mpData]) => {
                 setAlunos(alunosData.content ?? []);
                 setFaltas(Array.isArray(faltasData) ? faltasData : (faltasData?.content ?? []));
+                setMediaPonderadaData(mpData);
             })
             .catch((err) => showError('Erro ao carregar visão geral', err.message))
             .finally(() => setLoading(false));
@@ -87,36 +87,23 @@ const VisaoGeralTab = ({ turma }) => {
         };
     });
 
-    const avaliacaoTemNota = (avaliacao) => {
-        return avaliacao.media !== null && avaliacao.media !== undefined;
-    };
-
+    // Um período é visível se for o primeiro ou se já houver dados de avaliação para ele
     const periodosVisiveis = periodos.filter((periodo) => {
         if (periodo.numero === 1) return true;
-
-        return avaliacoesMockadas.some(
-            (avaliacao) =>
-                Number(avaliacao.periodo) === periodo.numero &&
-                avaliacaoTemNota(avaliacao)
+        const resumo = mediaPonderadaData?.resumoPorPeriodo?.[periodo.numero];
+        return resumo != null && (
+            resumo.mediaProva != null ||
+            resumo.mediaTrabalho != null ||
+            resumo.mediaAtividade != null
         );
     });
 
-    const calcularMediaAvaliacoes = (periodo, tipo) => {
-        const avaliacoesDoTipo = avaliacoesMockadas.filter(
-            (avaliacao) =>
-                Number(avaliacao.periodo) === periodo &&
-                avaliacao.tipo === tipo &&
-                avaliacaoTemNota(avaliacao)
-        );
-
-        if (avaliacoesDoTipo.length === 0) return null;
-
-        const soma = avaliacoesDoTipo.reduce(
-            (total, avaliacao) => total + Number(avaliacao.media),
-            0
-        );
-
-        return Number((soma / avaliacoesDoTipo.length).toFixed(1));
+    // Retorna a média da turma para um tipo de avaliação em um período, usando dados do backend
+    const calcularMediaAvaliacoes = (numeroPeriodo, tipo) => {
+        const resumo = mediaPonderadaData?.resumoPorPeriodo?.[numeroPeriodo];
+        if (!resumo) return null;
+        const mapa = { PROVA: 'mediaProva', TRABALHO: 'mediaTrabalho', ATIVIDADE: 'mediaAtividade' };
+        return resumo[mapa[tipo]] ?? null;
     };
 
     const calcularFrequenciaMedia = (periodo) => {
@@ -153,7 +140,7 @@ const VisaoGeralTab = ({ turma }) => {
     };
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-8">
             <section className="space-y-6">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800">
@@ -300,6 +287,7 @@ const VisaoGeralTab = ({ turma }) => {
                     alunos={alunos}
                     faltas={faltas}
                     turma={turma}
+                    mediasAlunos={mediaPonderadaData?.mediasAlunos ?? []}
                     loading={loading}
                 />
             </section>
