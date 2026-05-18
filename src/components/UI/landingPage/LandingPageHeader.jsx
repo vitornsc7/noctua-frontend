@@ -1,7 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../Button';
 
-const shortcuts = ['1', '2', '3', '4'];
+const shortcuts = [
+    { label: 'Início', href: '#inicio' },
+    { label: 'FAQ', href: '#faq' },
+];
 
 export default function LandingPageHeader() {
     const navigate = useNavigate();
@@ -19,11 +22,11 @@ export default function LandingPageHeader() {
                     <nav className="hidden items-center gap-2 sm:flex" aria-label="Atalhos principais">
                         {shortcuts.map((shortcut) => (
                             <a
-                                key={shortcut}
-                                href={`#${shortcut}`}
+                                key={shortcut.href}
+                                href={shortcut.href}
                                 className="rounded px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
                             >
-                                {shortcut}
+                                {shortcut.label}
                             </a>
                         ))}
                     </nav>
