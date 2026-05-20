@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Input, Button, Checkbox, useToast } from '../../../components/UI';
 import corujinha from '../../../assets/corujinha.png';
 import { loginSchema, LOGIN_INITIAL_VALUES } from '../authSchema';
-import { login, setToken, verifyLogin2FA } from '../../../api/authApi';
+import { getCurrentUser, login, setToken, verifyLogin2FA } from '../../../api/authApi';
 
 export default function LoginPage() {
     const [carregando, setCarregando] = useState(false);
@@ -48,6 +48,15 @@ export default function LoginPage() {
         error: errors[field]?.message,
     });
 
+    const redirectAfterLogin = async () => {
+        try {
+            const currentUser = await getCurrentUser();
+            navigate(currentUser?.role === 'ADMIN' ? '/admin' : '/dashboard', { replace: true });
+        } catch {
+            navigate('/dashboard', { replace: true });
+        }
+    };
+
     const onSubmit = async (data) => {
         try {
             setCarregando(true);
@@ -64,7 +73,7 @@ export default function LoginPage() {
             }
 
             setToken(response.token);
-            navigate('/');
+            await redirectAfterLogin();
         } catch (err) {
             showError(err.message || 'Erro ao realizar login.', 'Verifique as informações inseridas.');
         } finally {
@@ -84,7 +93,7 @@ export default function LoginPage() {
             });
 
             setToken(response.token);
-            navigate('/');
+            await redirectAfterLogin();
         } catch (err) {
             showError(err.message || 'Código inválido.', 'Tente novamente.');
         } finally {
