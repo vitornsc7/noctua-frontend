@@ -56,12 +56,12 @@ export default function LandingPageFooter() {
                             </a>
                             <a
                                 className="inline-flex min-w-0 items-center gap-2 text-gray-700 transition-colors hover:text-gray-950"
-                                href="https://www.instagram.com/noctua.br/"
+                                href="https://www.instagram.com/use_noctua/"
                                 target="_blank"
                                 rel="noreferrer"
                             >
                                 <i className="pi pi-instagram text-sm" aria-hidden="true" />
-                                Instagram
+                                @use_noctua
                             </a>
                         </nav>
                     </div>
