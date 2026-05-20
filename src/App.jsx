@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { useEffect } from 'react';
 import { ToastProvider } from "./components/UI";
 import { isTokenValid } from './api/authApi';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -24,6 +25,7 @@ import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
 import LancarNotasPage from "./pages/professor/turmas/LancarNotasPage";
 import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
 import TermosUsoPage from "./pages/TermosUsoPage";
+import LandingPage from "./pages/LandingPage";
 
 function PrivateRoute() {
   return isTokenValid() ? <Outlet /> : <Navigate to="/login" replace />;
@@ -37,19 +39,33 @@ function AuthLoadingScreen() {
   );
 }
 
-function RoleHomeRedirect() {
-  const { loading, role } = useAuth();
-  const isResolvingRole = isTokenValid() && !role;
+function PublicDocumentPage({ children }) {
+  useEffect(() => {
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousHtmlOverflowX = document.documentElement.style.overflowX;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyOverflowX = document.body.style.overflowX;
 
-  if (loading || isResolvingRole) {
-    return <AuthLoadingScreen />;
-  }
+    document.documentElement.style.overflow = "auto";
+    document.documentElement.style.overflowX = "hidden";
+    document.body.style.overflow = "auto";
+    document.body.style.overflowX = "hidden";
 
-  if (role === 'ADMIN') {
-    return <Navigate to="/admin" replace />;
-  }
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.documentElement.style.overflowX = previousHtmlOverflowX;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.overflowX = previousBodyOverflowX;
+    };
+  }, []);
 
-  return <Navigate to="/dashboard" replace />;
+  return (
+    <main className="min-h-screen bg-[#F6F6F8]">
+      <div className="mx-auto max-w-6xl p-8">
+        {children}
+      </div>
+    </main>
+  );
 }
 
 function RoleRoute({ allowedRoles }) {
@@ -77,17 +93,35 @@ export default function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/cadastro" element={<RegisterPage />} />
             <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route
+              path="/politica-de-privacidade"
+              element={
+                <PublicDocumentPage>
+                  <PoliticaPrivacidadePage />
+                </PublicDocumentPage>
+              }
+            />
+            <Route
+              path="/termos-de-uso"
+              element={
+                <PublicDocumentPage>
+                  <TermosUsoPage />
+                </PublicDocumentPage>
+              }
+            />
             <Route path="/403" element={<ForbiddenPage />} />
 
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<MainLayout />}>
-                <Route index element={<RoleHomeRedirect />} />
                 <Route path="politica-de-privacidade" element={<PoliticaPrivacidadePage />} />
                 <Route path="termos-de-uso" element={<TermosUsoPage />} />
+                <Route path="documentos/politica-de-privacidade" element={<PoliticaPrivacidadePage />} />
+                <Route path="documentos/termos-de-uso" element={<TermosUsoPage />} />
 
                 <Route element={<RoleRoute allowedRoles={["PROFESSOR"]} />}>
                   <Route path="dashboard" element={<DashboardPage />} />
