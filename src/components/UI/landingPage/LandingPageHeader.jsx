@@ -4,6 +4,7 @@ import Button from '../Button';
 
 const shortcuts = [
     { label: 'Início', href: '#inicio' },
+    { label: 'Por que usar?', href: '#por-que-usar' },
     { label: 'Como funciona', href: '#como-funciona' },
     { label: 'Segurança', href: '#seguranca' },
     { label: 'FAQ', href: '#faq' },

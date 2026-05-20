@@ -11,7 +11,7 @@ export default function LandingPageFooter() {
             >
                 <path
                     fill="#d8efff"
-                    d="M0 54L80 50C160 46 320 38 480 52C640 66 800 102 960 116C1120 130 1280 120 1360 114L1440 108V180H0V54Z"
+                    d="M0 122C170 118 300 112 450 96C620 78 760 52 930 42C1120 30 1290 38 1440 28V180H0V122Z"
                 />
             </svg>
             <div className="bg-[#d8efff] px-4 pb-5 pt-1 sm:px-6 sm:pb-6 lg:px-10">
@@ -21,18 +21,21 @@ export default function LandingPageFooter() {
                             Noctua
                         </p>
                         <p className="mt-2 max-w-md text-sm leading-6 text-gray-700 sm:mt-4 sm:text-base sm:leading-7">
-                            Insights poderosos que mudam a educacao.
+                            Insights poderosos que mudam a educação.
                         </p>
                     </div>
 
                     <div className="hidden min-w-0 text-sm sm:block">
                         <p className="font-semibold text-gray-950">Produto</p>
                         <nav className="mt-4 grid gap-3" aria-label="Links do produto">
+                            <a className="text-gray-700 transition-colors hover:text-gray-950" href="#por-que-usar">
+                                Por que usar?
+                            </a>
                             <a className="text-gray-700 transition-colors hover:text-gray-950" href="#como-funciona">
                                 Como funciona
                             </a>
                             <a className="text-gray-700 transition-colors hover:text-gray-950" href="#seguranca">
-                                Seguranca
+                                Segurança
                             </a>
                             <a className="text-gray-700 transition-colors hover:text-gray-950" href="#faq">
                                 FAQ
@@ -73,7 +76,7 @@ export default function LandingPageFooter() {
                             Termos de uso
                         </Link>
                         <Link className="transition-colors hover:text-gray-950" to="/politica-de-privacidade">
-                            Politica de privacidade
+                            Política de privacidade
                         </Link>
                     </nav>
                 </div>
