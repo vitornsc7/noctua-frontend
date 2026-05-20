@@ -4,6 +4,7 @@ import HeroSection from "../components/UI/landingPage/HeroSection";
 import ComoFuncionaLandingPage from "../components/UI/landingPage/ComoFuncionaLandingPage";
 import SegurancaLandingPage from "../components/UI/landingPage/SegurancaLandingPage";
 import FaqLandingPage from "../components/UI/landingPage/FaqLandingPage";
+import LandingPageFooter from "../components/UI/landingPage/LandingPageFooter";
 
 export default function LandingPage() {
     useEffect(() => {
@@ -32,6 +33,7 @@ export default function LandingPage() {
             <ComoFuncionaLandingPage />
             <SegurancaLandingPage />
             <FaqLandingPage />
+            <LandingPageFooter />
         </main>
     );
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { useEffect } from 'react';
 import { ToastProvider } from "./components/UI";
 import { isTokenValid } from './api/authApi';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -38,6 +39,35 @@ function AuthLoadingScreen() {
   );
 }
 
+function PublicDocumentPage({ children }) {
+  useEffect(() => {
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousHtmlOverflowX = document.documentElement.style.overflowX;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyOverflowX = document.body.style.overflowX;
+
+    document.documentElement.style.overflow = "auto";
+    document.documentElement.style.overflowX = "hidden";
+    document.body.style.overflow = "auto";
+    document.body.style.overflowX = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.documentElement.style.overflowX = previousHtmlOverflowX;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.overflowX = previousBodyOverflowX;
+    };
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-[#F6F6F8]">
+      <div className="mx-auto max-w-6xl p-8">
+        {children}
+      </div>
+    </main>
+  );
+}
+
 function RoleRoute({ allowedRoles }) {
   const { loading, role, isAuthenticated } = useAuth();
   const isResolvingRole = isTokenValid() && !role;
@@ -68,12 +98,30 @@ export default function App() {
             <Route path="/cadastro" element={<RegisterPage />} />
             <Route path="/esqueci-minha-senha" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route
+              path="/politica-de-privacidade"
+              element={
+                <PublicDocumentPage>
+                  <PoliticaPrivacidadePage />
+                </PublicDocumentPage>
+              }
+            />
+            <Route
+              path="/termos-de-uso"
+              element={
+                <PublicDocumentPage>
+                  <TermosUsoPage />
+                </PublicDocumentPage>
+              }
+            />
             <Route path="/403" element={<ForbiddenPage />} />
 
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<MainLayout />}>
                 <Route path="politica-de-privacidade" element={<PoliticaPrivacidadePage />} />
                 <Route path="termos-de-uso" element={<TermosUsoPage />} />
+                <Route path="documentos/politica-de-privacidade" element={<PoliticaPrivacidadePage />} />
+                <Route path="documentos/termos-de-uso" element={<TermosUsoPage />} />
 
                 <Route element={<RoleRoute allowedRoles={["PROFESSOR"]} />}>
                   <Route path="dashboard" element={<DashboardPage />} />

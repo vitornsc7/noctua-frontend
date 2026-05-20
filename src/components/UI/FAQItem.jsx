@@ -13,23 +13,23 @@ const FAQItem = ({ pergunta, resposta }) => {
             <button
                 type="button"
                 onClick={() => setAberto((valorAtual) => !valorAtual)}
-                className={`flex w-full items-center justify-between gap-4 px-5 py-3 text-left text-sm transition-colors ${aberto
+                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm transition-colors sm:gap-4 sm:px-5 ${aberto
                     ? 'text-gray-900'
                     : 'text-slate-700 hover:text-gray-900'
                     }`}
                 aria-expanded={aberto}
             >
-                <span className="font-semibold">{pergunta}</span>
+                <span className="min-w-0 font-semibold">{pergunta}</span>
 
                 <i
                     className={`pi ${aberto ? 'pi-chevron-up' : 'pi-chevron-down'
-                        } text-xs ${aberto ? 'text-[#1f8fe5]' : 'text-slate-700'}`}
+                        } shrink-0 text-xs ${aberto ? 'text-[#1f8fe5]' : 'text-slate-700'}`}
                     aria-hidden="true"
                 />
             </button>
 
             {aberto && (
-                <div className="border-t border-[#1f8fe5]/15 bg-white px-5 py-4 text-sm leading-6 text-slate-600">
+                <div className="border-t border-[#1f8fe5]/15 bg-white px-4 py-4 text-sm leading-6 text-slate-600 sm:px-5">
                     {resposta}
                 </div>
             )}

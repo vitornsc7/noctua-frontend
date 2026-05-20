@@ -11,13 +11,13 @@ const Footer = ({ className = '' }) => {
                 <p>&copy; 2026</p>
                 <p>Todos os direitos reservados</p>
                 <Link
-                    to="/politica-de-privacidade"
+                    to="/documentos/politica-de-privacidade"
                     className="transition-colors hover:text-gray-900 hover:underline"
                 >
                     Política de Privacidade
                 </Link>
                 <Link
-                    to="/termos-de-uso"
+                    to="/documentos/termos-de-uso"
                     className="transition-colors hover:text-gray-900 hover:underline"
                 >
                     Termos de Uso

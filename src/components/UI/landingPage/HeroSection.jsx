@@ -6,7 +6,7 @@ export default function HeroSection() {
     const navigate = useNavigate();
 
     return (
-        <section id="inicio" className="relative min-h-[calc(100vh-57px)] overflow-hidden bg-[#f7f8fa]">
+        <section id="inicio" className="relative overflow-hidden bg-[#f7f8fa] lg:min-h-[calc(100vh-57px)]">
             <div className="pointer-events-none absolute inset-x-0 top-6 z-20 mx-auto hidden w-full max-w-[1440px] justify-end px-10 lg:flex">
                 <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white/75 px-2.5 py-2 text-base shadow-sm ring-1 ring-gray-200/80 backdrop-blur">
                     <span className="rounded-full bg-[#e8f2ff] px-3 py-1 text-sm font-semibold text-[#1f8fe5]">
@@ -19,14 +19,14 @@ export default function HeroSection() {
                 </div>
             </div>
 
-            <div className="mx-auto grid min-h-[calc(100vh-57px)] w-full max-w-[1440px] grid-cols-1 items-stretch gap-14 px-10 pb-0 pt-8 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="flex max-w-[720px] -translate-y-8 flex-col justify-center pb-16">
-                    <div className="mb-10 flex justify-start lg:hidden">
-                        <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white/70 px-2.5 py-2 text-base shadow-sm ring-1 ring-gray-200/80 backdrop-blur">
+            <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-stretch gap-10 px-4 pb-12 pt-8 sm:px-6 sm:pb-16 lg:min-h-[calc(100vh-57px)] lg:grid-cols-[0.9fr_1.1fr] lg:gap-14 lg:px-10 lg:pb-0">
+                <div className="flex max-w-[720px] flex-col justify-start lg:-translate-y-8 lg:justify-center lg:pb-16">
+                    <div className="mb-7 flex justify-start lg:hidden">
+                        <div className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/70 px-2.5 py-2 text-sm shadow-sm ring-1 ring-gray-200/80 backdrop-blur sm:text-base">
                             <span className="rounded-full bg-[#e8f2ff] px-3 py-1 text-sm font-semibold text-[#1f8fe5]">
                                 Novidade
                             </span>
-                            <span className="px-1 text-base font-medium text-gray-700">
+                            <span className="min-w-0 px-1 text-sm font-medium text-gray-700 sm:text-base">
                                 IA que entende sua rotina pedagógica
                             </span>
                             <i className="pi pi-sparkles pr-1 text-sm text-[#1f8fe5]" />
@@ -34,7 +34,7 @@ export default function HeroSection() {
                     </div>
 
                     <div className="mb-6 flex items-end gap-3">
-                        <h1 className="text-5xl font-semibold leading-none tracking-[-0.03em] text-gray-950">
+                        <h1 className="text-4xl font-semibold leading-none text-gray-950 sm:text-5xl">
                             Noctua
                         </h1>
                         <img
@@ -44,13 +44,13 @@ export default function HeroSection() {
                         />
                     </div>
 
-                    <h2 className="text-5xl font-bold leading-[1.03] tracking-[-0.03em] text-gray-950 md:text-7xl">
+                    <h2 className="text-4xl font-bold leading-[1.08] text-gray-950 sm:text-5xl md:text-6xl lg:text-7xl">
                         Apoio pedagógico{' '}
                         <span className="text-[#1f8fe5]">inteligente</span>{' '}
                         para professores
                     </h2>
 
-                    <p className="mt-7 max-w-[620px] text-xl leading-8 text-gray-500">
+                    <p className="mt-6 max-w-[620px] text-lg leading-8 text-gray-500 sm:mt-7 sm:text-xl">
                         Simplifique sua rotina e foque no que realmente importa:{' '}
                         <span className="underline decoration-current decoration-1 underline-offset-4">
                             ensinar
@@ -60,13 +60,13 @@ export default function HeroSection() {
                     <div className="mt-8">
                         <Button
                             onClick={() => navigate('/cadastro')}
-                            className="min-w-[320px] rounded-full px-8 py-3.5 text-lg font-semibold shadow-sm"
+                            className="w-full rounded-full px-6 py-3.5 text-base font-semibold shadow-sm sm:w-auto sm:min-w-[320px] sm:px-8 sm:text-lg"
                         >
                             Começar agora gratuitamente
                         </Button>
                     </div>
 
-                    <div className="mt-7 flex flex-wrap gap-x-7 gap-y-3 text-base font-medium text-gray-600">
+                    <div className="mt-7 flex flex-wrap gap-x-5 gap-y-3 text-sm font-medium text-gray-600 sm:gap-x-7 sm:text-base">
                         {['Gratuito', 'Sem instalação', 'Acesso pelo navegador'].map((benefit) => (
                             <div key={benefit} className="flex items-center gap-2">
                                 <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#1f8fe5]/40 bg-white text-xs text-[#1f8fe5]">
