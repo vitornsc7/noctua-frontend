@@ -36,7 +36,7 @@ export default function CtaLandingPage() {
                         }}
                         className="w-full min-w-[210px] rounded-md border-slate-200 bg-white px-8 py-3 text-base font-semibold text-gray-950 hover:bg-slate-50 sm:w-auto"
                     >
-                        Falar com um consultor
+                        Fale conosco
                     </Button>
                 </div>
             </div>
