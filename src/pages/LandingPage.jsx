@@ -6,6 +6,7 @@ import ComoFuncionaLandingPage from "../components/UI/landingPage/ComoFuncionaLa
 import SegurancaLandingPage from "../components/UI/landingPage/SegurancaLandingPage";
 import FaqLandingPage from "../components/UI/landingPage/FaqLandingPage";
 import LandingPageFooter from "../components/UI/landingPage/LandingPageFooter";
+import CtaLandingPage from "../components/UI/landingPage/CtaLandingPage";
 
 export default function LandingPage() {
     useEffect(() => {
@@ -35,6 +36,7 @@ export default function LandingPage() {
             <ComoFuncionaLandingPage />
             <SegurancaLandingPage />
             <FaqLandingPage />
+            <CtaLandingPage />
             <LandingPageFooter />
         </main>
     );
