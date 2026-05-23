@@ -63,8 +63,8 @@ export const getIntervencao = (media, freq, limites, mediaMinima) => {
 export const INTERVENCOES = [
     { titulo: 'Não necessária', descricao: 'Desempenho e frequência adequados.', color: 'emerald', icon: 'pi pi-check', condicoes: [['alta', 'alta']] },
     { titulo: 'Em monitoramento', descricao: 'Necessita de acompanhamento.', color: 'sky', icon: 'pi pi-eye', condicoes: [['media', 'alta'], ['alta', 'media']] },
-    { titulo: 'Pedagógica', descricao: 'Necessita reforço pedagógico.', color: 'orange', icon: 'pi pi-book', condicoes: [['baixa', 'media'], ['alta', 'baixa'], ['media', 'baixa']] },
     { titulo: 'Psicossocial', descricao: 'Possíveis fatores sociais ou emocionais.', color: 'amber', icon: 'pi pi-users', condicoes: [['baixa', 'alta'], ['critica', 'alta']] },
+    { titulo: 'Pedagógica', descricao: 'Necessita reforço pedagógico.', color: 'orange', icon: 'pi pi-book', condicoes: [['baixa', 'media'], ['alta', 'baixa'], ['media', 'baixa']] },
     { titulo: 'Urgente', descricao: 'Alto risco de evasão ou reprovação.', color: 'red', icon: 'pi pi-exclamation-triangle', condicoes: [['critica', 'media'], ['baixa', 'baixa'], ['critica', 'baixa']] },
 ];
 
