@@ -88,6 +88,7 @@ const ConfiguracoesPage = () => {
                         title="Limites de nota e frequência"
                         description="Defina o intervalo dos valores de classificação."
                         actionLabel="Configurar limites"
+                        to="/configuracoes/limites"
                     />
                     <SettingCard
                         icon="pi pi-shield"
