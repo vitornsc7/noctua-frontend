@@ -1,24 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input, useToast } from '../../../components/UI';
-
-const STORAGE_KEY = 'noctua_limites';
+import { getLimites, atualizarLimites } from '../../../api/professorApi';
 
 const DEFAULTS = {
     atencaoFim: 79.9,
     regularFim: 89.9,
     pontosAcima: 2,
     pontosAbaixo: 1,
-};
-
-const loadFromStorage = () => {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return DEFAULTS;
-        return { ...DEFAULTS, ...JSON.parse(raw) };
-    } catch {
-        return DEFAULTS;
-    }
 };
 
 const COLORS = {
@@ -82,12 +71,25 @@ const LimitesPage = () => {
     const navigate = useNavigate();
     const { showSuccess, showError } = useToast();
 
-    const saved = loadFromStorage();
-    const [atencaoFim, setAtencaoFim] = useState(String(saved.atencaoFim));
-    const [regularFim, setRegularFim] = useState(String(saved.regularFim));
-    const [pontosAcima, setPontosAcima] = useState(String(saved.pontosAcima));
-    const [pontosAbaixo, setPontosAbaixo] = useState(String(saved.pontosAbaixo));
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [atencaoFim, setAtencaoFim] = useState(String(DEFAULTS.atencaoFim));
+    const [regularFim, setRegularFim] = useState(String(DEFAULTS.regularFim));
+    const [pontosAcima, setPontosAcima] = useState(String(DEFAULTS.pontosAcima));
+    const [pontosAbaixo, setPontosAbaixo] = useState(String(DEFAULTS.pontosAbaixo));
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        getLimites()
+            .then((data) => {
+                setAtencaoFim(String(data.atencaoFim ?? DEFAULTS.atencaoFim));
+                setRegularFim(String(data.regularFim ?? DEFAULTS.regularFim));
+                setPontosAcima(String(data.pontosAcima ?? DEFAULTS.pontosAcima));
+                setPontosAbaixo(String(data.pontosAbaixo ?? DEFAULTS.pontosAbaixo));
+            })
+            .catch(() => showError('Erro ao carregar', 'Não foi possível carregar os limites.'))
+            .finally(() => setLoading(false));
+    }, []);
 
     const parseVal = (v) => parseFloat(String(v).replace(',', '.'));
 
@@ -115,19 +117,21 @@ const LimitesPage = () => {
         return Object.keys(errs).length === 0;
     };
 
-    const handleSalvar = () => {
+    const handleSalvar = async () => {
         if (!validate()) return;
-
+        setSaving(true);
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            await atualizarLimites({
                 atencaoFim: parseVal(atencaoFim),
                 regularFim: parseVal(regularFim),
                 pontosAcima: parseVal(pontosAcima),
                 pontosAbaixo: parseVal(pontosAbaixo),
-            }));
-            showSuccess('Limites salvos', 'As configurações foram salvas localmente.');
+            });
+            showSuccess('Limites salvos', 'As configurações foram atualizadas com sucesso.');
         } catch {
             showError('Erro ao salvar', 'Não foi possível salvar as configurações.');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -136,6 +140,12 @@ const LimitesPage = () => {
     const atencaoInicio = 75;
     const regularInicio = isNaN(af) ? '-' : +(af + 0.1).toFixed(1);
     const altaInicio = isNaN(rf) ? '-' : +(rf + 0.1).toFixed(1);
+
+    if (loading) return (
+        <div className="flex items-center justify-center py-24">
+            <i className="pi pi-spin pi-spinner text-2xl text-gray-400" />
+        </div>
+    );
 
     return (
         <div className="space-y-6">
@@ -275,7 +285,7 @@ const LimitesPage = () => {
                 <Button variant="outline" onClick={() => navigate('/configuracoes')}>
                     Cancelar
                 </Button>
-                <Button onClick={handleSalvar}>
+                <Button onClick={handleSalvar} isLoading={saving}>
                     Salvar
                 </Button>
             </div>
