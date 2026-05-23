@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { atualizarFalta, excluirFalta, listarAlunos, listarFaltasPorTurma } from '../../../../api/turmaApi';
-import { Select, DateInput, Table, useToast } from '../../../../components/UI';
+import { Button, DateInput, Modal, Select, Table, useToast } from '../../../../components/UI';
 import EditarFaltaModal from '../EditarFaltaModal';
 import { Link } from 'react-router-dom';
 import { PERIODO_LABEL } from '../../../../utils/displayMaps';
@@ -29,6 +29,8 @@ const FaltasTab = ({ turma }) => {
     const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(true);
     const [faltaSelecionada, setFaltaSelecionada] = useState(null);
+    const [faltaParaExcluir, setFaltaParaExcluir] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
     const [filtroData, setFiltroData] = useState('');
     const [filtroAluno, setFiltroAluno] = useState('todos');
@@ -96,13 +98,18 @@ const FaltasTab = ({ turma }) => {
         }
     };
 
-    const handleExcluirFalta = async (falta) => {
+    const handleConfirmarExclusao = async () => {
+        if (!faltaParaExcluir) return;
+        setIsDeleting(true);
         try {
-            await excluirFalta(falta.id);
+            await excluirFalta(faltaParaExcluir.id);
             showSuccess('Falta excluída com sucesso');
+            setFaltaParaExcluir(null);
             carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
         } catch (err) {
             showError('Erro ao excluir falta', err.message);
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -113,6 +120,14 @@ const FaltasTab = ({ turma }) => {
     useEffect(() => {
         carregarFaltas(filtroPeriodo, filtroData, filtroAluno, page, pageSize);
     }, [turma?.id, filtroPeriodo, filtroData, filtroAluno, page, pageSize]);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <i className="pi pi-spin pi-spinner text-2xl text-gray-400" aria-hidden="true"></i>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -181,7 +196,7 @@ const FaltasTab = ({ turma }) => {
                     loading={loading}
                     emptyMessage="Nenhuma falta encontrada."
                     onEdit={setFaltaSelecionada}
-                    onDelete={handleExcluirFalta}
+                    onDelete={setFaltaParaExcluir}
                     actionTooltips={{
                         edit: 'Editar falta',
                         delete: 'Excluir falta',
@@ -219,6 +234,34 @@ const FaltasTab = ({ turma }) => {
                 falta={faltaSelecionada}
                 turma={turma}
             />
+
+            <Modal
+                isOpen={Boolean(faltaParaExcluir)}
+                onClose={() => { if (!isDeleting) setFaltaParaExcluir(null); }}
+                title="Confirmar exclusão"
+                maxWidth="max-w-md"
+                footer={
+                    <div className="flex justify-end gap-2">
+                        <Button variant="outline" onClick={() => setFaltaParaExcluir(null)} disabled={isDeleting}>
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleConfirmarExclusao} disabled={isDeleting}>
+                            {isDeleting && <i className="pi pi-spin pi-spinner"></i>}
+                            Excluir
+                        </Button>
+                    </div>
+                }
+            >
+                <div className="space-y-2 text-sm text-gray-600">
+                    <p>
+                        Deseja excluir a falta do aluno{' '}
+                        <span className="font-medium text-gray-700">
+                            {getNomeAluno(faltaParaExcluir?.alunoId)}
+                        </span>?
+                    </p>
+                    <p>Essa ação não poderá ser desfeita.</p>
+                </div>
+            </Modal>
         </>
     );
 };

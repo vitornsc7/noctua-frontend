@@ -66,6 +66,14 @@ const AvaliacoesTab = ({ turma }) => {
         setPage(0);
     };
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <i className="pi pi-spin pi-spinner text-2xl text-gray-400" aria-hidden="true"></i>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -131,11 +139,7 @@ const AvaliacoesTab = ({ turma }) => {
                 </div>
             </div>
 
-            {loading ? (
-                <div className="flex items-center justify-center py-12">
-                    <i className="pi pi-spin pi-spinner text-2xl text-gray-400" />
-                </div>
-            ) : avaliacoes.length === 0 ? (
+            {avaliacoes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
                     <div className='flex flex-row gap-3 items-center'>
                         <i className="pi pi-file text-1xl text-gray-500"></i>

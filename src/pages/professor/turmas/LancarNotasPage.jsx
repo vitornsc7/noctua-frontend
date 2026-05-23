@@ -76,7 +76,7 @@ const LancarNotasPage = () => {
                 notas.map((nota) => {
                     if (naoRealizadas[nota.id]) {
                         return atualizarNota(turmaId, avaliacaoId, nota.id, {
-                            valor: null,
+                            valor: 0,
                             naoRealizada: true,
                         });
                     }

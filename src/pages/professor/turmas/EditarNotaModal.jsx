@@ -89,7 +89,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilh
 
     const onSubmit = (data) => {
         onSave({
-            valor: data.naoRealizada ? null : parseFloat(String(data.valor).replace(',', '.')),
+            valor: data.naoRealizada ? 0 : parseFloat(String(data.valor).replace(',', '.')),
             naoRealizada: data.naoRealizada,
         });
     };

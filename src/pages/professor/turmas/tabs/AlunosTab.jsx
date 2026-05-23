@@ -69,6 +69,14 @@ const AlunosTab = ({ turma }) => {
             .finally(() => setIsSaving(false));
     };
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <i className="pi pi-spin pi-spinner text-2xl text-gray-400" aria-hidden="true"></i>
+            </div>
+        );
+    }
+
     return (
         <>
             <div className='space-y-4'>

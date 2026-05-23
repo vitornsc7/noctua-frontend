@@ -153,7 +153,9 @@ const Input = forwardRef(({
 
     const displayValue = mask
         ? normalizeValue(String(value ?? ''), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars })
-        : value;
+        : numericOnly
+            ? normalizeValue(String(value ?? ''), { numericOnly, integerOnly, maxIntegerDigits, maxDecimalDigits })
+            : value;
 
     useEffect(() => {
         if (!mask || value == null) return;
@@ -185,7 +187,9 @@ const Input = forwardRef(({
 
     const incrementFloat = () => {
         if (!canIncrementFloat) return;
-        const next = Math.round((numFloatValue + 0.01) * 100) / 100;
+        const precision = String(step).includes('.') ? String(step).split('.')[1].length : 0;
+        const factor = Math.pow(10, precision);
+        const next = Math.round((numFloatValue + step) * factor) / factor;
         const clamped = effectiveMax != null ? Math.min(next, effectiveMax) : next;
         const normalized = normalizeValue(String(clamped), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars, maxIntegerDigits, maxDecimalDigits });
         onChange?.({ target: { value: normalized } });
@@ -193,7 +197,9 @@ const Input = forwardRef(({
 
     const decrementFloat = () => {
         if (!canDecrementFloat) return;
-        const next = Math.round((numFloatValue - 0.01) * 100) / 100;
+        const precision = String(step).includes('.') ? String(step).split('.')[1].length : 0;
+        const factor = Math.pow(10, precision);
+        const next = Math.round((numFloatValue - step) * factor) / factor;
         const clamped = min != null ? Math.max(next, Number(min)) : next;
         const normalized = normalizeValue(String(clamped), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars, maxIntegerDigits, maxDecimalDigits });
         onChange?.({ target: { value: normalized } });
@@ -361,7 +367,7 @@ const Input = forwardRef(({
             {integerOnly ? (
                 <div
                     className={`
-                        flex rounded-lg border overflow-hidden
+                        flex w-full rounded-lg border overflow-hidden
                         ${hasError ? 'border-red-300 focus-within:border-red-300' : 'border-gray-300 focus-within:border-primary'}
                         ${isBlocked ? 'opacity-60' : ''}
                     `}
@@ -412,7 +418,7 @@ const Input = forwardRef(({
             ) : numericOnly ? (
                 <div
                     className={`
-                        flex rounded-lg border overflow-hidden
+                        flex w-full rounded-lg border overflow-hidden
                         ${hasError ? 'border-red-300 focus-within:border-red-300' : 'border-gray-300 focus-within:border-primary'}
                         ${isBlocked ? 'opacity-60' : ''}
                     `}

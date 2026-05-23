@@ -10,6 +10,7 @@ import AlunosTab from './tabs/AlunosTab';
 import AvaliacoesTab from './tabs/AvaliacoesTab';
 import FaltasTab from './tabs/FaltasTab';
 
+
 const TurmaDetalhesPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -159,6 +160,8 @@ const TurmaDetalhesPage = () => {
                     <Tabs.Tab id="visao-geral" label="Visão geral">
                         <VisaoGeralTab turma={turma} />
                     </Tabs.Tab>
+
+
 
                     <Tabs.Tab id="alunos" label="Alunos">
                         <AlunosTab turma={turma} />

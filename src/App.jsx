@@ -22,6 +22,7 @@ import MonitoramentoOperacionalPage from './pages/admin/MonitoramentoOperacional
 import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
 import CentralDeAjudaPage from "./pages/ajuda/CentralDeAjudaPage";
 import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
+import LimitesPage from "./pages/professor/configuration/LimitesPage";
 import LancarNotasPage from "./pages/professor/turmas/LancarNotasPage";
 import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
 import TermosUsoPage from "./pages/TermosUsoPage";
@@ -135,6 +136,7 @@ export default function App() {
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
                   <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
+                  <Route path="configuracoes/limites" element={<LimitesPage />} />
                   <Route path="ajuda" element={<CentralDeAjudaPage />} />
                 </Route>
 
