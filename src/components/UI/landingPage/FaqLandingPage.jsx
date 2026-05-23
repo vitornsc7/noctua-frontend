@@ -61,7 +61,7 @@ const perguntasFrequentes = [
 
 export default function FaqLandingPage() {
     return (
-        <section id="faq" className="relative z-10 bg-white px-4 pb-8 pt-12 sm:px-6 sm:pt-16 lg:px-10 lg:pb-10">
+        <section id="faq" className="relative z-10 bg-[#f6f7f9] px-4 pb-8 pt-12 sm:px-6 sm:pt-16 lg:px-10 lg:pb-10">
             <div className="mx-auto grid w-full max-w-[1220px] gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] lg:items-start lg:gap-16">
                 <div className="order-2 grid min-w-0 gap-3 lg:order-1">
                     {perguntasFrequentes.map((item) => (
