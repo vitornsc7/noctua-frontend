@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { listarAlunos, listarFaltasPorTurma, calcularMediaPonderadaTurma } from '../../../../api/turmaApi';
 import { Button, Card, Modal, useToast } from '../../../../components/UI';
 import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
 
 const VisaoGeralTab = ({ turma }) => {
+    const navigate = useNavigate();
     const [alunos, setAlunos] = useState([]);
     const [faltas, setFaltas] = useState([]);
     const [mediaPonderadaData, setMediaPonderadaData] = useState(null);
@@ -30,47 +32,20 @@ const VisaoGeralTab = ({ turma }) => {
             .finally(() => setLoading(false));
     }, [turma?.id, showError]);
 
+    const INTERVENCAO_COLORS = {
+        emerald: { border: 'border-t-emerald-400', label: 'text-emerald-700' },
+        sky: { border: 'border-t-sky-400', label: 'text-sky-700' },
+        amber: { border: 'border-t-amber-400', label: 'text-amber-700' },
+        orange: { border: 'border-t-orange-400', label: 'text-orange-700' },
+        red: { border: 'border-t-red-400', label: 'text-red-700' },
+    };
+
     const intervencoes = [
-        {
-            titulo: 'Não necessária',
-            quantidade: 26,
-            descricao: 'Desempenho e frequência adequados.',
-            color: 'emerald',
-            icon: 'pi pi-check-circle',
-            alunos: ['Ana Souza', 'Lucas Martins', 'Marina Costa'],
-        },
-        {
-            titulo: 'Em monitoramento',
-            quantidade: 24,
-            descricao: 'Necessita acompanhamento preventivo.',
-            color: 'sky',
-            icon: 'pi pi-eye',
-            alunos: ['Bruno Lima', 'Rafaela Dias'],
-        },
-        {
-            titulo: 'Pedagógica',
-            quantidade: 26,
-            descricao: 'Necessita reforço pedagógico.',
-            color: 'amber',
-            icon: 'pi pi-book',
-            alunos: ['Carla Mendes', 'João Silva'],
-        },
-        {
-            titulo: 'Psicossocial',
-            quantidade: 26,
-            descricao: 'Possíveis fatores sociais ou emocionais.',
-            color: 'orange',
-            icon: 'pi pi-users',
-            alunos: ['Diego Santos'],
-        },
-        {
-            titulo: 'Urgente',
-            quantidade: 26,
-            descricao: 'Alto risco de evasão ou reprovação.',
-            color: 'red',
-            icon: 'pi pi-exclamation-triangle',
-            alunos: ['Eduarda Rocha', 'Felipe Alves'],
-        },
+        { titulo: 'Não necessária', descricao: 'Desempenho e frequência adequados.', color: 'emerald', icon: 'pi pi-check-circle' },
+        { titulo: 'Em monitoramento', descricao: 'Necessita acompanhamento preventivo.', color: 'sky', icon: 'pi pi-eye' },
+        { titulo: 'Pedagógica', descricao: 'Necessita reforço pedagógico.', color: 'amber', icon: 'pi pi-book' },
+        { titulo: 'Psicossocial', descricao: 'Possíveis fatores sociais ou emocionais.', color: 'orange', icon: 'pi pi-users' },
+        { titulo: 'Urgente', descricao: 'Alto risco de evasão ou reprovação.', color: 'red', icon: 'pi pi-exclamation-triangle' },
     ];
 
     const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
@@ -87,7 +62,6 @@ const VisaoGeralTab = ({ turma }) => {
         };
     });
 
-    // Um período é visível se for o primeiro ou se já houver dados de avaliação para ele
     const periodosVisiveis = periodos.filter((periodo) => {
         if (periodo.numero === 1) return true;
         const resumo = mediaPonderadaData?.resumoPorPeriodo?.[periodo.numero];
@@ -98,7 +72,6 @@ const VisaoGeralTab = ({ turma }) => {
         );
     });
 
-    // Retorna a média da turma para um tipo de avaliação em um período, usando dados do backend
     const calcularMediaAvaliacoes = (numeroPeriodo, tipo) => {
         const resumo = mediaPonderadaData?.resumoPorPeriodo?.[numeroPeriodo];
         if (!resumo) return null;
@@ -139,11 +112,55 @@ const VisaoGeralTab = ({ turma }) => {
         return `${String(valor).replace('.', ',')}${suffix}`;
     };
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <i className="pi pi-spin pi-spinner text-2xl text-gray-400" aria-hidden="true"></i>
+            </div>
+        );
+    }
+
+    const temDadosAvaliacao = mediaPonderadaData?.resumoPorPeriodo != null &&
+        Object.values(mediaPonderadaData.resumoPorPeriodo).some(
+            (r) => r?.mediaProva != null || r?.mediaTrabalho != null || r?.mediaAtividade != null
+        );
+    const temDadosFalta = faltas.length > 0;
+    const semDados = !loading && !temDadosAvaliacao && !temDadosFalta;
+
+    if (semDados) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="flex gap-3">
+                    <i className="pi pi-chart-bar text-lg text-gray-700" aria-hidden="true"></i>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                        Nenhum dado registrado ainda
+                    </h3>
+                </div>
+
+
+                <p className="mt-2 max-w-sm text-sm text-gray-500">
+                    Registre avaliações e faltas para visualizar o resumo e o boletim progressivo da turma.
+                </p>
+
+                <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+                    <Button onClick={() => navigate(`/turmas/${turma.id}/avaliacoes/nova`)}>
+                        <i className="pi pi-plus mr-2 text-xs" aria-hidden="true"></i>
+                        Nova avaliação
+                    </Button>
+                    <Button variant="outline" onClick={() => navigate(`/turmas/${turma.id}/faltas/nova`)}>
+                        <i className="pi pi-plus mr-2 text-xs" aria-hidden="true"></i>
+                        Nova falta
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-8">
             <section className="space-y-6">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-gray-700">
                         Resumo por {periodoLabel.toLowerCase()}
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
@@ -200,7 +217,7 @@ const VisaoGeralTab = ({ turma }) => {
 
             <section className="space-y-5">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-gray-700">
                         Tipos de intervenção
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
@@ -208,74 +225,28 @@ const VisaoGeralTab = ({ turma }) => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-                    {intervencoes.map((item) => (
-                        <div
-                            key={item.titulo}
-                            className={`
-                                flex flex-col justify-between rounded-2xl border p-5
-                                ${item.color === 'emerald' && 'border-emerald-200 bg-emerald-50'}
-                                ${item.color === 'sky' && 'border-sky-200 bg-sky-50'}
-                                ${item.color === 'amber' && 'border-amber-200 bg-amber-50'}
-                                ${item.color === 'orange' && 'border-orange-200 bg-orange-50'}
-                                ${item.color === 'red' && 'border-red-200 bg-red-50'}
-                            `}
-                        >
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <i
-                                        className={`
-                                            ${item.icon} text-sm
-                                            ${item.color === 'emerald' && 'text-emerald-700'}
-                                            ${item.color === 'sky' && 'text-sky-700'}
-                                            ${item.color === 'amber' && 'text-amber-700'}
-                                            ${item.color === 'orange' && 'text-orange-700'}
-                                            ${item.color === 'red' && 'text-red-700'}
-                                        `}
-                                    />
-
-                                    <h4
-                                        className={`
-                                            text-sm font-semibold
-                                            ${item.color === 'emerald' && 'text-emerald-700'}
-                                            ${item.color === 'sky' && 'text-sky-700'}
-                                            ${item.color === 'amber' && 'text-amber-700'}
-                                            ${item.color === 'orange' && 'text-orange-700'}
-                                            ${item.color === 'red' && 'text-red-700'}
-                                        `}
-                                    >
-                                        {item.titulo}
-                                    </h4>
-                                </div>
-
-                                <p className="mt-4 text-sm leading-relaxed text-gray-700">
-                                    {item.descricao}
-                                </p>
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={() => setIntervencaoSelecionada(item)}
-                                className={`
-                                    mt-5 inline-flex w-fit cursor-pointer rounded-full px-3 py-1 text-xs font-semibold
-                                    transition-all duration-200 hover:scale-105 hover:shadow-sm
-                                    ${item.color === 'emerald' && 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}
-                                    ${item.color === 'sky' && 'bg-sky-100 text-sky-700 hover:bg-sky-200'}
-                                    ${item.color === 'amber' && 'bg-amber-100 text-amber-700 hover:bg-amber-200'}
-                                    ${item.color === 'orange' && 'bg-orange-100 text-orange-700 hover:bg-orange-200'}
-                                    ${item.color === 'red' && 'bg-red-100 text-red-700 hover:bg-red-200'}
-                                `}
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-5">
+                    {intervencoes.map((item) => {
+                        const c = INTERVENCAO_COLORS[item.color];
+                        return (
+                            <div
+                                key={item.titulo}
+                                className={`rounded-xl border border-gray-200 border-t-4 ${c.border} bg-white p-5`}
                             >
-                                {item.quantidade} alunos
-                            </button>
-                        </div>
-                    ))}
+                                <div className={`mb-2 flex items-center gap-2 text-sm font-semibold ${c.label}`}>
+                                    <i className={item.icon} aria-hidden="true" />
+                                    <span>{item.titulo}</span>
+                                </div>
+                                <p className="text-sm leading-relaxed text-gray-500">{item.descricao}</p>
+                            </div>
+                        );
+                    })}
                 </div>
             </section>
 
             <section className="space-y-5">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-gray-700">
                         Boletim progressivo anual
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
