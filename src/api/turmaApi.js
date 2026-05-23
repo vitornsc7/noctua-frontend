@@ -117,11 +117,16 @@ export const buscarAvaliacaoPorId = (turmaId, avaliacaoId) =>
 export const listarNotasPorAvaliacao = (turmaId, avaliacaoId) =>
     client.get(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas`);
 
+export const listarTodasNotasPorTurma = (turmaId) =>
+    client.get(`/turmas/${turmaId}/avaliacoes/notas`);
+
 export const atualizarNota = (turmaId, avaliacaoId, notaId, payload) =>
     client.put(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/notas/${notaId}`, payload);
 
-export const criarChamada = (turmaId, avaliacaoId) =>
-    client.post(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/chamada`);
+export const criarChamada = (turmaId, avaliacaoId, dataAplicacao) => {
+    const params = dataAplicacao ? `?dataAplicacao=${dataAplicacao}` : '';
+    return client.post(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/chamada${params}`);
+};
 
 export const listarFaltasPorTurma = (turmaId, periodo, dataFalta, alunoId, { page = 0, size = 10 } = {}) => {
     const params = new URLSearchParams({ page, size });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ActionMenu, Button, Modal, Tag, Table, Tooltip, useToast } from '../../../components/UI';
+import { ActionMenu, Button, DateInput, Modal, Tag, Table, Tooltip, useToast } from '../../../components/UI';
 import { buscarAvaliacaoPorId, buscarTurmaPorId, criarChamada, listarNotasPorAvaliacao, atualizarNota } from '../../../api/turmaApi';
 import { TIPO_AVALIACAO_DISPLAY, displayLabel, normalizeNumber } from '../../../utils/displayMaps';
 import TurmaTags from './components/TurmaTags';
@@ -30,6 +30,7 @@ const AvaliacaoDetalhesPage = () => {
     const [savingNota, setSavingNota] = useState(false);
     const [chamadaModalOpen, setChamadaModalOpen] = useState(false);
     const [criandoChamada, setCriandoChamada] = useState(false);
+    const [dataSegundaChamada, setDataSegundaChamada] = useState('');
 
     const mediaMinima = normalizeNumber(turma?.mediaMinima);
 
@@ -48,12 +49,36 @@ const AvaliacaoDetalhesPage = () => {
         }
     };
 
+    const toJSDate = (data) => {
+        if (!data) return null;
+        if (Array.isArray(data)) {
+            const [year, month, day] = data;
+            return new Date(year, month - 1, day);
+        }
+        return new Date(data);
+    };
+
+    const handleCloseChamadaModal = () => {
+        setChamadaModalOpen(false);
+        setDataSegundaChamada('');
+    };
+
     const handleCriarChamada = async () => {
+        if (!dataSegundaChamada) {
+            showError('Data obrigatória', 'Selecione a data da segunda aplicação.');
+            return;
+        }
+        const dataPrimeira = toJSDate(avaliacao?.data);
+        const dataSegunda = new Date(dataSegundaChamada);
+        if (dataPrimeira && dataSegunda <= dataPrimeira) {
+            showError('Data inválida', 'A data deve ser posterior à data da primeira aplicação.');
+            return;
+        }
         setCriandoChamada(true);
         try {
-            const nova = await criarChamada(turmaId, avaliacaoId);
+            const nova = await criarChamada(turmaId, avaliacaoId, dataSegundaChamada);
             showSuccess(`${nova.numeroChamada}ª Chamada criada com sucesso.`, 'A avaliação foi criada com os alunos que não compareceram.');
-            setChamadaModalOpen(false);
+            handleCloseChamadaModal();
             navigate(`/turmas/${turmaId}/avaliacoes/${nova.id}`);
         } catch (err) {
             showError('Erro ao criar chamada', err.message);
@@ -123,152 +148,150 @@ const AvaliacaoDetalhesPage = () => {
     const chamadaLabel = `${proximaChamada}ª Chamada`;
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <Link
-                        to={`/turmas/${turmaId}`}
-                        state={{ tab: 'avaliacoes' }}
-                        className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
-                    >
-                        <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
-                        <span>Avaliações</span>
-                    </Link>
-                    {avaliacao.avaliacaoPaiId && (
+        <div>
+            <div className="space-y-6">
+                <div className="flex items-start justify-between gap-4">
+                    <div>
                         <Link
-                            to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoPaiId}`}
-                            className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                            to={`/turmas/${turmaId}`}
+                            state={{ tab: 'avaliacoes' }}
+                            className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
                         >
                             <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
-                            <span>{avaliacao.numeroChamada - 1}ª Chamada</span>
+                            <span>Avaliações</span>
                         </Link>
-                    )}
-                    {avaliacao.avaliacaoFilhaId && (
-                        <Link
-                            to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoFilhaId}`}
-                            className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
-                        >
-                            <i className="pi pi-chevron-right text-xs" aria-hidden="true" />
-                            <span>{proximaChamada}ª Chamada</span>
-                        </Link>
-                    )}
-                    <h1 className="text-3xl font-semibold text-gray-700">{titulo}</h1>
-                </div>
-                <div className="pt-1">
-                    <ActionMenu buttonLabel="Mais ações da avaliação">
-                        {({ closeMenu }) => (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        closeMenu();
-                                        navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/editar`);
-                                    }}
-                                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
-                                >
-                                    <i className="pi pi-pencil text-xs" aria-hidden="true" />
-                                    <span>Editar avaliação</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        closeMenu();
-                                        navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/lancar-notas`);
-                                    }}
-                                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
-                                >
-                                    <i className="pi pi-upload text-xs" aria-hidden="true" />
-                                    <span>Lançar notas</span>
-                                </button>
-                                {!temChamadaFilha && temNaoCompareceram && (
+                        {avaliacao.avaliacaoPaiId && (
+                            <Link
+                                to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoPaiId}`}
+                                className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                            >
+                                <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
+                                <span>{avaliacao.numeroChamada - 1}ª Chamada</span>
+                            </Link>
+                        )}
+                        {avaliacao.avaliacaoFilhaId && (
+                            <Link
+                                to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoFilhaId}`}
+                                className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                            >
+                                <i className="pi pi-chevron-right text-xs" aria-hidden="true" />
+                                <span>{proximaChamada}ª Chamada</span>
+                            </Link>
+                        )}
+                        <h1 className="text-3xl font-semibold text-gray-700">{titulo}</h1>
+                    </div>
+                    <div className="pt-1">
+                        <ActionMenu buttonLabel="Mais ações da avaliação">
+                            {({ closeMenu }) => (
+                                <>
                                     <button
                                         type="button"
                                         onClick={() => {
                                             closeMenu();
-                                            setChamadaModalOpen(true);
+                                            navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/editar`);
                                         }}
                                         className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
                                     >
-                                        <i className="pi pi-refresh text-xs" aria-hidden="true" />
-                                        <span>{chamadaLabel}</span>
+                                        <i className="pi pi-pencil text-xs" aria-hidden="true" />
+                                        <span>Editar avaliação</span>
                                     </button>
-                                )}
-                                {!temChamadaFilha && !temNaoCompareceram && (
-                                    <Tooltip className='w-full' content="Nenhum aluno marcado como não compareceu.">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            closeMenu();
+                                            navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/lancar-notas`);
+                                        }}
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                    >
+                                        <i className="pi pi-upload text-xs" aria-hidden="true" />
+                                        <span>Lançar notas</span>
+                                    </button>
+                                    {!temChamadaFilha && temNaoCompareceram && (
                                         <button
                                             type="button"
-                                            disabled
-                                            className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
+                                            onClick={() => {
+                                                closeMenu();
+                                                setChamadaModalOpen(true);
+                                            }}
+                                            className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
                                         >
                                             <i className="pi pi-refresh text-xs" aria-hidden="true" />
                                             <span>{chamadaLabel}</span>
                                         </button>
-                                    </Tooltip>
-                                )}
-                                {temChamadaFilha && (
-                                    <Tooltip className='w-full' content="Esta avaliação já possui uma chamada subsequente.">
-                                        <button
-                                            type="button"
-                                            disabled
-                                            className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
-                                        >
-                                            <i className="pi pi-refresh text-xs" aria-hidden="true" />
-                                            <span>{chamadaLabel}</span>
-                                        </button>
-                                    </Tooltip>
-                                )}
-                            </>
-                        )}
-                    </ActionMenu>
-                </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-                {(avaliacao.numeroChamada ?? 1) > 1 && (
-                    <Tag>{avaliacao.numeroChamada}ª Chamada</Tag>
-                )}
-                <Tag>{tipoDisplay}</Tag>
-                <Tag>Peso: {avaliacao.peso}</Tag>
-                <Tag>Data aplicação: {formatarData(avaliacao.data)}</Tag>
-                <Tag>Média mínima da instituição: {mediaMinima}</Tag>
-            </div>
-
-            {media != null && (
-                <div className="bg-white border border-gray-200 rounded-lg px-6 py-4 inline-flex items-center gap-4">
-                    <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wide">Média</p>
-                        <p className="text-3xl font-semibold text-gray-700">{media}</p>
+                                    )}
+                                    {!temChamadaFilha && !temNaoCompareceram && (
+                                        <Tooltip className='w-full' content="Nenhum aluno marcado como não compareceu.">
+                                            <button
+                                                type="button"
+                                                disabled
+                                                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
+                                            >
+                                                <i className="pi pi-refresh text-xs" aria-hidden="true" />
+                                                <span>{chamadaLabel}</span>
+                                            </button>
+                                        </Tooltip>
+                                    )}
+                                    {temChamadaFilha && (
+                                        <Tooltip className='w-full' content="Esta avaliação já possui uma chamada subsequente.">
+                                            <button
+                                                type="button"
+                                                disabled
+                                                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
+                                            >
+                                                <i className="pi pi-refresh text-xs" aria-hidden="true" />
+                                                <span>{chamadaLabel}</span>
+                                            </button>
+                                        </Tooltip>
+                                    )}
+                                </>
+                            )}
+                        </ActionMenu>
                     </div>
-                    <div className="h-10 w-px bg-gray-200" />
-                    <p className="text-sm text-gray-500">
-                        {notasComValor.length} de {notas.length} alunos com nota lançada
-                    </p>
                 </div>
-            )}
-
-            <Table
-                data={notas}
-                rowKey="id"
-                loading={loadingNotas}
-                emptyMessage="Nenhum aluno associado a esta avaliação."
-                onEdit={setNotaEditando}
-            >
-                <Table.Column
-                    header="Aluno"
-                    accessor="alunoNome"
-                />
-                <Table.Column
-                    header="Nota"
-                    render={(nota) =>
-                        nota.valor != null
-                            ? Number(nota.valor).toLocaleString('pt-BR', { minimumFractionDigits: 1 })
-                            : nota.naoRealizada
-                                ? <span className="text-gray-400 italic text-sm">Não compareceu</span>
-                                : '-'
-                    }
-                />
-            </Table>
-
+                <div className="flex flex-wrap gap-2">
+                    {(avaliacao.numeroChamada ?? 1) > 1 && (
+                        <Tag>{avaliacao.numeroChamada}ª Chamada</Tag>
+                    )}
+                    <Tag>{tipoDisplay}</Tag>
+                    <Tag>Peso: {avaliacao.peso}</Tag>
+                    <Tag>Data aplicação: {formatarData(avaliacao.data)}</Tag>
+                    <Tag>Média mínima da instituição: {mediaMinima}</Tag>
+                </div>
+                {media != null && (
+                    <div className="bg-white border border-gray-200 rounded-lg px-6 py-4 inline-flex items-center gap-4">
+                        <div>
+                            <p className="text-xs text-gray-400 uppercase tracking-wide">Média</p>
+                            <p className="text-3xl font-semibold text-gray-700">{media}</p>
+                        </div>
+                        <div className="h-10 w-px bg-gray-200" />
+                        <p className="text-sm text-gray-500">
+                            {notasComValor.length} de {notas.length} alunos com nota lançada
+                        </p>
+                    </div>
+                )}
+                <Table
+                    data={notas}
+                    rowKey="id"
+                    loading={loadingNotas}
+                    emptyMessage="Nenhum aluno associado a esta avaliação."
+                    onEdit={setNotaEditando}
+                >
+                    <Table.Column
+                        header="Aluno"
+                        accessor="alunoNome"
+                    />
+                    <Table.Column
+                        header="Nota"
+                        render={(nota) =>
+                            nota.valor != null
+                                ? Number(nota.valor).toLocaleString('pt-BR', { minimumFractionDigits: 1 })
+                                : nota.naoRealizada
+                                    ? <span className="text-gray-400 italic text-sm">Não compareceu</span>
+                                    : '-'
+                        }
+                    />
+                </Table>
+            </div>
             <EditarNotaModal
                 isOpen={Boolean(notaEditando)}
                 onClose={() => setNotaEditando(null)}
@@ -277,15 +300,14 @@ const AvaliacaoDetalhesPage = () => {
                 saving={savingNota}
                 temChamadaFilha={temChamadaFilha}
             />
-
             <Modal
                 isOpen={chamadaModalOpen}
-                onClose={() => setChamadaModalOpen(false)}
+                onClose={handleCloseChamadaModal}
                 title={`Criar ${chamadaLabel}`}
                 maxWidth="max-w-md"
                 footer={
                     <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => setChamadaModalOpen(false)} disabled={criandoChamada}>
+                        <Button variant="outline" onClick={handleCloseChamadaModal} disabled={criandoChamada}>
                             Cancelar
                         </Button>
                         <Button onClick={handleCriarChamada} disabled={criandoChamada}>
@@ -299,6 +321,20 @@ const AvaliacaoDetalhesPage = () => {
                     <p className="text-sm text-gray-600">
                         Apenas os alunos marcados como <span className="font-medium">não compareceu</span> irão para essa prova.
                     </p>
+                    <DateInput
+                        label="Data da segunda aplicação"
+                        value={dataSegundaChamada}
+                        onChange={(e) => setDataSegundaChamada(e.target.value)}
+                        minDate={(() => {
+                            const d = toJSDate(avaliacao?.data);
+                            if (!d) return undefined;
+                            const next = new Date(d);
+                            next.setDate(next.getDate() + 1);
+                            return next;
+                        })()}
+                        required
+                        fullWidth
+                    />
                     <div>
                         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Alunos</p>
                         <p className="text-sm text-gray-700">

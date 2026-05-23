@@ -1,16 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listarAlunos, listarFaltasPorTurma, calcularMediaPonderadaTurma } from '../../../../api/turmaApi';
-import { Button, Card, Modal, useToast } from '../../../../components/UI';
-import BoletimProgressivoTable from '../../../../components/UI/BoletimProgressivoTable';
+import { getLimites } from '../../../../api/professorApi';
+import {
+    calcularMediaPonderadaTurma,
+    listarAlunos,
+    listarAvaliacoes,
+    listarFaltasPorTurma,
+    listarTodasNotasPorTurma,
+} from '../../../../api/turmaApi';
+import { Button, Tabs, useToast } from '../../../../components/UI';
+import AnualTab from './visaoGeral/AnualTab';
+import PeriodoTab from './visaoGeral/PeriodoTab';
+
+import { INTERVENCAO_CARD_COLORS, INTERVENCOES, fmtN, freqLabel, gradeLabel } from '../../../../utils/intervencaoUtils';
 
 const VisaoGeralTab = ({ turma }) => {
     const navigate = useNavigate();
     const [alunos, setAlunos] = useState([]);
+    const [avaliacoes, setAvaliacoes] = useState([]);
+    const [notasPorAvaliacao, setNotasPorAvaliacao] = useState({});
     const [faltas, setFaltas] = useState([]);
     const [mediaPonderadaData, setMediaPonderadaData] = useState(null);
+    const [limites, setLimites] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [intervencaoSelecionada, setIntervencaoSelecionada] = useState(null);
     const { showError } = useToast();
 
     useEffect(() => {
@@ -20,33 +32,29 @@ const VisaoGeralTab = ({ turma }) => {
 
         Promise.all([
             listarAlunos(turma.id, { ativo: true, page: 0, size: 100 }),
+            listarAvaliacoes(turma.id, null, null, null, { page: 0, size: 200 }),
             listarFaltasPorTurma(turma.id),
             calcularMediaPonderadaTurma(turma.id),
+            getLimites(),
+            listarTodasNotasPorTurma(turma.id),
         ])
-            .then(([alunosData, faltasData, mpData]) => {
+            .then(([alunosData, avaliacoesData, faltasData, mpData, limitesData, todasNotas]) => {
                 setAlunos(alunosData.content ?? []);
+                setAvaliacoes(avaliacoesData.content ?? []);
                 setFaltas(Array.isArray(faltasData) ? faltasData : (faltasData?.content ?? []));
                 setMediaPonderadaData(mpData);
+                setLimites(limitesData);
+
+                const map = {};
+                todasNotas.forEach((nota) => {
+                    if (!map[nota.avaliacaoId]) map[nota.avaliacaoId] = [];
+                    map[nota.avaliacaoId].push(nota);
+                });
+                setNotasPorAvaliacao(map);
             })
             .catch((err) => showError('Erro ao carregar visão geral', err.message))
             .finally(() => setLoading(false));
     }, [turma?.id, showError]);
-
-    const INTERVENCAO_COLORS = {
-        emerald: { border: 'border-t-emerald-400', label: 'text-emerald-700' },
-        sky: { border: 'border-t-sky-400', label: 'text-sky-700' },
-        amber: { border: 'border-t-amber-400', label: 'text-amber-700' },
-        orange: { border: 'border-t-orange-400', label: 'text-orange-700' },
-        red: { border: 'border-t-red-400', label: 'text-red-700' },
-    };
-
-    const intervencoes = [
-        { titulo: 'Não necessária', descricao: 'Desempenho e frequência adequados.', color: 'emerald', icon: 'pi pi-check-circle' },
-        { titulo: 'Em monitoramento', descricao: 'Necessita acompanhamento preventivo.', color: 'sky', icon: 'pi pi-eye' },
-        { titulo: 'Pedagógica', descricao: 'Necessita reforço pedagógico.', color: 'amber', icon: 'pi pi-book' },
-        { titulo: 'Psicossocial', descricao: 'Possíveis fatores sociais ou emocionais.', color: 'orange', icon: 'pi pi-users' },
-        { titulo: 'Urgente', descricao: 'Alto risco de evasão ou reprovação.', color: 'red', icon: 'pi pi-exclamation-triangle' },
-    ];
 
     const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
     const isTrimestral = qtdePeriodosTurma === 3;
@@ -72,45 +80,23 @@ const VisaoGeralTab = ({ turma }) => {
         );
     });
 
-    const calcularMediaAvaliacoes = (numeroPeriodo, tipo) => {
-        const resumo = mediaPonderadaData?.resumoPorPeriodo?.[numeroPeriodo];
-        if (!resumo) return null;
-        const mapa = { PROVA: 'mediaProva', TRABALHO: 'mediaTrabalho', ATIVIDADE: 'mediaAtividade' };
-        return resumo[mapa[tipo]] ?? null;
-    };
+    const rootAvaliacoes = avaliacoes.filter((av) => av.avaliacaoPaiId == null);
 
-    const calcularFrequenciaMedia = (periodo) => {
-        const aulasPrevistas = Number(turma?.qtdeAulasPrevistasPeriodo) || 0;
+    const filhaIdMap = {};
+    rootAvaliacoes.forEach((av) => {
+        if (av.avaliacaoFilhaId) filhaIdMap[av.id] = av.avaliacaoFilhaId;
+    });
 
-        if (aulasPrevistas <= 0 || alunos.length === 0) return null;
-
-        const frequencias = alunos.map((aluno) => {
-            const totalFaltas = faltas
-                .filter((falta) => {
-                    const faltaAlunoId = falta.alunoId ?? falta.aluno?.id;
-
-                    return (
-                        Number(faltaAlunoId) === Number(aluno.id) &&
-                        Number(falta.periodo) === Number(periodo)
-                    );
-                })
-                .reduce(
-                    (total, falta) => total + Number(falta.periodosFaltados ?? 1),
-                    0
-                );
-
-            return ((aulasPrevistas - totalFaltas) / aulasPrevistas) * 100;
-        });
-
-        const soma = frequencias.reduce((total, frequencia) => total + frequencia, 0);
-
-        return Number((soma / frequencias.length).toFixed(1));
-    };
-
-    const formatarValorResumo = (valor, suffix = '') => {
-        if (valor === null || valor === undefined) return '-';
-        return `${String(valor).replace('.', ',')}${suffix}`;
-    };
+    const avaliacoesPorPeriodo = {};
+    for (let p = 1; p <= qtdePeriodos; p++) {
+        avaliacoesPorPeriodo[p] = rootAvaliacoes
+            .filter((av) => Number(av.periodo) === p)
+            .sort((a, b) => {
+                const da = a.dataAplicacao ? new Date(a.dataAplicacao) : new Date(0);
+                const db = b.dataAplicacao ? new Date(b.dataAplicacao) : new Date(0);
+                return da - db || a.id - b.id;
+            });
+    }
 
     if (loading) {
         return (
@@ -157,77 +143,23 @@ const VisaoGeralTab = ({ turma }) => {
     }
 
     return (
-        <div className="space-y-8">
-            <section className="space-y-6">
-                <div>
-                    <h3 className="text-lg font-semibold text-gray-700">
-                        Resumo por {periodoLabel.toLowerCase()}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Indicadores calculados a partir das avaliações e frequências registradas em cada {periodoLabel.toLowerCase()}.
-                    </p>
-                </div>
-
-                {periodosVisiveis.map((periodo) => (
-                    <div key={periodo.numero} className="space-y-4">
-                        <h3 className="text-sm font-semibold uppercase text-gray-700">
-                            {periodo.titulo}
-                        </h3>
-
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
-                            <Card>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                                    Média das provas
-                                </p>
-                                <p className="mt-2 text-2xl font-semibold text-gray-800">
-                                    {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'PROVA'))}
-                                </p>
-                            </Card>
-
-                            <Card>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                                    Média dos trabalhos
-                                </p>
-                                <p className="mt-2 text-2xl font-semibold text-gray-800">
-                                    {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'TRABALHO'))}
-                                </p>
-                            </Card>
-
-                            <Card>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                                    Média das atividades
-                                </p>
-                                <p className="mt-2 text-2xl font-semibold text-gray-800">
-                                    {formatarValorResumo(calcularMediaAvaliacoes(periodo.numero, 'ATIVIDADE'))}
-                                </p>
-                            </Card>
-
-                            <Card>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                                    Frequência média
-                                </p>
-                                <p className="mt-2 text-2xl font-semibold text-gray-800">
-                                    {formatarValorResumo(calcularFrequenciaMedia(periodo.numero), '%')}
-                                </p>
-                            </Card>
-                        </div>
-                    </div>
-                ))}
-            </section>
-
+        <div className="space-y-6">
+            <div>
+                <h2 className="text-lg font-semibold text-gray-700">Visão geral da turma</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                    Tenha uma visão geral do desempenho da turma em cada período letivo.
+                </p>
+            </div>
             <section className="space-y-5">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-700">
-                        Tipos de intervenção
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-700">Tipos de intervenção</h3>
                     <p className="mt-1 text-sm text-gray-500">
-                        Classificação automática baseada na média e frequência dos alunos.
+                        Classificação automática baseada na média final e frequência total dos alunos.
                     </p>
                 </div>
-
                 <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-5">
-                    {intervencoes.map((item) => {
-                        const c = INTERVENCAO_COLORS[item.color];
+                    {INTERVENCOES.map((item) => {
+                        const c = INTERVENCAO_CARD_COLORS[item.color];
                         return (
                             <div
                                 key={item.titulo}
@@ -238,64 +170,46 @@ const VisaoGeralTab = ({ turma }) => {
                                     <span>{item.titulo}</span>
                                 </div>
                                 <p className="text-sm leading-relaxed text-gray-500">{item.descricao}</p>
+                                {/* {limites && (
+                                    <div className="mt-3 space-y-1 border-t border-gray-100 pt-3">
+                                        {item.condicoes.map(([f, g]) => (
+                                            <p key={`${f}|${g}`} className="text-xs text-gray-400">
+                                                {freqLabel(f, limites)} · {gradeLabel(g, limites)}
+                                            </p>
+                                        ))}
+                                    </div>
+                                )} */}
                             </div>
                         );
                     })}
                 </div>
             </section>
-
-            <section className="space-y-5">
-                <div>
-                    <h3 className="text-lg font-semibold text-gray-700">
-                        Boletim progressivo anual
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Acompanhe a média, frequência e sugestão de intervenção dos alunos ao longo do ano letivo.
-                    </p>
-                </div>
-
-                <BoletimProgressivoTable
-                    alunos={alunos}
-                    faltas={faltas}
-                    turma={turma}
-                    mediasAlunos={mediaPonderadaData?.mediasAlunos ?? []}
-                    loading={loading}
-                />
-            </section>
-
-            <Modal
-                isOpen={Boolean(intervencaoSelecionada)}
-                onClose={() => setIntervencaoSelecionada(null)}
-                title={
-                    intervencaoSelecionada
-                        ? `Intervenção: ${intervencaoSelecionada.titulo.toLowerCase()}`
-                        : ''
-                }
-                footer={
-                    <div className="flex justify-end">
-                        <Button variant="outline" onClick={() => setIntervencaoSelecionada(null)}>
-                            Fechar
-                        </Button>
-                    </div>
-                }
-            >
-                <div className="space-y-3">
-                    <p className="text-sm text-gray-500">
-                        Alunos classificados com esta intervenção:
-                    </p>
-
-                    <div className="rounded-xl border border-gray-200 bg-gray-50">
-                        {(intervencaoSelecionada?.alunos ?? []).map((aluno) => (
-                            <div
-                                key={aluno}
-                                className="border-b border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 last:border-b-0"
-                            >
-                                {aluno}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </Modal>
+            <Tabs defaultTab="anual">
+                <Tabs.Tab id="anual" label="Anual">
+                    <AnualTab
+                        alunos={alunos}
+                        faltas={faltas}
+                        turma={turma}
+                        mediasAlunos={mediaPonderadaData?.mediasAlunos ?? []}
+                        limites={limites}
+                    />
+                </Tabs.Tab>
+                {periodosVisiveis.map((periodo) => (
+                    <Tabs.Tab key={periodo.numero} id={String(periodo.numero)} label={periodo.titulo}>
+                        <PeriodoTab
+                            periodo={periodo}
+                            alunos={alunos}
+                            avaliacoes={avaliacoesPorPeriodo[periodo.numero] ?? []}
+                            notasPorAvaliacao={notasPorAvaliacao}
+                            filhaIdMap={filhaIdMap}
+                            faltas={faltas}
+                            mediaPonderadaData={mediaPonderadaData}
+                            limites={limites}
+                            turma={turma}
+                        />
+                    </Tabs.Tab>
+                ))}
+            </Tabs>
         </div>
     );
 };

@@ -248,9 +248,9 @@ const LimitesPage = () => {
                         <p className="mb-3 text-sm font-semibold text-yellow-700">Médio</p>
                         <p className="text-sm text-gray-500">
                             Entre{' '}
-                            <span className="font-medium text-gray-700">{pontosAbaixo || '—'} abaixo</span>
+                            <span className="font-medium text-gray-700">{pontosAbaixo || '-'} abaixo</span>
                             {' '}e{' '}
-                            <span className="font-medium text-gray-700">{pontosAcima || '—'} acima</span>
+                            <span className="font-medium text-gray-700">{pontosAcima || '-'} acima</span>
                             {' '}da média mínima.
                         </p>
                     </div>

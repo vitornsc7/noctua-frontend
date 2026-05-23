@@ -323,7 +323,7 @@ const NovaAvaliacaoPage = () => {
 
             <div className="flex justify-end gap-3">
                 <Button
-                    variant="secondary"
+                    variant="outline"
                     onClick={() => navigate(`/turmas/${turmaId}`, { state: { tab: 'avaliacoes' } })}
                 >
                     Cancelar
