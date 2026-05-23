@@ -163,7 +163,7 @@ const NovaFaltaPage = () => {
                         Média mínima:{' '}
                         {turma.mediaMinima != null
                             ? turma.mediaMinima.toLocaleString('pt-BR', { minimumFractionDigits: 1 })
-                            : '—'}
+                            : '-'}
                     </Tag>
                 </div>
             )}

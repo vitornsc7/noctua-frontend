@@ -92,12 +92,12 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
     });
 
     const formatarNumero = (valor) => {
-        if (valor === null || valor === undefined) return '—';
+        if (valor === null || valor === undefined) return '-';
         return String(valor).replace('.', ',');
     };
 
     const formatarFrequencia = (valor) => {
-        if (valor === null || valor === undefined) return '—';
+        if (valor === null || valor === undefined) return '-';
         return `${formatarNumero(valor)}%`;
     };
 
@@ -115,7 +115,7 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
     };
 
     return (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
             {loading ? (
                 <div className="px-4 py-6 text-sm text-gray-400 italic">
                     Carregando boletim progressivo anual...

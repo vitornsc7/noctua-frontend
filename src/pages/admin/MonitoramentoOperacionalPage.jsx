@@ -3,9 +3,9 @@ import { Card, Input, Select, Table, Tabs, useToast } from '../../components/UI'
 import { buscarLogsAdmin, buscarMonitoramentoAdmin } from '../../api/adminApi';
 
 const formatarData = (valor) => {
-    if (!valor) return '—';
+    if (!valor) return '-';
     const data = new Date(valor.endsWith('Z') ? valor : valor + 'Z');
-    if (Number.isNaN(data.getTime())) return '—';
+    if (Number.isNaN(data.getTime())) return '-';
     return new Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
         month: '2-digit',
