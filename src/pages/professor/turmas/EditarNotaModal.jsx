@@ -142,6 +142,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilh
                         min={0}
                         max={10}
                         value={valor}
+                        step={0.01}
                         onChange={handleValorChange}
                         onBlur={() => trigger('valor')}
                         error={errors.valor?.message}

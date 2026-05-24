@@ -145,6 +145,7 @@ const LancarNotasPage = () => {
                                     numericOnly
                                     min={0}
                                     max={10}
+                                    step={0.01}
                                     value={valores[nota.id] ?? ''}
                                     onChange={(e) => handleChange(nota.id, e.target.value)}
                                     error={errors[nota.id]}

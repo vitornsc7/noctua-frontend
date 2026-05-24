@@ -96,6 +96,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                     maxDecimalDigits={2}
                     min={0}
                     max={10}
+                    step={0.01}
                     fullWidth
                 />
 
