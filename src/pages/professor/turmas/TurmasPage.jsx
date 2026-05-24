@@ -149,7 +149,7 @@ const TurmasPage = () => {
 
             <div className="relative">
                 {loading ? (
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute pt-10 inset-0 flex items-center justify-center">
                         <i className="pi pi-spin pi-spinner text-2xl text-gray-400"></i>
                     </div>
                 ) : (
