@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Input, Button, Checkbox, useToast } from '../../../components/UI';
-import corujinha from '../../../assets/corujinha.png';
+import corujinha from '../../../assets/noctua.svg';
 import { loginSchema, LOGIN_INITIAL_VALUES } from '../authSchema';
 import { getCurrentUser, login, setToken, verifyLogin2FA } from '../../../api/authApi';
 
@@ -104,27 +104,23 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex justify-center items-center bg-[#f6f7f9] px-6 py-6">
             <div className="w-full md:max-w-[420px]">
-                <div className='text-center'>
-                    <img
-                        src={corujinha}
-                        alt="Logo Noctua"
-                        className="w-[58px] h-[58px] object-contain mx-auto mb-1 block"
-                    />
-                    <h1 className="m-0 text-4xl font-medium leading-[1.22] tracking-[-3px] text-gray-900 font-['Inter',sans-serif]">
-                        Noctua
-                    </h1>
-                    <p className="mt-2 mb-5 text-sm text-gray-500">
+                <div>
+                    <div className="flex items-center justify-center">
+                        <span className="text-4xl font-medium tracking-tighter text-primary font-['Inter',sans-serif]">
+                            Noctua
+                        </span>
+                        <img
+                            src={corujinha}
+                            alt="Logo Noctua"
+                            className="w-12 ml-2"
+                        />
+                    </div>
+                    <p className="mt-2 mb-5 text-sm text-gray-500 text-center">
                         <span className="italic">Insights</span> poderosos que mudam a educação.
                     </p>
                 </div>
 
                 <Card
-                    variant="accent"
-                    header={
-                        <h2 className="text-lg font-medium text-gray-700">
-                            {!requiresTwoFactor ? 'Acesso ao portal' : 'Verificação em dois fatores'}
-                        </h2>
-                    }
                     footer={
                         <div className="flex gap-2 items-center justify-between">
                             {!requiresTwoFactor ? (
