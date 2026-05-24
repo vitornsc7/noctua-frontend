@@ -33,33 +33,27 @@ const beneficios = [
 
 export default function PorQueUsarLandingPage() {
     return (
-        <section id="por-que-usar" className="bg-white px-4 py-14 sm:px-6 sm:py-20 lg:px-10">
-            <div className="mx-auto w-full max-w-[1220px]">
-                <div className="text-center">
-                    <h2 className="text-3xl font-bold leading-tight text-gray-950 sm:text-4xl">
-                        Por que usar o Noctua?
-                    </h2>
-                    <p className="mt-3 text-base leading-7 text-gray-500 sm:text-lg">
-                        Desenvolvido por quem entende as dores da sala de aula.
-                    </p>
+        <section id="por-que-usar" className="bg-white">
+            <div className="mx-auto max-w-6xl px-8 py-16">
+                <div>
+                    <h2 className="text-2xl font-semibold text-gray-700">Por que usar o Noctua?</h2>
+                    <p className="mt-2 text-sm text-gray-500">Desenvolvido por quem entende as dores da sala de aula.</p>
                 </div>
 
-                <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                     {beneficios.map((beneficio) => (
                         <article
                             key={beneficio.titulo}
-                            className="rounded-lg border border-gray-200 bg-[#f7f8fa] p-6 shadow-sm"
+                            className="rounded-xl border border-gray-200 bg-[#F6F6F8] p-5"
                         >
-                            <div className="mb-5 flex justify-center lg:justify-start">
-                                <i
-                                    className={`pi ${beneficio.icon} text-xl text-[#1f8fe5]`}
-                                    aria-hidden="true"
-                                />
-                            </div>
-                            <h3 className="text-lg font-bold leading-snug text-gray-950">
+                            <i
+                                className={`pi ${beneficio.icon} text-base text-secondary`}
+                                aria-hidden="true"
+                            />
+                            <h3 className="mt-3 text-sm font-semibold text-gray-700">
                                 {beneficio.titulo}
                             </h3>
-                            <p className="mt-3 text-sm leading-6 text-gray-600">
+                            <p className="mt-2 text-sm text-gray-500">
                                 {beneficio.descricao}
                             </p>
                         </article>

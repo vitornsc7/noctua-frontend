@@ -6,8 +6,8 @@ const FAQItem = ({ pergunta, resposta }) => {
     return (
         <div
             className={`overflow-hidden rounded-xl border transition-colors ${aberto
-                ? 'border-[#1f8fe5]/35 bg-white shadow-sm'
-                : 'border-slate-200 bg-slate-50'
+                ? 'bg-slate-50'
+                : 'border-slate-200 bg-white hover:bg-slate-50'
                 }`}
         >
             <button
@@ -19,17 +19,17 @@ const FAQItem = ({ pergunta, resposta }) => {
                     }`}
                 aria-expanded={aberto}
             >
-                <span className="min-w-0 font-semibold">{pergunta}</span>
+                <span className="min-w-0">{pergunta}</span>
 
                 <i
                     className={`pi ${aberto ? 'pi-chevron-up' : 'pi-chevron-down'
-                        } shrink-0 text-xs ${aberto ? 'text-[#1f8fe5]' : 'text-slate-700'}`}
+                        } shrink-0 text-xs ${aberto ? 'text-secondary' : 'text-slate-700'}`}
                     aria-hidden="true"
                 />
             </button>
 
             {aberto && (
-                <div className="border-t border-[#1f8fe5]/15 bg-white px-4 py-4 text-sm leading-6 text-slate-600 sm:px-5">
+                <div className="border-t border-secondary/15 bg-white px-4 py-4 text-sm leading-6 text-slate-600 sm:px-5">
                     {resposta}
                 </div>
             )}
