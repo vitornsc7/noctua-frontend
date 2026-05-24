@@ -154,7 +154,7 @@ const PeriodoTab = ({
                                         {valor > 0 ? (
                                             <span>{fmtNota(valor)}</span>
                                         ) : (
-                                            naoRealizada ? <Tooltip content="Aluno não realizou a avaliação.">
+                                            naoRealizada ? <Tooltip content="Aluno(a) não realizou a avaliação.">
                                                 <div className="inline-flex items-center gap-1 cursor-default">
                                                     <span>{fmtNota(valor)}</span>
                                                     <i className="pi pi-info-circle text-xs text-gray-400" aria-hidden="true" />

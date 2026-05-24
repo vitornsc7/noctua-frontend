@@ -129,7 +129,6 @@ const AlunosStep = ({ turmaId, initialAlunos, onChange, onNext, onBack, showErro
                                 variant="outline"
                                 onClick={() => setImportModalOpen(true)}
                                 disabled={isBusy}
-                                title="Importar lista de alunos a partir de uma imagem ou PDF usando IA"
                             >
                                 <i className="pi pi-sparkles text-xs" /> Importar com IA
                             </Button>

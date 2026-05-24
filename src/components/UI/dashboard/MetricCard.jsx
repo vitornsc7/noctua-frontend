@@ -1,22 +1,23 @@
 import React from 'react';
 import Card from '../Card';
 
-const MetricCard = ({ title, value, description }) => {
+const MetricCard = ({ title, value, description, icon, accentClass = 'bg-primary/10 text-primary' }) => {
     return (
         <Card className="h-full">
-            <div className="flex h-full min-h-[150px] flex-col items-center justify-center text-center">
-                <p className="text-[17px] font-medium leading-snug text-gray-500">
-                    {title}
-                </p>
+            <div className="flex h-full min-h-[150px] flex-col items-center justify-center gap-3 text-center">
+                {icon && (
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${accentClass}`}>
+                        <i className={`${icon} text-base`} />
+                    </div>
+                )}
 
-                <p className="mt-4 text-3xl font-semibold leading-none text-gray-900">
-                    {value}
-                </p>
+                <div>
+                    <p className="text-[15px] font-medium text-gray-500">{title}</p>
+                    <p className="mt-1 text-3xl font-bold leading-none text-gray-800">{value}</p>
+                </div>
 
                 {description && (
-                    <p className="mt-4 max-w-full whitespace-nowrap text-sm leading-snug text-gray-600">
-                        {description}
-                    </p>
+                    <p className="text-xs text-gray-400">{description}</p>
                 )}
             </div>
         </Card>

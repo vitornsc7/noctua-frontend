@@ -141,6 +141,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         numericOnly
                         maxIntegerDigits={2}
                         maxDecimalDigits={2}
+                        step={0.01}
                         min={0}
                         fullWidth
                         {...getFieldProps('mediaMinima')}

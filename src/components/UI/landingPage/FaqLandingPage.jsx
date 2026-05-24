@@ -1,5 +1,5 @@
 import FAQItem from '../FAQItem';
-import noctuaDoubt from '../../../assets/noctua-doubt.png';
+import noctuaDoubt from '../../../assets/noctua-looking-right.svg';
 
 const perguntasFrequentes = [
     {
@@ -61,34 +61,30 @@ const perguntasFrequentes = [
 
 export default function FaqLandingPage() {
     return (
-        <section id="faq" className="relative z-10 bg-[#f6f7f9] px-4 pb-8 pt-12 sm:px-6 sm:pt-16 lg:px-10 lg:pb-10">
-            <div className="mx-auto grid w-full max-w-[1220px] gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] lg:items-start lg:gap-16">
-                <div className="order-2 grid min-w-0 gap-3 lg:order-1">
-                    {perguntasFrequentes.map((item) => (
-                        <FAQItem
-                            key={item.pergunta}
-                            pergunta={item.pergunta}
-                            resposta={item.resposta}
+        <section id="faq" className="bg-[#F6F6F8]">
+            <div className="mx-auto max-w-6xl px-8 py-16">
+                <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
+                    <div className="lg:sticky lg:top-24 lg:w-72 lg:shrink-0">
+                        <h2 className="text-2xl font-semibold text-gray-700">Perguntas frequentes</h2>
+                        <p className="mt-2 text-sm text-gray-500">
+                            Encontre respostas sobre o funcionamento da Noctua, seus indicadores e o uso da plataforma no dia a dia pedagógico.
+                        </p>
+                        <img
+                            src={noctuaDoubt}
+                            alt="Noctua com dúvida"
+                            className="mt-6 hidden w-full max-w-[220px] object-contain lg:block"
                         />
-                    ))}
-                </div>
+                    </div>
 
-                <div className="order-1 flex min-w-0 flex-col items-start lg:sticky lg:top-24 lg:order-2">
-                    <span className="text-sm font-semibold uppercase tracking-[0.14em] text-[#1f8fe5]">
-                        Perguntas frequentes
-                    </span>
-                    <h2 className="mt-3 text-3xl font-bold leading-tight text-gray-950 sm:text-4xl md:text-[2.75rem]">
-                        Tire suas dúvidas sobre a Noctua
-                    </h2>
-                    <p className="mt-4 max-w-md text-base leading-7 text-gray-500 sm:mt-5 sm:text-lg sm:leading-8">
-                        Encontre respostas rápidas sobre o funcionamento da Noctua, seus indicadores e o uso da plataforma no dia a dia pedagógico.
-                    </p>
-
-                    <img
-                        src={noctuaDoubt}
-                        alt="Noctua com dúvida"
-                        className="mt-5 hidden w-full max-w-[340px] self-center object-contain md:block lg:max-w-[420px] lg:self-end xl:max-w-[520px] xl:translate-x-[calc((100vw-1220px)/2+2.5rem)]"
-                    />
+                    <div className="grid min-w-0 flex-1 gap-3">
+                        {perguntasFrequentes.map((item) => (
+                            <FAQItem
+                                key={item.pergunta}
+                                pergunta={item.pergunta}
+                                resposta={item.resposta}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>

@@ -21,7 +21,7 @@ export default function LandingPageHeader() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
-            <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:gap-6 lg:px-10">
+            <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-8 py-4">
                 <div className="flex min-w-0 items-center gap-4 lg:gap-8">
                     <a href="#inicio" className="flex items-center gap-2 text-gray-900">
                         <span className="text-xl font-semibold leading-none">

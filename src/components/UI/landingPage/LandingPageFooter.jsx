@@ -2,25 +2,14 @@ import { Link } from 'react-router-dom';
 
 export default function LandingPageFooter() {
     return (
-        <footer className="relative overflow-hidden bg-white" aria-label="Rodape da landing page">
-            <svg
-                className="block h-8 w-full sm:h-10 lg:h-12"
-                viewBox="0 0 1440 180"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-            >
-                <path
-                    fill="#d8efff"
-                    d="M0 122C170 118 300 112 450 96C620 78 760 52 930 42C1120 30 1290 38 1440 28V180H0V122Z"
-                />
-            </svg>
-            <div className="bg-[#d8efff] px-4 pb-5 pt-1 sm:px-6 sm:pb-6 lg:px-10">
-                <div className="mx-auto grid w-full max-w-[1440px] gap-5 sm:grid-cols-2 sm:gap-7 lg:grid-cols-[minmax(320px,1fr)_180px_minmax(0,290px)] lg:items-start lg:gap-16">
-                    <div className="max-w-xl sm:col-span-2 lg:col-span-1">
-                        <p className="text-2xl font-semibold leading-none text-gray-950 sm:text-4xl lg:text-5xl">
+        <footer className="bg-[#d8efff]" aria-label="Rodape da landing page">
+            <div className="px-8 py-10 max-w-6xl mx-auto">
+                <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-[1fr_160px_260px] lg:items-start lg:gap-16">
+                    <div className="sm:col-span-2 lg:col-span-1">
+                        <p className="text-xl font-semibold text-gray-700">
                             Noctua
                         </p>
-                        <p className="mt-2 max-w-md text-sm leading-6 text-gray-700 sm:mt-4 sm:text-base sm:leading-7">
+                        <p className="mt-2 max-w-sm text-sm text-gray-500">
                             Insights poderosos que mudam a educação.
                         </p>
                     </div>

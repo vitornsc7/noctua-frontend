@@ -280,7 +280,7 @@ const Input = forwardRef(({
         if (numMin !== null && num < numMin) num = numMin;
 
         const formatted = numericOnly
-            ? num.toFixed(2).replace('.', ',')
+            ? num.replace('.', ',')
             : String(num);
 
         if (formatted !== String(event.target.value)) {

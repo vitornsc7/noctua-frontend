@@ -1,39 +1,50 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const PendingEvaluationAlert = ({
     turma,
     tipo,
     tema,
     diasPendentes,
-    onAdjust,
+    alunosSemNota,
+    avaliacaoId,
+    turmaId,
 }) => {
     return (
-        <div className="flex flex-col gap-4 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-4">
-                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
-                    <i className="pi pi-exclamation-triangle text-sm" />
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50/50 px-4 py-3">
+            <div className="flex items-start gap-3 min-w-0">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                    <i className="pi pi-file-edit text-xs" />
                 </div>
 
-                <div>
-                    <p className="text-sm font-semibold text-gray-800">{turma}</p>
-
-                    <p className="mt-1 text-sm text-gray-700">
-                        {tipo}: <span className="font-medium">{tema}</span>
-                    </p>
-
-                    <p className="mt-1 text-xs text-gray-500">
-                        Cadastrada há {diasPendentes} dias e ainda sem notas lançadas.
-                    </p>
+                <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2">
+                        <p className="text-sm font-semibold text-gray-800">{turma}</p>
+                        <span className="text-xs text-gray-400">·</span>
+                        <p className="text-xs text-gray-500">{tipo}</p>
+                    </div>
+                    <p className="mt-0.5 truncate text-sm text-gray-700">{tema}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                        <span className="text-xs text-gray-400">
+                            <i className="pi pi-clock mr-1 text-[10px]" />
+                            {diasPendentes} dias sem nota
+                        </span>
+                        {alunosSemNota > 0 && (
+                            <span className="text-xs font-medium text-amber-700">
+                                <i className="pi pi-user mr-1 text-[10px]" />
+                                {alunosSemNota} aluno{alunosSemNota > 1 ? 's' : ''} pendente{alunosSemNota > 1 ? 's' : ''}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            <button
-                type="button"
-                onClick={onAdjust}
-                className="self-start rounded-xl px-3 py-2 text-sm font-medium text-primary transition hover:bg-white/70 hover:underline sm:self-center"
+            <Link
+                to={`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/lancar-notas`}
+                className="shrink-0 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-700 transition hover:bg-amber-50"
             >
-                Ajustar
-            </button>
+                Lançar notas
+            </Link>
         </div>
     );
 };
