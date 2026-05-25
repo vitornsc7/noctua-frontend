@@ -101,26 +101,23 @@ const DashboardPage = () => {
 
                 <MetricCard
                     title="Alunos"
-                    value={metricas?.totalAlunos ?? '—'}
+                    value={metricas?.totalAlunos ?? '-'}
                     description="Alunos ativos"
                     icon="pi pi-users"
-                    accentClass="bg-blue-100 text-blue-600"
                 />
 
                 <MetricCard
                     title="Turmas"
-                    value={metricas?.totalTurmas ?? '—'}
+                    value={metricas?.totalTurmas ?? '-'}
                     description="Turmas ativas"
                     icon="pi pi-book"
-                    accentClass="bg-violet-100 text-violet-600"
                 />
 
                 <MetricCard
                     title="Avaliações"
-                    value={metricas?.totalAvaliacoes ?? '—'}
+                    value={metricas?.totalAvaliacoes ?? '-'}
                     description="Avaliações cadastradas"
                     icon="pi pi-file-edit"
-                    accentClass="bg-emerald-100 text-emerald-600"
                 />
             </div>
             <PendingAlertsSection alerts={pendingAlerts} loading={loadingAlerts} />

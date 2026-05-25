@@ -27,7 +27,7 @@ const WelcomeCard = () => {
                     <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
                         {hojeFormatado}
                     </p>
-                    <h2 className="mt-1 text-2xl font-semibold leading-tight text-gray-800">
+                    <h2 className="mt-1 text-2xl font-semibold leading-tight text-primary">
                         Olá, {firstName}!
                     </h2>
                     <p className="mt-2 text-sm text-gray-500">
