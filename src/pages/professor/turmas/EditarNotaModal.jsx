@@ -109,8 +109,8 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilh
                         variant="primary"
                         onClick={handleSubmit(onSubmit)}
                         disabled={saving}
+                        isLoading={saving}
                     >
-                        {saving && <i className="pi pi-spin pi-spinner text-xs" />}
                         Salvar
                     </Button>
                 </div>

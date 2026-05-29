@@ -158,8 +158,9 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                                 type="submit"
                                 form="dados-cadastrais-form"
                                 disabled={loading}
+                                isLoading={loading}
                             >
-                                {loading ? 'Salvando...' : 'Salvar'}
+                                Salvar
                             </Button>
                         </div>
                     </div>
@@ -219,8 +220,9 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                             onClick={excluirConta}
                             disabled={excluindoConta}
                             className="bg-red-600 hover:bg-red-700"
+                            isLoading={excluindoConta}
                         >
-                            {excluindoConta ? 'Excluindo...' : 'Excluir conta'}
+                            Excluir conta
                         </Button>
                     </div>
                 </div>

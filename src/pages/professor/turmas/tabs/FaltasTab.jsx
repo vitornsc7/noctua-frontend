@@ -245,8 +245,7 @@ const FaltasTab = ({ turma }) => {
                         <Button variant="outline" onClick={() => setFaltaParaExcluir(null)} disabled={isDeleting}>
                             Cancelar
                         </Button>
-                        <Button onClick={handleConfirmarExclusao} disabled={isDeleting}>
-                            {isDeleting && <i className="pi pi-spin pi-spinner"></i>}
+                        <Button onClick={handleConfirmarExclusao} disabled={isDeleting} isLoading={isDeleting}>
                             Excluir
                         </Button>
                     </div>

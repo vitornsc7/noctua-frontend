@@ -12,7 +12,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                 variant="outline"
                 onClick={onCancel}
                 disabled={isSubmitting || isCloningTurma || isCancelling}
-                leftIcon={isCancelling ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+                isLoading={isCancelling}
             >
                 Cancelar
             </Button>
@@ -20,7 +20,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                 variant="primary"
                 onClick={onSubmit}
                 disabled={isSubmitting || isCloningTurma || isCancelling}
-                leftIcon={isSubmitting ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+                isLoading={isSubmitting}
             >
                 {label}
             </Button>

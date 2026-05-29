@@ -310,8 +310,7 @@ const AvaliacaoDetalhesPage = () => {
                         <Button variant="outline" onClick={handleCloseChamadaModal} disabled={criandoChamada}>
                             Cancelar
                         </Button>
-                        <Button onClick={handleCriarChamada} disabled={criandoChamada}>
-                            {criandoChamada && <i className="pi pi-spin pi-spinner" aria-hidden="true" />}
+                        <Button onClick={handleCriarChamada} disabled={criandoChamada} isLoading={criandoChamada}>
                             Confirmar
                         </Button>
                     </div>

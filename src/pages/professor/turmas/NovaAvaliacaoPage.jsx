@@ -331,8 +331,8 @@ const NovaAvaliacaoPage = () => {
                 <Button
                     onClick={handleSalvar}
                     disabled={saving}
+                    isLoading={saving}
                 >
-                    {saving && <i className="pi pi-spin pi-spinner" aria-hidden="true" />}
                     Salvar
                 </Button>
             </div>

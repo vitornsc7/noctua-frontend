@@ -52,7 +52,7 @@ const Button = ({
             {...rest}
         >
             {isLoading
-                ? <i className="pi pi-spin pi-spinner flex-shrink-0" />
+                ? <i className="pi pi-spin pi-spinner text-xs flex-shrink-0" />
                 : leftIcon && <span className="flex-shrink-0">{leftIcon}</span>
             }
             {children}

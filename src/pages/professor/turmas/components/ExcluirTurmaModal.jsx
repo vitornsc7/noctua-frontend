@@ -18,8 +18,8 @@ const ExcluirTurmaModal = ({ isOpen, turmaNome, isDeleting, onClose, onConfirm }
                     <Button variant="outline" onClick={onClose} disabled={isDeleting}>
                         Não
                     </Button>
-                    <Button onClick={onConfirm} disabled={isDeleting}>
-                        {isDeleting ? 'Excluindo...' : 'Sim'}
+                    <Button onClick={onConfirm} disabled={isDeleting} isLoading={isDeleting}>
+                        Sim
                     </Button>
                 </div>
             }

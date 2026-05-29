@@ -142,7 +142,7 @@ export default function LoginPage() {
                                 form={!requiresTwoFactor ? "login-form" : undefined}
                                 onClick={requiresTwoFactor ? handleVerify2FA : undefined}
                                 disabled={carregando}
-                                leftIcon={carregando ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+                                isLoading={carregando}
                             >
                                 {requiresTwoFactor ? 'Validar código' : 'Entrar'}
                             </Button>

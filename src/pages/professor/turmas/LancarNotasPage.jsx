@@ -169,8 +169,8 @@ const LancarNotasPage = () => {
                 <Button
                     onClick={handleSalvar}
                     disabled={saving || notas.length === 0}
+                    isLoading={saving}
                 >
-                    {saving && <i className="pi pi-spin pi-spinner" aria-hidden="true" />}
                     Lançar notas
                 </Button>
             </div>

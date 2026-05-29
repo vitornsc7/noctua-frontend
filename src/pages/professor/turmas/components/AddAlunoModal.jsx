@@ -54,7 +54,7 @@ const AddAlunoModal = ({
                         variant="primary"
                         onClick={handleSubmit(onSubmit)}
                         disabled={isLoading}
-                        leftIcon={isLoading ? <i className="pi pi-spin pi-spinner text-xs" /> : undefined}
+                        isLoading={isLoading}
                     >
                         {isEditing ? 'Salvar' : 'Adicionar'}
                     </Button>

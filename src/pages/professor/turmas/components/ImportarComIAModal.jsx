@@ -106,11 +106,14 @@ const ImportarComIAModal = ({ isOpen, onClose, onImport, isLoading }) => {
             <Button variant="outline" onClick={onClose} disabled={isLoading}>
                 Cancelar
             </Button>
-            <Button variant="primary" onClick={() => onImport(file)} disabled={!file || isLoading}>
-                {isLoading
-                    ? <><i className="pi pi-spin pi-spinner text-xs" /> Importando...</>
-                    : <><i className="pi pi-sparkles text-xs" /> Importar</>
-                }
+            <Button
+                variant="primary"
+                onClick={() => onImport(file)}
+                disabled={!file || isLoading}
+                isLoading={isLoading}
+                leftIcon={!isLoading ? <i className="pi pi-sparkles text-xs" /> : undefined}
+            >
+                Importar
             </Button>
         </div>
     );

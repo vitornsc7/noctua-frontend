@@ -99,8 +99,8 @@ export default function RegisterPage() {
                                 type="submit"
                                 form="register-form"
                                 disabled={carregando}
+                                isLoading={carregando}
                             >
-                                {carregando && <i className="pi pi-spinner pi-spin" />}
                                 Cadastrar
                             </Button>
                         </div>
