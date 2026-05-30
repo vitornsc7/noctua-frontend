@@ -231,33 +231,29 @@ const NovaAvaliacaoPage = () => {
                         error={errors.peso?.message}
                     />
 
-                    <div className="flex gap-4">
-                        <div className="flex-1">
-                            <DateInput
-                                label="Data de aplicação"
-                                value={formValues.data}
-                                onChange={handleChange('data')}
-                                required
-                                fullWidth
-                                error={errors.data?.message}
-                            />
-                        </div>
-                        <div className="flex-1">
-                            <Select
-                                label={periodoLabel}
-                                value={formValues.periodo}
-                                onChange={handleChange('periodo')}
-                                fullWidth
-                                required
-                                error={errors.periodo?.message}
-                            >
-                                {periodoOptions.map((op) => (
-                                    <Select.Option key={op.value} value={op.value}>
-                                        {op.label}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <DateInput
+                            label="Data de aplicação"
+                            value={formValues.data}
+                            onChange={handleChange('data')}
+                            required
+                            fullWidth
+                            error={errors.data?.message}
+                        />
+                        <Select
+                            label={periodoLabel}
+                            value={formValues.periodo}
+                            onChange={handleChange('periodo')}
+                            fullWidth
+                            required
+                            error={errors.periodo?.message}
+                        >
+                            {periodoOptions.map((op) => (
+                                <Select.Option key={op.value} value={op.value}>
+                                    {op.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
                     </div>
                 </div>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../Button';
 
@@ -13,6 +13,20 @@ const shortcuts = [
 export default function LandingPageHeader() {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const headerRef = useRef(null);
+
+    const handleNavClick = (e, href) => {
+        e.preventDefault();
+        setIsMenuOpen(false);
+
+        const targetId = href.replace('#', '');
+        const target = document.getElementById(targetId);
+        if (!target) return;
+
+        const headerHeight = headerRef.current?.offsetHeight ?? 0;
+        target.style.scrollMarginTop = `${headerHeight}px`;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
     const handleRegister = () => {
         setIsMenuOpen(false);
@@ -20,10 +34,10 @@ export default function LandingPageHeader() {
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
+        <header ref={headerRef} className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-8 py-4">
                 <div className="flex min-w-0 items-center gap-4 lg:gap-8">
-                    <a href="#inicio" className="flex items-center gap-2 text-gray-900">
+                    <a href="#inicio" onClick={(e) => handleNavClick(e, '#inicio')} className="flex items-center gap-2 text-gray-900">
                         <span className="text-xl font-semibold leading-none">
                             Noctua
                         </span>
@@ -34,6 +48,7 @@ export default function LandingPageHeader() {
                             <a
                                 key={shortcut.href}
                                 href={shortcut.href}
+                                onClick={(e) => handleNavClick(e, shortcut.href)}
                                 className="px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
                             >
                                 {shortcut.label}
@@ -66,21 +81,21 @@ export default function LandingPageHeader() {
             </div>
 
             {isMenuOpen && (
-                <div className="border-t border-gray-200 bg-white px-4 py-4 shadow-sm lg:hidden">
+                <div className="border-t border-gray-200 bg-white px-5 py-4 shadow-sm lg:hidden">
                     <nav className="grid gap-1" aria-label="Menu da landing page">
                         {shortcuts.map((shortcut) => (
                             <a
                                 key={shortcut.href}
                                 href={shortcut.href}
-                                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-950"
-                                onClick={() => setIsMenuOpen(false)}
+                                onClick={(e) => handleNavClick(e, shortcut.href)}
+                                className="rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-950"
                             >
                                 {shortcut.label}
                             </a>
                         ))}
                     </nav>
 
-                    <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-4">
+                    <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-4 px-3">
                         <Link
                             to="/login"
                             className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-gray-200 px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-950"

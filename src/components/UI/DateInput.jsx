@@ -56,7 +56,7 @@ const DateInput = ({
     ].filter(Boolean).join(' ');
 
     return (
-        <div className={`flex flex-col gap-1.5 ${fullWidth ? 'w-full' : ''} ${className}`}>
+        <div className={`flex flex-col gap-1 ${fullWidth ? 'w-full' : ''} ${className}`}>
             {label && (
                 <label className="text-sm font-medium text-gray-700">
                     {label}

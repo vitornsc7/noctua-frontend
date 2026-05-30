@@ -16,11 +16,11 @@ const WelcomeCard = () => {
 
     return (
         <Card className="relative h-full overflow-hidden">
-            <div className="relative flex h-full min-h-[150px] items-center">
+            <div className="relative flex h-full min-h-[130px] items-center">
                 <img
                     src={wavingNoctua}
                     alt="Noctua acenando"
-                    className="h-28 w-28 shrink-0"
+                    className="h-28 w-28 shrink-0 hidden md:block"
                 />
 
                 <div className="ml-6">

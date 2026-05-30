@@ -105,7 +105,7 @@ const AlunosTab = ({ turma }) => {
                             </p>
                         )} */}
                     </div>
-                    <div className="grid grid-cols-3">
+                    <div className="grid md:grid-cols-3 sm:grid-cols-1">
                         <Select
                             label="Matrícula"
                             value={filtroMatricula}
