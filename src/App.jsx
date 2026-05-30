@@ -21,7 +21,7 @@ import ResetPasswordPage from "./pages/authentication/forgotPassword/ResetPasswo
 import MonitoramentoOperacionalPage from './pages/admin/MonitoramentoOperacionalPage';
 import ConfiguracoesAdminPage from './pages/admin/ConfiguracoesAdminPage';
 import CentralDeAjudaPage from "./pages/ajuda/CentralDeAjudaPage";
-import NovaFaltaPage from "./pages/professor/turmas/NovaFaltaPage";
+import LancarFaltasPage from "./pages/professor/turmas/LancarFaltasPage";
 import LimitesPage from "./pages/professor/configuration/LimitesPage";
 import LancarNotasPage from "./pages/professor/turmas/LancarNotasPage";
 import PoliticaPrivacidadePage from "./pages/PoliticaPrivacidadePage";
@@ -134,7 +134,7 @@ export default function App() {
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId/editar" element={<NovaAvaliacaoPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId/lancar-notas" element={<LancarNotasPage />} />
                   <Route path="turmas/:id/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhesPage />} />
-                  <Route path="turmas/:id/faltas/nova" element={<NovaFaltaPage />} />
+                  <Route path="turmas/:id/faltas/nova" element={<LancarFaltasPage />} />
                   <Route path="configuracoes/2fa" element={<TwoFactorSetupPage />} />
                   <Route path="configuracoes/limites" element={<LimitesPage />} />
                   <Route path="ajuda" element={<CentralDeAjudaPage />} />
