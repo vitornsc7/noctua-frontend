@@ -4,14 +4,15 @@ import PendingEvaluationAlert from './PendingEvaluationCard';
 
 const PendingAlertsSection = ({ alerts, loading }) => {
     const hasAlerts = alerts.length > 0;
+    console.log(alerts)
 
     return (
         <Card>
-            <div className="p-2">
+            <div>
                 <div className="mb-4 flex items-center justify-between">
                     <div>
                         <h2 className="text-lg font-semibold text-gray-600">
-                            {loading ? 'Pendências de notas' : hasAlerts ? <><i className="pi pi-exclamation-triangle mr-1" /> Pendências de notas</> : 'Tudo em dia'}
+                            {loading ? 'Pendências de notas' : hasAlerts ? <><i className="pi pi-info-circle mr-1" /> Pendências de notas</> : 'Tudo em dia'}
                         </h2>
                         <p className="text-sm text-gray-500">
                             {loading
@@ -23,7 +24,7 @@ const PendingAlertsSection = ({ alerts, loading }) => {
                     </div>
 
                     {!loading && hasAlerts && (
-                        <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                        <span className="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-700">
                             {alerts.length}
                         </span>
                     )}
