@@ -99,7 +99,7 @@ const DateInput = ({
             )}
             {error && (
                 <p className="text-xs text-red-600 flex items-center gap-1">
-                    <i className="pi pi-exclamation-circle text-xs" aria-hidden="true" />
+                    {/* <i className="pi pi-exclamation-circle text-xs" aria-hidden="true" /> */}
                     {error}
                 </p>
             )}

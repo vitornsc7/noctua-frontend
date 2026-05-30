@@ -280,7 +280,7 @@ const Input = forwardRef(({
         if (numMin !== null && num < numMin) num = numMin;
 
         const formatted = numericOnly
-            ? num.replace('.', ',')
+            ? String(num).replace('.', ',')
             : String(num);
 
         if (formatted !== String(event.target.value)) {
@@ -505,7 +505,7 @@ const Input = forwardRef(({
 
             {error && (
                 <p className="text-xs text-red-600 flex items-center gap-1">
-                    <i className="pi pi-exclamation-circle text-xs"></i>
+                    {/* <i className="pi pi-exclamation-circle text-xs"></i> */}
                     {error}
                 </p>
             )}
