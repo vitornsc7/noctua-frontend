@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ActionMenu, Button, DateInput, Modal, Tag, Table, Tooltip, useToast } from '../../../components/UI';
 import { buscarAvaliacaoPorId, buscarTurmaPorId, criarChamada, listarNotasPorAvaliacao, atualizarNota } from '../../../api/turmaApi';
-import { TIPO_AVALIACAO_DISPLAY, displayLabel, normalizeNumber } from '../../../utils/displayMaps';
+import { TIPO_AVALIACAO_DISPLAY, displayLabel, normalizeNumber, fmtNota } from '../../../utils/displayMaps';
 import TurmaTags from './components/TurmaTags';
 import EditarNotaModal from './EditarNotaModal';
 
@@ -283,10 +283,15 @@ const AvaliacaoDetalhesPage = () => {
                     <Table.Column
                         header="Nota"
                         render={(nota) =>
-                            nota.valor != null
+                            nota.valor != null && !nota.naoRealizada
                                 ? Number(nota.valor).toLocaleString('pt-BR', { minimumFractionDigits: 1 })
                                 : nota.naoRealizada
-                                    ? <span className="text-gray-400 italic text-sm">Não compareceu</span>
+                                    ? <Tooltip content="Aluno(a) não realizou a avaliação.">
+                                        <div className="inline-flex items-center gap-1 cursor-default">
+                                            <span>{fmtNota(nota.valor)}</span>
+                                            <i className="pi pi-info-circle text-xs text-gray-400" aria-hidden="true" />
+                                        </div>
+                                    </Tooltip>
                                     : '-'
                         }
                     />
