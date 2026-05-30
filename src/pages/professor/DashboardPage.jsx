@@ -30,6 +30,8 @@ const DashboardPage = () => {
                     tema: aviso.tema,
                     diasPendentes: aviso.diasPendentes,
                     alunosSemNota: aviso.alunosSemNota,
+                    turmaId: aviso.turmaId,
+                    avaliacaoId: aviso.avaliacaoId,
                     onAdjust: () =>
                         navigate(
                             `/turmas/${aviso.turmaId}/avaliacoes/${aviso.avaliacaoId}/lancar-notas`
