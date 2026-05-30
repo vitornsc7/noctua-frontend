@@ -80,6 +80,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
             isOpen={isOpen}
             onClose={onClose}
             title="Editar turma"
+            maxWidth="max-w-2xl"
             footer={
                 <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={onClose}>
@@ -129,7 +130,6 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         integerOnly
                         min={1}
                         max={200}
-                        maxChars={3}
                         fullWidth
                         {...getFieldProps('qtdeAulasPrevistasPeriodo')}
                     />
@@ -137,7 +137,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         label="Média mínima"
                         required
                         tooltip="Média mínima da instituição, utilizada no cálculo da matriz de intervenção."
-                        placeholder="Ex: 7.0"
+                        placeholder="Ex: 7"
                         numericOnly
                         maxIntegerDigits={2}
                         maxDecimalDigits={2}
