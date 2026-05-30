@@ -60,3 +60,13 @@ export const normalizeNumber = (value) => {
     if (Number.isNaN(num)) return '';
     return num.toFixed(2).replace('.', ',');
 };
+
+/**
+ * Formats a grade value to pt-BR locale with 2 decimal places, or '-' if null.
+ * @param {number|null|undefined} n
+ * @returns {string}
+ */
+export const fmtNota = (n) =>
+    n != null
+        ? Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : '-';
