@@ -32,7 +32,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
             footer={footer}
             header={<h2 className="text-lg font-medium text-gray-700">Informações gerais</h2>}
         >
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <Input
                     label="Nome da turma"
                     required
@@ -79,9 +79,10 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                     label="Aulas previstas por período"
                     required
                     placeholder="Ex: 20"
+                    max={200}
+                    min={1}
                     {...getTurmaFieldProps('qtdeAulasPrevistasPeriodo')}
                     integerOnly
-                    maxChars={3}
                     fullWidth
                 />
 

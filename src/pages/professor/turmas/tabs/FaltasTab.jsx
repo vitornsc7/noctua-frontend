@@ -5,6 +5,14 @@ import EditarFaltaModal from '../EditarFaltaModal';
 import { Link } from 'react-router-dom';
 import { PERIODO_LABEL } from '../../../../utils/displayMaps';
 
+const hojeISO = () => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+};
+
 const formatarData = (data) => {
     if (!data) return '-';
     return new Date(data).toLocaleDateString('pt-BR');
@@ -32,7 +40,7 @@ const FaltasTab = ({ turma }) => {
     const [faltaParaExcluir, setFaltaParaExcluir] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [filtroPeriodo, setFiltroPeriodo] = useState('todos');
-    const [filtroData, setFiltroData] = useState('');
+    const [filtroData, setFiltroData] = useState(hojeISO());
     const [filtroAluno, setFiltroAluno] = useState('todos');
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
@@ -80,12 +88,12 @@ const FaltasTab = ({ turma }) => {
 
     const handleLimparFiltros = () => {
         setFiltroPeriodo('todos');
-        setFiltroData('');
+        setFiltroData(hojeISO());
         setFiltroAluno('todos');
         setPage(0);
     };
 
-    const temFiltroAtivo = filtroPeriodo !== 'todos' || filtroData !== '' || filtroAluno !== 'todos';
+    const temFiltroAtivo = filtroPeriodo !== 'todos' || filtroData !== hojeISO() || filtroAluno !== 'todos';
 
     const handleSalvarEdicao = async (formData) => {
         try {
@@ -138,7 +146,7 @@ const FaltasTab = ({ turma }) => {
                         to={`/turmas/${turma.id}/faltas/nova`}
                         className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
                     >
-                        Nova falta
+                        Lançar faltas
                     </Link>
                 </div>
                 <div className='space-y-2'>

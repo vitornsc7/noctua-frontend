@@ -256,7 +256,7 @@ const Select = forwardRef(({
 
     const stateClasses = hasError
         ? 'border-red-300 focus:ring-red-200 focus:border-red-300'
-        : 'border-gray-300 hover:border-gray-400 focus:ring-primary focus:border-primary';
+        : 'border-gray-300 focus:ring-primary focus:border-primary';
 
     const disabledClasses = isBlocked
         ? 'bg-gray-100 opacity-60'

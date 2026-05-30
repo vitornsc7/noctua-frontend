@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Table, Tooltip } from '../../../../../components/UI';
-import { TIPO_AVALIACAO_DISPLAY, displayLabel } from '../../../../../utils/displayMaps';
+import { TIPO_AVALIACAO_DISPLAY, displayLabel, fmtNota } from '../../../../../utils/displayMaps';
 import { INTERVENCAO_ICON, INTERVENCAO_TEXT_COLOR, getIntervencao } from '../../../../../utils/intervencaoUtils';
 
 const PeriodoTab = ({
@@ -14,11 +14,6 @@ const PeriodoTab = ({
     limites,
     turma,
 }) => {
-    const fmtNota = (n) =>
-        n != null
-            ? Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-            : '-';
-
     const fmtFreq = (n) => (n != null ? `${String(n).replace('.', ',')}%` : '-');
 
     const fmtResumo = (valor, suffix = '') => {

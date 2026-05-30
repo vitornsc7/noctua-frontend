@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DateInput, Input, Modal, Select } from '../../../components/UI';
+import { Button, DateInput, Input, Modal, Select, Tooltip } from '../../../components/UI';
 
 const formatarDataParaInput = (data) => {
     if (!data) return '';
@@ -90,6 +90,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     label="Aluno"
                     required
                     placeholder="Selecione o aluno"
+                    disabled
                     value={form.alunoId}
                     onChange={handleChange('alunoId')}
                     fullWidth
@@ -101,13 +102,16 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                     ))}
                 </Select>
 
+
                 <Select
                     label={periodoLabel}
                     required
                     placeholder={`Selecione o ${periodoLabel.toLowerCase()}`}
                     value={form.periodo}
                     onChange={handleChange('periodo')}
+                    disabled
                     fullWidth
+                    tooltip="O período só pode ser alterado na tela de lançamento de faltas."
                 >
                     {periodos.map((periodo) => (
                         <Select.Option key={periodo} value={periodo}>
@@ -119,6 +123,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
                 <DateInput
                     label="Data da falta"
                     required
+                    disabled
                     value={form.dataFalta}
                     onChange={handleChange('dataFalta')}
                     fullWidth

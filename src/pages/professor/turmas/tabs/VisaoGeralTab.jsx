@@ -144,12 +144,12 @@ const VisaoGeralTab = ({ turma }) => {
 
     return (
         <div className="space-y-6">
-            <div>
+            {/* <div>
                 <h2 className="text-lg font-semibold text-gray-700">Visão geral da turma</h2>
                 <p className="mt-1 text-sm text-gray-500">
                     Tenha uma visão geral do desempenho da turma em cada período letivo.
                 </p>
-            </div>
+            </div> */}
             <section className="space-y-5">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-700">Tipos de intervenção</h3>
