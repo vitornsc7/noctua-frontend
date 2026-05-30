@@ -1,6 +1,7 @@
-import React, { forwardRef, useState, useRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useLayoutEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import Tooltip from './Tooltip';
 
 /**
  * @param {Object} props
@@ -16,6 +17,7 @@ import PropTypes from 'prop-types';
  */
 const Select = forwardRef(({
     label,
+    tooltip,
     placeholder = "Selecione uma opção",
     children,
     error,
@@ -79,7 +81,7 @@ const Select = forwardRef(({
         };
     }, [isOpen]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!isOpen) return undefined;
 
         const updatePosition = () => {
@@ -146,11 +148,11 @@ const Select = forwardRef(({
         }
     }, [focusedIndex]);
 
-    const handleToggle = () => {
-        if (!isBlocked) {
-            clearBlurTimeout();
-            setIsOpen(!isOpen);
-        }
+    const handleToggle = (event) => {
+        if (isBlocked) return;
+        if (event.detail === 0) return;
+        clearBlurTimeout();
+        setIsOpen(!isOpen);
     };
 
     const handleBlur = (event) => {
@@ -275,12 +277,19 @@ const Select = forwardRef(({
     const containerClasses = fullWidth ? 'w-full' : '';
 
     return (
-        <div className={`flex flex-col gap-1.5 ${containerClasses} ${className}`}>
+        <div className={`flex flex-col gap-1 ${containerClasses} ${className}`}>
             {label && (
-                <label className="text-sm font-medium text-gray-700">
-                    {label}
-                    {required && <span className="text-red-500 ml-1">*</span>}
-                </label>
+                <div className="flex justify-between">
+                    <label className="text-sm font-medium text-gray-700">
+                        {label}
+                        {required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                    {tooltip && (
+                        <Tooltip content={tooltip}>
+                            <i className="pi pi-info-circle text-sm text-gray-400 cursor-default" />
+                        </Tooltip>
+                    )}
+                </div>
             )}
 
             <div className="relative" ref={selectAreaRef}>
@@ -352,7 +361,7 @@ const Select = forwardRef(({
 
             {error && (
                 <p className="text-xs text-red-600 flex items-center gap-1">
-                    <i className="pi pi-exclamation-circle text-xs"></i>
+                    {/* <i className="pi pi-exclamation-circle text-xs"></i> */}
                     {error}
                 </p>
             )}
