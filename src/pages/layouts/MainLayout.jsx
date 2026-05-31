@@ -79,6 +79,44 @@ const MainLayout = () => {
                         </button>
                     </div>
                 }
+                mobileMenuContent={({ closeMenu }) => (
+                    <>
+                        {navItems.length > 0 && (
+                            <nav className="grid gap-1" aria-label="Menu de navegação">
+                                {navItems.map((item) => {
+                                    const isActive =
+                                        location.pathname === item.to ||
+                                        location.pathname.startsWith(item.to + '/');
+                                    return (
+                                        <Link
+                                            key={item.to}
+                                            to={item.to}
+                                            onClick={closeMenu}
+                                            className={[
+                                                'rounded-lg px-3 py-2 text-sm transition-colors hover:bg-gray-50 hover:text-secondary',
+                                                isActive ? 'bg-gray-50 text-primary' : 'text-gray-700',
+                                            ].join(' ')}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    );
+                                })}
+                            </nav>
+                        )}
+                        <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4 px-3">
+                            <p className="text-sm text-gray-600">{user?.nome || 'Perfil'}</p>
+                            <button
+                                type="button"
+                                onClick={() => { handleLogout(); closeMenu(); }}
+                                className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                                aria-label="Sair"
+                            >
+                                <i className="pi pi-sign-out text-xs"></i>
+                                Sair
+                            </button>
+                        </div>
+                    </>
+                )}
                 fixed
             />
 

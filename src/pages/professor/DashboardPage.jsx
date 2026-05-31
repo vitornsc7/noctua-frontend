@@ -85,7 +85,7 @@ const DashboardPage = () => {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             <div>
                 <h1 className="mb-2 text-3xl font-semibold text-gray-700">
                     Dashboard

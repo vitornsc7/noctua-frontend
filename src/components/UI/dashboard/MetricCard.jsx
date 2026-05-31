@@ -4,7 +4,7 @@ import Card from '../Card';
 const MetricCard = ({ title, value, description, icon, accentClass = 'bg-primary/10 text-primary' }) => {
     return (
         <Card>
-            <div className="flex flex-col min-h-[150px] items-center justify-center gap-2">
+            <div className="flex flex-col lg:min-h-[130px] items-center justify-center gap-2">
                 {icon && (
                     <div className={`flex flex-row items-center gap-2`}>
                         <i className={`${icon} text-gray-500 text-md`} />
