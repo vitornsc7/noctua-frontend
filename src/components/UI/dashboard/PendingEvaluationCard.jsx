@@ -13,11 +13,11 @@ const PendingEvaluationAlert = ({
     return (
         <div className="flex items-center justify-between gap-4 py-3">
             <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-x-2">
-                    <span className="text-md text-gray-500">{tipo}:</span>
-                    <p className="truncate text-md text-gray-600">{tema}</p>
+                <div className="flex flex-wrap items-center gap-x-1">
+                    <span className="text-sm text-gray-500">{tipo}:</span>
+                    <p className="truncate text-sm text-gray-600">{tema}</p>
                 </div>
-                <div className="mt-1 flex flex-wrap items-center gap-x-1">
+                <div className="flex flex-wrap items-center gap-x-1">
                     <span className="text-sm text-gray-500">{diasPendentes} dias sem nota -</span>
                     {alunosSemNota > 0 && (
                         <span className="text-sm text-gray-500">
