@@ -192,7 +192,7 @@ const NovaAvaliacaoPage = () => {
 
             {turma && <TurmaTags turma={turma} />}
 
-            <div className="flex gap-2 flex-wrap lg:flex-nowrap">
+            <div className="flex gap-2 flex-col lg:flex-row">
                 <div className="flex-1 min-w-72 bg-white border border-gray-200 rounded-lg p-6 space-y-4">
                     <h2 className="font-medium text-gray-700">Avaliação</h2>
 
@@ -271,16 +271,16 @@ const NovaAvaliacaoPage = () => {
                         fullWidth
                     />
 
-                    <div className="space-y-1 max-h-72 overflow-y-auto">
-                        <Checkbox
-                            label="Selecionar todos"
-                            checked={todosSelecionados}
-                            onChange={toggleTodos}
-                            disabled={alunos.length === 0}
-                            variant="circle"
-                            className="px-2 pb-3 font-medium border-b border-gray-200"
-                        />
+                    <Checkbox
+                        label="Selecionar todos"
+                        checked={todosSelecionados}
+                        onChange={toggleTodos}
+                        disabled={alunos.length === 0}
+                        variant="circle"
+                        className="px-2 pb-3 font-medium border-b border-gray-200"
+                    />
 
+                    <div className="space-y-1 max-h-64 overflow-y-auto">
                         {alunosFiltrados.map((aluno) => {
                             const tooltipMsg = disabledAlunosMap.get(aluno.id);
                             const isDisabled = Boolean(tooltipMsg);
@@ -292,12 +292,14 @@ const NovaAvaliacaoPage = () => {
                                         onChange={() => toggleAluno(aluno.id)}
                                         disabled={isDisabled}
                                         variant="circle"
-                                        className="px-2 py-1 flex-1"
+                                        className="px-2 py-2 md:py-1 flex-1"
                                     />
                                     {isDisabled && (
-                                        <Tooltip content={tooltipMsg}>
-                                            <i className="pi pi-info-circle text-sm text-gray-400" aria-hidden="true" />
-                                        </Tooltip>
+                                        <div className={alunos.length > 6 ? "mr-3" : ""}>
+                                            <Tooltip content={tooltipMsg}>
+                                                <i className="pi pi-info-circle text-sm text-gray-400" aria-hidden="true" />
+                                            </Tooltip>
+                                        </div>
                                     )}
                                 </div>
                             );
@@ -307,13 +309,6 @@ const NovaAvaliacaoPage = () => {
                             <p className="text-sm text-gray-400 italic px-2 py-2">Nenhum aluno encontrado.</p>
                         )}
                     </div>
-
-                    {alunosError && (
-                        <p className="text-xs text-red-600 flex items-center gap-1">
-                            <i className="pi pi-exclamation-circle" aria-hidden="true" />
-                            {alunosError}
-                        </p>
-                    )}
                 </div>
             </div>
 

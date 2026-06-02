@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip';
 
@@ -150,6 +150,9 @@ const Input = forwardRef(({
 }, ref) => {
     const hasError = Boolean(error);
     const isBlocked = disabled || isLoading;
+    const isPassword = type === 'password';
+    const [showPassword, setShowPassword] = useState(false);
+    const effectiveType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
     const displayValue = mask
         ? normalizeValue(String(value ?? ''), { numericOnly, integerOnly, mask, maxChars: parsedMaxChars })
@@ -215,7 +218,7 @@ const Input = forwardRef(({
         ? 'bg-gray-100 opacity-60'
         : '';
 
-    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', integerOnly ? 'pr-8' : (rightIcon || isLoading ? 'pr-10' : '')]
+    const iconPaddingClasses = [leftIcon ? 'pl-10' : '', integerOnly ? 'pr-8' : (isPassword || rightIcon || isLoading ? 'pr-10' : '')]
         .filter(Boolean)
         .join(' ');
 
@@ -476,7 +479,7 @@ const Input = forwardRef(({
 
                     <input
                         ref={ref}
-                        type={type}
+                        type={effectiveType}
                         value={displayValue}
                         placeholder={placeholder}
                         disabled={isBlocked}
@@ -491,11 +494,21 @@ const Input = forwardRef(({
                         {...rest}
                     />
 
-                    {trailingIcon && (
+                    {isPassword ? (
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            onClick={() => setShowPassword((v) => !v)}
+                            aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                        >
+                            <i className={`pi ${showPassword ? 'pi-eye-slash' : 'pi-eye'} text-sm`} aria-hidden="true" />
+                        </button>
+                    ) : trailingIcon ? (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                             {trailingIcon}
                         </div>
-                    )}
+                    ) : null}
                 </div>
             )}
 

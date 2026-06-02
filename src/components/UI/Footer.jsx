@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Footer = ({ className = '' }) => {
     return (
         <footer className={`w-full border-t border-gray-200 bg-white ${className}`.trim()}>
-            <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col sm:flex-row items-center justify-center gap-y-1 gap-x-3 text-sm text-gray-600">
+            <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col md:flex-row items-center justify-center gap-y-1 gap-x-3 text-sm text-gray-600">
                 <div className="flex items-center gap-3">
                     <p>Noctua</p>
                     <p className="hidden sm:block">Plataforma de análises educacionais</p>
