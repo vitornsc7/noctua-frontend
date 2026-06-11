@@ -4,7 +4,6 @@ import { Button, Card, Input, Select } from '../../../../components/UI';
 import { PERIODICIDADE_OPTIONS, TURNO_OPTIONS } from '../cadastroTurmaSchema';
 
 const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isEditing, onSubmit, onCancel, isCancelling }) => {
-    const label = isEditing ? 'Salvar' : 'Criar turma';
 
     const footer = (
         <div className="flex justify-end gap-2">
@@ -22,7 +21,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                 disabled={isSubmitting || isCloningTurma || isCancelling}
                 isLoading={isSubmitting}
             >
-                {label}
+                Prosseguir
             </Button>
         </div>
     );
