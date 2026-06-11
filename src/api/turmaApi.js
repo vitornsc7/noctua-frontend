@@ -169,3 +169,27 @@ export const calcularMediaPonderadaTurma = (turmaId) =>
 
 export const classificarFrequencia = (alunoId, periodo) =>
     client.get(`/frequencias/aluno/${alunoId}/periodo/${periodo}/classificacao`);
+
+const downloadBlob = async (path, filename) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api${path}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Erro HTTP ${response.status}`);
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+export const exportarBoletimAnual = (turmaId) =>
+    downloadBlob(`/turmas/${turmaId}/boletim/export/anual`, `boletim-anual-turma-${turmaId}.xlsx`);
+
+export const exportarBoletimPeriodo = (turmaId, periodo) =>
+    downloadBlob(`/turmas/${turmaId}/boletim/export/periodo/${periodo}`, `boletim-periodo-${periodo}-turma-${turmaId}.xlsx`);
