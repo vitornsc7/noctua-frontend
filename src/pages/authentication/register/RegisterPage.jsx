@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Card, Input, Button, useToast } from '../../../components/UI';
+import { Card, Input, Button, useToast, Checkbox } from '../../../components/UI';
 import corujinha from '../../../assets/noctua.svg';
 import { registerSchema, REGISTER_INITIAL_VALUES } from '../authSchema';
 import { register } from '../../../api/authApi';
@@ -11,6 +11,8 @@ export default function RegisterPage() {
     const navigate = useNavigate();
     const { showSuccess, showError } = useToast();
     const [carregando, setCarregando] = useState(false);
+    const [termosAceitos, setTermosAceitos] = useState(false);
+    const [politicaAceita, setPoliticaAceita] = useState(false);
 
     const {
         watch,
@@ -90,7 +92,7 @@ export default function RegisterPage() {
                         <div className="flex gap-2 items-center justify-between">
                             <p className="text-sm text-gray-500">
                                 Já possui conta?{' '}
-                                <Link to="/login" className="underline">
+                                <Link tabIndex={-1} to="/login" className="underline">
                                     Logar
                                 </Link>
                             </p>
@@ -98,7 +100,7 @@ export default function RegisterPage() {
                             <Button
                                 type="submit"
                                 form="register-form"
-                                disabled={carregando}
+                                disabled={carregando || !termosAceitos || !politicaAceita}
                                 isLoading={carregando}
                             >
                                 Cadastrar
@@ -132,6 +134,19 @@ export default function RegisterPage() {
                             {...getFieldProps('senha')}
                         />
                     </form>
+                    <Checkbox
+                        className="mt-4"
+                        label={<span>Aceito os <Link tabIndex={-1} target="_blank" to="/termos-de-uso" className="underline outline-none">termos de uso</Link></span>}
+                        checked={termosAceitos ?? false}
+
+                        onChange={(e) => setTermosAceitos(e.target.checked)}
+                    />
+                    <Checkbox
+                        className="mt-1"
+                        label={<span>Li e concordo com a <Link tabIndex={-1} target="_blank" to="/politica-de-privacidade" className="underline outline-none">política de privacidade</Link></span>}
+                        checked={politicaAceita ?? false}
+                        onChange={(e) => setPoliticaAceita(e.target.checked)}
+                    />
                 </Card>
             </div>
         </div>
