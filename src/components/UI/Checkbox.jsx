@@ -44,7 +44,7 @@ const Checkbox = ({
                         w-4 h-4
                         border ${shape}
                         flex items-center justify-center
-                        peer-focus-visible:ring-2 peer-focus-visible:ring-gray-700 peer-focus-visible:ring-offset-1
+                        peer-focus-visible:ring-2 peer-focus-visible:ring-gray-700 peer-focus-visible:ring-offset-2
                         ${checked
                             ? 'bg-gray-700 border-gray-700'
                             : 'border-gray-400'
