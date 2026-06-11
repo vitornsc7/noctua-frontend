@@ -159,7 +159,7 @@ const LimitesPage = () => {
                 </Link>
                 <h1 className="text-3xl font-semibold text-gray-700">Configuração de limites</h1>
                 <p className="mt-1 text-sm text-gray-500">
-                    Defina os intervalos de classificação de frequência e desempenho dos alunos.
+                    Defina os intervalos de classificação de frequência e notas dos alunos.
                 </p>
             </div>
 
@@ -213,9 +213,9 @@ const LimitesPage = () => {
 
             <section className="space-y-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Desempenho</h3>
+                    <h3 className="text-lg font-semibold text-gray-700">Notas</h3>
                     <p className="mt-1 text-sm text-gray-500">
-                        Classifica o desempenho do aluno com base na distância em relação à média mínima da turma.
+                        Classifica o desempenho do aluno com base na distância de notas em avaliações em relação à média mínima da turma.
                     </p>
                 </div>
 
