@@ -85,7 +85,7 @@ const ConfiguracoesPage = () => {
                     />
                     <SettingCard
                         icon="pi pi-chart-bar"
-                        title="Limites de nota e frequência"
+                        title="Limites de frequência e nota"
                         description="Defina o intervalo dos valores de classificação."
                         actionLabel="Configurar limites"
                         to="/configuracoes/limites"

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Table, Tooltip } from '../../../../../components/UI';
 import { TIPO_AVALIACAO_DISPLAY, displayLabel, fmtNota } from '../../../../../utils/displayMaps';
 import { INTERVENCAO_ICON, INTERVENCAO_TEXT_COLOR, getIntervencao } from '../../../../../utils/intervencaoUtils';
+import { exportarBoletimPeriodo } from '../../../../../api/turmaApi';
+import { useToast } from '../../../../../components/UI';
 
 const PeriodoTab = ({
     periodo,
@@ -14,6 +16,16 @@ const PeriodoTab = ({
     limites,
     turma,
 }) => {
+    const [exporting, setExporting] = useState(false);
+    const { showError } = useToast();
+
+    const handleExport = () => {
+        if (!turma?.id) return;
+        setExporting(true);
+        exportarBoletimPeriodo(turma.id, periodo.numero)
+            .catch((err) => showError('Erro ao exportar boletim', err.message))
+            .finally(() => setExporting(false));
+    };
     const fmtFreq = (n) => (n != null ? `${String(n).replace('.', ',')}%` : '-');
 
     const fmtResumo = (valor, suffix = '') => {
@@ -85,6 +97,17 @@ const PeriodoTab = ({
 
     return (
         <div className="space-y-6">
+            <div>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-700">Boletim {periodo.titulo}</h3>
+                    <p
+                        onClick={!exporting ? handleExport : undefined}
+                        className={`text-sm text-gray-600 underline underline-offset-4 transition ${exporting ? 'opacity-50 cursor-default' : 'hover:text-gray-700 cursor-pointer'}`}
+                    >
+                        Exportar
+                    </p>
+                </div>
+            </div>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
                 <Card>
                     <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">

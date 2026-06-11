@@ -267,7 +267,7 @@ const LancarFaltasPage = () => {
                     disabled={saving || loadingFaltas || alunos.length === 0}
                     isLoading={saving}
                 >
-                    Salvar chamada
+                    Salvar
                 </Button>
             </div>
         </div>
