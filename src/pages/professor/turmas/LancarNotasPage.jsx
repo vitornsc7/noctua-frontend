@@ -112,7 +112,7 @@ const LancarNotasPage = () => {
             <div>
                 <Link
                     to={`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`}
-                    className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                    className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                 >
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
                     <span>{titulo}</span>

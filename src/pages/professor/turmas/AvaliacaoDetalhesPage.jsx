@@ -146,6 +146,8 @@ const AvaliacaoDetalhesPage = () => {
     const temNaoCompareceram = alunosNaoCompareceram.length > 0;
     const temChamadaFilha = Boolean(avaliacao.temChamadaFilha);
     const chamadaLabel = `${proximaChamada}ª Chamada`;
+    const concluida = Boolean(avaliacao.concluida);
+    const temNotasPendentes = notas.some((n) => n.valor == null && !n.naoRealizada);
 
     return (
         <div>
@@ -155,7 +157,7 @@ const AvaliacaoDetalhesPage = () => {
                         <Link
                             to={`/turmas/${turmaId}`}
                             state={{ tab: 'avaliacoes' }}
-                            className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                            className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                         >
                             <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
                             <span>Avaliações</span>
@@ -163,7 +165,7 @@ const AvaliacaoDetalhesPage = () => {
                         {avaliacao.avaliacaoPaiId && (
                             <Link
                                 to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoPaiId}`}
-                                className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                                className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                             >
                                 <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
                                 <span>{avaliacao.numeroChamada - 1}ª Chamada</span>
@@ -172,7 +174,7 @@ const AvaliacaoDetalhesPage = () => {
                         {avaliacao.avaliacaoFilhaId && (
                             <Link
                                 to={`/turmas/${turmaId}/avaliacoes/${avaliacao.avaliacaoFilhaId}`}
-                                className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                                className="mb-2 ml-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                             >
                                 <i className="pi pi-chevron-right text-xs" aria-hidden="true" />
                                 <span>{proximaChamada}ª Chamada</span>
@@ -190,7 +192,7 @@ const AvaliacaoDetalhesPage = () => {
                                             closeMenu();
                                             navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/editar`);
                                         }}
-                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                     >
                                         <i className="pi pi-pencil text-xs" aria-hidden="true" />
                                         <span>Editar avaliação</span>
@@ -201,25 +203,49 @@ const AvaliacaoDetalhesPage = () => {
                                             closeMenu();
                                             navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/lancar-notas`);
                                         }}
-                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                     >
                                         <i className="pi pi-upload text-xs" aria-hidden="true" />
                                         <span>Lançar notas</span>
                                     </button>
-                                    {!temChamadaFilha && temNaoCompareceram && (
+                                    {!temChamadaFilha && concluida && !temNotasPendentes && temNaoCompareceram && (
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 closeMenu();
                                                 setChamadaModalOpen(true);
                                             }}
-                                            className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                            className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                         >
                                             <i className="pi pi-refresh text-xs" aria-hidden="true" />
                                             <span>{chamadaLabel}</span>
                                         </button>
                                     )}
-                                    {!temChamadaFilha && !temNaoCompareceram && (
+                                    {!temChamadaFilha && !concluida && (
+                                        <Tooltip className='w-full' content="A avaliação precisa estar CONCLUÍDA para criar uma nova chamada.">
+                                            <button
+                                                type="button"
+                                                disabled
+                                                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
+                                            >
+                                                <i className="pi pi-refresh text-xs" aria-hidden="true" />
+                                                <span>{chamadaLabel}</span>
+                                            </button>
+                                        </Tooltip>
+                                    )}
+                                    {!temChamadaFilha && concluida && temNotasPendentes && (
+                                        <Tooltip className='w-full' content="Há alunos com notas não preenchidas.">
+                                            <button
+                                                type="button"
+                                                disabled
+                                                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-300"
+                                            >
+                                                <i className="pi pi-refresh text-xs" aria-hidden="true" />
+                                                <span>{chamadaLabel}</span>
+                                            </button>
+                                        </Tooltip>
+                                    )}
+                                    {!temChamadaFilha && concluida && !temNotasPendentes && !temNaoCompareceram && (
                                         <Tooltip className='w-full' content="Nenhum aluno marcado como não compareceu.">
                                             <button
                                                 type="button"

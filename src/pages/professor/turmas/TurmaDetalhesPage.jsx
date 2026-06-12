@@ -122,7 +122,7 @@ const TurmaDetalhesPage = () => {
                                             closeMenu();
                                             handleOpenEditModal();
                                         }}
-                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                     >
                                         <i className="pi pi-pencil text-xs" aria-hidden="true"></i>
                                         <span>Editar turma</span>
@@ -131,7 +131,7 @@ const TurmaDetalhesPage = () => {
                                     <Link
                                         to={`/turmas/cadastro?from=${id}`}
                                         onClick={closeMenu}
-                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700"
+                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                     >
                                         <i className="pi pi-copy text-xs" aria-hidden="true"></i>
                                         <span>Nova turma a partir da atual</span>
@@ -143,7 +143,7 @@ const TurmaDetalhesPage = () => {
                                             closeMenu();
                                             handleOpenDeleteModal();
                                         }}
-                                        className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-3 text-left text-sm text-red-500 transition hover:bg-red-50 hover:text-red-600"
+                                        className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-3 text-left text-sm text-red-500 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:font-bold focus:text-red-700"
                                     >
                                         <i className="pi pi-trash text-xs" aria-hidden="true"></i>
                                         <span>Excluir turma</span>
