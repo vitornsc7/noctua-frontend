@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import Card from './Card';
 
@@ -15,6 +15,8 @@ const Modal = ({
 	draggable = true,
 }) => {
 	const panelRef = useRef(null);
+	const [visible, setVisible] = useState(false);
+	const closeTimerRef = useRef(null);
 	const dragStateRef = useRef({
 		isDragging: false,
 		pointerId: null,
@@ -25,27 +27,44 @@ const Modal = ({
 		rafId: null,
 	});
 
+	const handleClose = () => {
+		setVisible(false);
+		closeTimerRef.current = setTimeout(() => {
+			onClose?.();
+		}, 200);
+	};
+
+	useEffect(() => {
+		return () => {
+			if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+		};
+	}, []);
+
 	useEffect(() => {
 		if (!isOpen) {
+			setVisible(false);
 			return undefined;
 		}
+
+		const raf = requestAnimationFrame(() => setVisible(true));
 
 		const previousOverflow = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
 
 		const handleKeyDown = (event) => {
 			if (event.key === 'Escape' && closeOnEsc) {
-				onClose?.();
+				handleClose();
 			}
 		};
 
 		document.addEventListener('keydown', handleKeyDown);
 
 		return () => {
+			cancelAnimationFrame(raf);
 			document.body.style.overflow = previousOverflow;
 			document.removeEventListener('keydown', handleKeyDown);
 		};
-	}, [isOpen, closeOnEsc, onClose]);
+	}, [isOpen, closeOnEsc]);
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -71,8 +90,9 @@ const Modal = ({
 		const getFocusable = () => Array.from(panel.querySelectorAll(FOCUSABLE));
 
 		const focusable = getFocusable();
-		if (focusable.length > 0) {
-			focusable[0].focus();
+		const firstContent = focusable.find((el) => !el.hasAttribute('data-modal-close-btn')) ?? focusable[0];
+		if (firstContent) {
+			firstContent.focus();
 		}
 
 		const handleTabTrap = (event) => {
@@ -200,7 +220,7 @@ const Modal = ({
 
 	return (
 		<div
-			className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`.trim()}
+			className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`.trim()}
 			role="dialog"
 			aria-modal="true"
 			aria-hidden={!isOpen}
@@ -208,7 +228,7 @@ const Modal = ({
 		>
 			<div className="absolute inset-0 bg-black/55" />
 
-			<div className={`relative flex w-full justify-center transition-all duration-200 ease-out ${isOpen ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0'}`.trim()}>
+			<div className={`relative flex w-full justify-center transition-all duration-200 ease-out ${visible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0'}`.trim()}>
 				<div ref={panelRef} className={`w-full ${maxWidth}`}>
 					<Card
 						className={`w-full shadow-2xl ${className}`.trim()}
@@ -224,9 +244,19 @@ const Modal = ({
 									{showCloseButton && (
 										<button
 											type="button"
-											onClick={onClose}
-											className=" px-1 outline-none text-gray-500 focus:ring-2 focus:ring-gray-700 rounded"
+											onClick={handleClose}
+											className="
+												w-8 h-8
+												flex items-center justify-center
+												rounded-full
+												text-gray-700
+												hover:bg-gray-100
+												hover:text-gray-700
+												transition-colors
+												outline-none 0 focus:ring-2 focus:ring-gray-300
+											"
 											aria-label="Fechar modal"
+											data-modal-close-btn
 										>
 											<i className="pi pi-times text-sm" aria-hidden="true"></i>
 										</button>
