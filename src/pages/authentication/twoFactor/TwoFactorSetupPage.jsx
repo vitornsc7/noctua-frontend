@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode';
-import { Button, Card, Input, useToast } from '../../../components/UI';
-import { getToken, setup2FA, verifySetup2FA } from '../../../api/authApi';
+import { Button, Card, Input, Modal, useToast } from '../../../components/UI';
+import { getToken, setup2FA, verifySetup2FA, disable2FA, getCurrentUser } from '../../../api/authApi';
 
 export default function TwoFactorSetupPage() {
     const navigate = useNavigate();
@@ -16,6 +16,36 @@ export default function TwoFactorSetupPage() {
     const [success, setSuccess] = useState(false);
     const setupInitializedRef = useRef(false);
 
+    const [twoFactorAtivo, setTwoFactorAtivo] = useState(null);
+    const [loadingStatus, setLoadingStatus] = useState(true);
+    const [desativando, setDesativando] = useState(false);
+    const [confirmarDesativar, setConfirmarDesativar] = useState(false);
+
+    useEffect(() => {
+        if (!getToken()) {
+            navigate('/login', { replace: true });
+            return;
+        }
+        getCurrentUser()
+            .then((user) => setTwoFactorAtivo(Boolean(user?.twoFactorEnabled)))
+            .catch(() => setTwoFactorAtivo(false))
+            .finally(() => setLoadingStatus(false));
+    }, [navigate]);
+
+    const handleDesativar2FA = async () => {
+        setDesativando(true);
+        try {
+            await disable2FA();
+            showSuccess('2FA removido com sucesso', 'A autenticação em dois fatores foi desativada.');
+            setTwoFactorAtivo(false);
+            setConfirmarDesativar(false);
+        } catch (err) {
+            showError('Erro ao desativar 2FA', err.message);
+        } finally {
+            setDesativando(false);
+        }
+    };
+
     useEffect(() => {
         if (!otpauthUrl) {
             return;
@@ -28,6 +58,10 @@ export default function TwoFactorSetupPage() {
 
     useEffect(() => {
         if (setupInitializedRef.current) {
+            return;
+        }
+
+        if (twoFactorAtivo !== false) {
             return;
         }
 
@@ -61,7 +95,7 @@ export default function TwoFactorSetupPage() {
         };
 
         initSetup();
-    }, [navigate]);
+    }, [navigate, twoFactorAtivo]);
 
     const handleVerify = async () => {
         try {
@@ -103,6 +137,93 @@ export default function TwoFactorSetupPage() {
     const handleCodeChange = (event) => {
         setCode(event.target.value.replace(/\D/g, '').slice(0, 6));
     };
+
+    if (loadingStatus) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <i className="pi pi-spin pi-spinner text-2xl text-gray-400" aria-hidden="true" />
+            </div>
+        );
+    }
+
+    if (twoFactorAtivo) {
+        return (
+            <div className="space-y-6">
+                <div>
+                    <Link to="/configuracoes" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary">
+                        <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
+                        <span>Configurações</span>
+                    </Link>
+                    <h1 className="mt-2 text-3xl font-semibold text-gray-700">
+                        Autenticação em dois fatores
+                    </h1>
+                    <p className="mt-2 max-w-2xl text-gray-600">
+                        Gerencie a autenticação em dois fatores da sua conta.
+                    </p>
+                </div>
+
+                <Card>
+                    <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-secondary">
+                            <i className="pi pi-shield text-xl" aria-hidden="true" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-medium text-gray-700">2FA ativo</h2>
+                            <p className="mt-1 text-sm text-gray-600">
+                                A autenticação em dois fatores está habilitada na sua conta. Um código do aplicativo autenticador será solicitado a cada login.
+                            </p>
+                        </div>
+                    </div>
+                </Card>
+
+                {!confirmarDesativar ? (
+                    <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-6 py-4">
+                        <div>
+                            <p className="text-sm font-medium text-gray-700">Remover autenticação em dois fatores</p>
+                            <p className="text-sm text-gray-500">Sua conta ficará protegida apenas pela senha.</p>
+                        </div>
+                        <Button
+                            variant="outline"
+                            onClick={() => setConfirmarDesativar(true)}
+                        >
+                            Remover 2FA
+                        </Button>
+                    </div>
+                ) : null}
+
+                {confirmarDesativar && (
+                    <Modal
+                        isOpen={confirmarDesativar}
+                        onClose={() => setConfirmarDesativar(false)}
+                        title="Remover autenticação em dois fatores"
+                        maxWidth="max-w-md"
+                        footer={
+                            <div className="flex justify-end gap-3">
+                                <Button variant="outline" onClick={() => setConfirmarDesativar(false)} disabled={desativando}>
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={handleDesativar2FA}
+                                    isLoading={desativando}
+                                    disabled={desativando}
+                                >
+                                    Confirmar remoção
+                                </Button>
+                            </div>
+                        }
+                    >
+                        <div className="flex items-start gap-3 text-sm text-gray-600">
+                            <i className="pi pi-exclamation-triangle mt-0.5 text-gray-500 flex-shrink-0" aria-hidden="true" />
+                            <p>
+                                Ao remover o 2FA, sua conta ficará protegida apenas pela senha.
+                                Essa ação não pode ser desfeita.
+                            </p>
+                        </div>
+                    </Modal>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">

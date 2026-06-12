@@ -141,6 +141,20 @@ export const verifySetup2FA = async (code) => {
     return await parseResponseBody(response);
 };
 
+export const disable2FA = async () => {
+    const response = await fetch(`${BASE_URL}/2fa/disable`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Erro HTTP ${response.status}`);
+    }
+
+    return await parseResponseBody(response);
+};
+
 export const forgotPassword = async (email) => {
     const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
         method: 'POST',
