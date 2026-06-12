@@ -88,7 +88,7 @@ const TurmaDetalhesPage = () => {
     if (!turma) {
         return (
             <div className="space-y-4">
-                <Link to="/turmas" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
+                <Link to="/turmas" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary">
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
                     <span>Turmas</span>
                 </Link>
@@ -104,7 +104,7 @@ const TurmaDetalhesPage = () => {
                     <div>
                         <Link
                             to="/turmas"
-                            className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                            className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                         >
                             <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
                             <span>Turmas</span>
@@ -160,8 +160,6 @@ const TurmaDetalhesPage = () => {
                     <Tabs.Tab id="visao-geral" label="Visão geral">
                         <VisaoGeralTab turma={turma} />
                     </Tabs.Tab>
-
-
 
                     <Tabs.Tab id="alunos" label="Alunos">
                         <AlunosTab turma={turma} />

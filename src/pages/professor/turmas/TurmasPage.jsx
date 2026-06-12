@@ -76,7 +76,7 @@ const TurmasPage = () => {
 
                 <Link
                     to="/turmas/cadastro"
-                    className="pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
+                    className=" pt-1 text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                 >
                     Nova turma
                 </Link>
@@ -166,7 +166,7 @@ const TurmasPage = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             {turmas.map((turma) => (
-                                <Link key={turma.id} to={`/turmas/${turma.id}`} className="block">
+                                <Link key={turma.id} to={`/turmas/${turma.id}`} className="block focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 rounded-lg">
                                     <Card className="hover:border-gray-300 transition-colors cursor-pointer h-full">
                                         <div className="flex items-start justify-between mb-3">
                                             <h3 className="text-lg font-semibold text-gray-700">{turma.nome}</h3>

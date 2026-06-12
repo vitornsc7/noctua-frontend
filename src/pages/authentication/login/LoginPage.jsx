@@ -126,8 +126,7 @@ export default function LoginPage() {
                             {!requiresTwoFactor ? (
                                 <p className="text-sm text-gray-500 text-center m-0">
                                     Não possui conta?{' '}
-                                    <Link to="/cadastro" className="underline"
-                                        tabIndex={-1}>
+                                    <Link to="/cadastro" className="underline focus:outline-none focus:font-bold focus:text-secondary">
                                         Cadastrar
                                     </Link>
                                 </p>
@@ -198,12 +197,12 @@ export default function LoginPage() {
 
                 <div className="mt-4 text-sm text-gray-500 text-center">
                     Esqueceu sua senha?{" "}
-                    <span
-                        onClick={() => navigate("/esqueci-minha-senha")}
-                        className="underline bg-transparent border-none p-0 m-0 text-inherit cursor-pointer"
+                    <Link
+                        to="/esqueci-minha-senha"
+                        className="underline focus:outline-none focus:font-bold focus:text-secondary"
                     >
                         Redefinir
-                    </span>
+                    </Link>
                 </div>
             </div>
         </div>

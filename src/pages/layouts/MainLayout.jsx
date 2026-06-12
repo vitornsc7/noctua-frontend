@@ -12,7 +12,6 @@ const MainLayout = () => {
         if (role === 'ADMIN') {
             return [
                 { label: 'Monitoramento operacional', to: '/admin' },
-                //{ label: 'Configurações', to: '/admin/configuracoes' },
             ];
         }
 
@@ -28,8 +27,6 @@ const MainLayout = () => {
         return [];
     }, [role]);
 
-    const homeLink = role === 'ADMIN' ? '/admin' : '/dashboard';
-
     const handleLogout = () => {
         logout();
         navigate('/login', { replace: true });
@@ -39,11 +36,9 @@ const MainLayout = () => {
         <div className="flex h-screen flex-col bg-[#F6F6F8] overflow-hidden">
             <Header
                 logo={
-                    <Link to={homeLink}>
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl font-semibold text-gray-800">Noctua</span>
-                        </div>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl font-semibold text-gray-800">Noctua</span>
+                    </div>
                 }
                 actions={
                     <div className="text-sm text-gray-600 flex items-center gap-6">
@@ -56,10 +51,10 @@ const MainLayout = () => {
                                     key={item.to}
                                     to={item.to}
                                     className={[
-                                        'relative text-sm border-b-2 pt-1 pb-0.5 transition-colors',
+                                        'relative text-sm border-b-2 focus:outline-none pt-1 pb-0.5 transition-colors',
                                         isActive
                                             ? 'border-primary text-gray-800 font-medium'
-                                            : 'border-transparent text-gray-600 hover:text-gray-800',
+                                            : 'border-transparent  focus:border-secondary focus:text-secondary text-gray-600 hover:text-gray-800',
                                     ].join(' ')}
                                 >
                                     <span aria-hidden className="invisible font-medium">{item.label}</span>
@@ -72,7 +67,7 @@ const MainLayout = () => {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="inline-flex items-center hover:text-gray-800 transition-colors"
+                            className="inline-flex items-center hover:text-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-3 rounded p-1 py-0.5"
                             aria-label="Sair"
                         >
                             <i className="pi pi-sign-out text-xs hover:cursor-pointer"></i>

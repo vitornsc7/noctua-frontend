@@ -109,7 +109,7 @@ export default function BoletimProgressivoTable({ alunos = [], faltas = [], turm
     };
 
     return (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white" tabIndex={-1}>
             {loading ? (
                 <div className="flex items-center justify-center py-12">
                     <i className="pi pi-spin pi-spinner text-2xl text-gray-400" aria-hidden="true" />

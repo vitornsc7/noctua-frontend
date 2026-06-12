@@ -19,7 +19,8 @@ const WelcomeCard = () => {
             <div className="relative flex h-full min-h-[130px] items-center">
                 <img
                     src={wavingNoctua}
-                    alt="Noctua acenando"
+                    alt=""
+                    aria-hidden="true"
                     className="h-28 w-28 shrink-0 hidden md:block"
                 />
 

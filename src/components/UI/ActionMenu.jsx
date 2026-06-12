@@ -40,7 +40,7 @@ const ActionMenu = ({
                 type="button"
                 onClick={toggleMenu}
                 className={[
-                    'inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300 hover:text-gray-700',
+                    'inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
                     buttonClassName,
                 ].join(' ').trim()}
                 aria-label={buttonLabel}

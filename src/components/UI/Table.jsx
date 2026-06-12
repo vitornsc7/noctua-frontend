@@ -96,7 +96,7 @@ const Table = ({
 
     return (
         <div className={`w-full overflow-hidden rounded-lg border border-gray-200 ${className}`.trim()}>
-            <div className="overflow-x-auto overflow-y-visible">
+            <div className="overflow-x-auto overflow-y-visible" tabIndex={-1}>
                 <table className="min-w-full text-sm text-gray-700">
                     <thead className="bg-gray-100 border-b text-gray-700">
                         <tr>

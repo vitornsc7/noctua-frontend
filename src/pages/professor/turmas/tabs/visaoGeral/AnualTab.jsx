@@ -21,12 +21,12 @@ const AnualTab = ({ alunos, faltas, turma, mediasAlunos, limites }) => {
                 <div>
                     <div className="flex justify-between items-center">
                         <h3 className="text-lg font-semibold text-gray-700">Boletim anual</h3>
-                        <p
+                        <button
                             onClick={!exporting ? handleExport : undefined}
-                            className={`text-sm text-gray-600 underline underline-offset-4 transition ${exporting ? 'opacity-50 cursor-default' : 'hover:text-gray-700 cursor-pointer'}`}
+                            className={`text-sm text-gray-600 underline underline-offset-4 transition focus:outline-none focus:font-bold focus:text-secondary ${exporting ? 'opacity-50 cursor-default' : 'hover:text-gray-700 cursor-pointer'}`}
                         >
                             Exportar
-                        </p>
+                        </button>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
                         Acompanhe a evolução de média e frequência dos alunos ao longo do ano letivo.

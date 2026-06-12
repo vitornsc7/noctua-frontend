@@ -22,7 +22,7 @@ const Card = ({
 }) => {
     const isClickable = Boolean(onClick);
 
-    const baseClasses = 'rounded-lg transition-all duration-200';
+    const baseClasses = 'rounded-lg transition-all duration-200 focus';
 
     const variantClasses = {
         default: 'bg-white border border-gray-200',

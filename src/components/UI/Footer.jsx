@@ -15,13 +15,13 @@ const Footer = ({ className = '' }) => {
                 <div className="flex items-center gap-3">
                     <Link
                         to="/documentos/politica-de-privacidade"
-                        className="transition-colors hover:text-gray-900 hover:underline"
+                        className="transition-colors hover:text-gray-900 hover:underline focus:outline-none focus:font-bold focus:text-secondary focus:underline"
                     >
                         Política de Privacidade
                     </Link>
                     <Link
                         to="/documentos/termos-de-uso"
-                        className="transition-colors hover:text-gray-900 hover:underline"
+                        className="transition-colors hover:text-gray-900 hover:underline focus:outline-none focus:font-bold focus:text-secondary focus:underline"
                     >
                         Termos de Uso
                     </Link>

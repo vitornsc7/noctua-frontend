@@ -29,7 +29,7 @@ const PendingEvaluationAlert = ({
 
             <Link
                 to={`/turmas/${turmaId}/avaliacoes/${avaliacaoId}/lancar-notas`}
-                className="shrink-0 text-sm text-primary underline-offset-2 underline"
+                className="shrink-0 text-sm text-primary underline-offset-2 underline focus:outline-none focus:font-bold focus:text-secondary"
             >
                 Lançar notas
             </Link>

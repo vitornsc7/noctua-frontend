@@ -92,7 +92,7 @@ export default function RegisterPage() {
                         <div className="flex gap-2 items-center justify-between">
                             <p className="text-sm text-gray-500">
                                 Já possui conta?{' '}
-                                <Link tabIndex={-1} to="/login" className="underline">
+                                <Link to="/login" className="underline focus:outline-none focus:font-bold focus:text-secondary">
                                     Logar
                                 </Link>
                             </p>
@@ -136,14 +136,14 @@ export default function RegisterPage() {
                     </form>
                     <Checkbox
                         className="mt-4"
-                        label={<span>Aceito os <Link tabIndex={-1} target="_blank" to="/termos-de-uso" className="underline outline-none">termos de uso</Link></span>}
+                        label={<span>Aceito os <Link target="_blank" to="/termos-de-uso" className="underline outline-none focus:outline-none focus:font-bold focus:text-secondary">termos de uso</Link></span>}
                         checked={termosAceitos ?? false}
 
                         onChange={(e) => setTermosAceitos(e.target.checked)}
                     />
                     <Checkbox
                         className="mt-1"
-                        label={<span>Li e concordo com a <Link tabIndex={-1} target="_blank" to="/politica-de-privacidade" className="underline outline-none">política de privacidade</Link></span>}
+                        label={<span>Li e concordo com a <Link target="_blank" to="/politica-de-privacidade" className="underline outline-none focus:outline-none focus:font-bold focus:text-secondary">política de privacidade</Link></span>}
                         checked={politicaAceita ?? false}
                         onChange={(e) => setPoliticaAceita(e.target.checked)}
                     />

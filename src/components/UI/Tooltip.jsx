@@ -54,6 +54,7 @@ const Tooltip = ({ content, children, className = '', contentClassName = '' }) =
     return (
         <span
             ref={triggerRef}
+            tabIndex={-1}
             className={`inline-flex ${className}`.trim()}
             onMouseEnter={handleShow}
             onMouseLeave={handleHide}
