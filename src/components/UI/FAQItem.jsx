@@ -13,10 +13,7 @@ const FAQItem = ({ pergunta, resposta }) => {
             <button
                 type="button"
                 onClick={() => setAberto((valorAtual) => !valorAtual)}
-                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm transition-colors sm:gap-4 sm:px-5 ${aberto
-                    ? 'text-gray-900'
-                    : 'text-slate-700 hover:text-gray-900'
-                    }`}
+                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left outline-none text-sm transition sm:gap-4 sm:px-5 focus:outline-none focus:font-bold focus:text-secondary`}
                 aria-expanded={aberto}
             >
                 <span className="min-w-0">{pergunta}</span>

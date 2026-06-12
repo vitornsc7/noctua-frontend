@@ -80,7 +80,7 @@ const AvaliacoesTab = ({ turma }) => {
                 <h2 className="text-lg font-semibold text-gray-700">Avaliações</h2>
                 <Link
                     to={`/turmas/${turma?.id}/avaliacoes/nova`}
-                    className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
+                    className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                 >
                     Nova avaliação
                 </Link>
@@ -154,7 +154,7 @@ const AvaliacoesTab = ({ turma }) => {
                             <Link
                                 key={av.id}
                                 to={`/turmas/${turma.id}/avaliacoes/${av.id}`}
-                                className="block bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                                className="block bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                             >
                                 <div className="px-4 py-3 border-b border-gray-200 bg-gray-100 rounded-t-lg">
                                     <p className="text-xs uppercase tracking-wide">

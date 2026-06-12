@@ -144,7 +144,7 @@ const FaltasTab = ({ turma }) => {
                     <h2 className="text-lg font-semibold text-gray-700">Faltas</h2>
                     <Link
                         to={`/turmas/${turma.id}/faltas/nova`}
-                        className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition"
+                        className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                     >
                         Lançar faltas
                     </Link>
@@ -235,40 +235,44 @@ const FaltasTab = ({ turma }) => {
                     />
                 </Table>
             </div>
-            <EditarFaltaModal
-                isOpen={Boolean(faltaSelecionada)}
-                onClose={() => setFaltaSelecionada(null)}
-                onSave={handleSalvarEdicao}
-                falta={faltaSelecionada}
-                turma={turma}
-            />
+            {Boolean(faltaSelecionada) && (
+                <EditarFaltaModal
+                    isOpen={Boolean(faltaSelecionada)}
+                    onClose={() => setFaltaSelecionada(null)}
+                    onSave={handleSalvarEdicao}
+                    falta={faltaSelecionada}
+                    turma={turma}
+                />
+            )}
 
-            <Modal
-                isOpen={Boolean(faltaParaExcluir)}
-                onClose={() => { if (!isDeleting) setFaltaParaExcluir(null); }}
-                title="Confirmar exclusão"
-                maxWidth="max-w-md"
-                footer={
-                    <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => setFaltaParaExcluir(null)} disabled={isDeleting}>
-                            Cancelar
-                        </Button>
-                        <Button onClick={handleConfirmarExclusao} disabled={isDeleting} isLoading={isDeleting}>
-                            Excluir
-                        </Button>
+            {Boolean(faltaParaExcluir) && (
+                <Modal
+                    isOpen={Boolean(faltaParaExcluir)}
+                    onClose={() => { if (!isDeleting) setFaltaParaExcluir(null); }}
+                    title="Confirmar exclusão"
+                    maxWidth="max-w-md"
+                    footer={
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setFaltaParaExcluir(null)} disabled={isDeleting}>
+                                Cancelar
+                            </Button>
+                            <Button onClick={handleConfirmarExclusao} disabled={isDeleting} isLoading={isDeleting}>
+                                Excluir
+                            </Button>
+                        </div>
+                    }
+                >
+                    <div className="space-y-2 text-sm text-gray-600">
+                        <p>
+                            Deseja excluir a falta do aluno{' '}
+                            <span className="font-medium text-gray-700">
+                                {getNomeAluno(faltaParaExcluir?.alunoId)}
+                            </span>?
+                        </p>
+                        <p>Essa ação não poderá ser desfeita.</p>
                     </div>
-                }
-            >
-                <div className="space-y-2 text-sm text-gray-600">
-                    <p>
-                        Deseja excluir a falta do aluno{' '}
-                        <span className="font-medium text-gray-700">
-                            {getNomeAluno(faltaParaExcluir?.alunoId)}
-                        </span>?
-                    </p>
-                    <p>Essa ação não poderá ser desfeita.</p>
-                </div>
-            </Modal>
+                </Modal>
+            )}
         </>
     );
 };

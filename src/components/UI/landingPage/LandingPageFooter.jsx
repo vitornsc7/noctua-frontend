@@ -17,16 +17,16 @@ export default function LandingPageFooter() {
                     <div className="hidden min-w-0 text-sm sm:block">
                         <p className="font-semibold text-gray-950">Produto</p>
                         <nav className="mt-4 grid gap-3" aria-label="Links do produto">
-                            <a className="text-gray-700 transition-colors hover:text-gray-950" href="#por-que-usar">
+                            <a className="text-gray-700 focus:outline-none focus:font-bold focus:text-secondary" href="#por-que-usar">
                                 Por que usar?
                             </a>
-                            <a className="text-gray-700 transition-colors hover:text-gray-950" href="#como-funciona">
+                            <a className="text-gray-700 focus:outline-none focus:font-bold focus:text-secondary" href="#como-funciona">
                                 Como funciona
                             </a>
-                            <a className="text-gray-700 transition-colors hover:text-gray-950" href="#seguranca">
+                            <a className="text-gray-700 focus:outline-none focus:font-bold focus:text-secondary" href="#seguranca">
                                 Segurança
                             </a>
-                            <a className="text-gray-700 transition-colors hover:text-gray-950" href="#faq">
+                            <a className="text-gray-700 focus:outline-none focus:font-bold focus:text-secondary" href="#faq">
                                 FAQ
                             </a>
                         </nav>
@@ -36,7 +36,7 @@ export default function LandingPageFooter() {
                         <p className="sr-only sm:not-sr-only sm:font-semibold sm:text-gray-950">Contato</p>
                         <nav className="flex flex-wrap gap-4 sm:mt-4 sm:grid sm:gap-3" aria-label="Links de contato">
                             <a
-                                className="inline-flex min-w-0 items-center gap-2 text-gray-700 transition-colors hover:text-gray-950"
+                                className="inline-flex min-w-0 items-center gap-2 text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                 href="mailto:contato.noctua.br@gmail.com"
                             >
                                 <i className="pi pi-envelope text-sm" aria-hidden="true" />
@@ -44,7 +44,7 @@ export default function LandingPageFooter() {
                                 <span className="hidden break-all sm:inline">contato.noctua.br@gmail.com</span>
                             </a>
                             <a
-                                className="inline-flex min-w-0 items-center gap-2 text-gray-700 transition-colors hover:text-gray-950"
+                                className="inline-flex min-w-0 items-center gap-2 text-gray-700 focus:outline-none focus:font-bold focus:text-secondary"
                                 href="https://www.instagram.com/use_noctua/"
                                 target="_blank"
                                 rel="noreferrer"
@@ -56,15 +56,15 @@ export default function LandingPageFooter() {
                     </div>
                 </div>
 
-                <div className="mx-auto mt-5 flex w-full max-w-[1440px] flex-col gap-3 border-t border-[#b8ddf7] pt-4 text-xs text-gray-600 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-xs text-gray-600">
+                <div className="mx-auto mt-5 flex w-full max-w-[1440px] flex-col gap-3 border-t border-[#b8ddf7] pt-4 text-sm text-gray-600 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-gray-600">
                         &copy; 2026 Noctua.
                     </p>
                     <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="Links legais">
-                        <Link className="transition-colors hover:text-gray-950" to="/termos-de-uso">
+                        <Link className="transition-colors focus:outline-none focus:font-bold focus:text-secondary" to="/termos-de-uso">
                             Termos de uso
                         </Link>
-                        <Link className="transition-colors hover:text-gray-950" to="/politica-de-privacidade">
+                        <Link className="transition-colors focus:outline-none focus:font-bold focus:text-secondary" to="/politica-de-privacidade">
                             Política de privacidade
                         </Link>
                     </nav>

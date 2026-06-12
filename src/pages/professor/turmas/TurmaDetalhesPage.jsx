@@ -175,20 +175,24 @@ const TurmaDetalhesPage = () => {
                 </Tabs>
             </div>
 
-            <EdicaoTurmaModal
-                isOpen={editModalOpen}
-                onClose={() => setEditModalOpen(false)}
-                turma={turma}
-                onSave={handleSalvarEdicao}
-            />
+            {editModalOpen && (
+                <EdicaoTurmaModal
+                    isOpen={editModalOpen}
+                    onClose={() => setEditModalOpen(false)}
+                    turma={turma}
+                    onSave={handleSalvarEdicao}
+                />
+            )}
 
-            <ExcluirTurmaModal
-                isOpen={deleteModalOpen}
-                turmaNome={turma?.nome}
-                isDeleting={isDeleting}
-                onClose={() => setDeleteModalOpen(false)}
-                onConfirm={handleConfirmDelete}
-            />
+            {deleteModalOpen && (
+                <ExcluirTurmaModal
+                    isOpen={deleteModalOpen}
+                    turmaNome={turma?.nome}
+                    isDeleting={isDeleting}
+                    onClose={() => setDeleteModalOpen(false)}
+                    onConfirm={handleConfirmDelete}
+                />
+            )}
         </>
     );
 };

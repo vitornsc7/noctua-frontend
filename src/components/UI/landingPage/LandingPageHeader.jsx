@@ -33,15 +33,18 @@ export default function LandingPageHeader() {
         navigate('/cadastro');
     };
 
+    const handleLogin = () => {
+        setIsMenuOpen(false);
+        navigate('/login');
+    };
+
     return (
         <header ref={headerRef} className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-8 py-4">
                 <div className="flex min-w-0 items-center gap-4 lg:gap-8">
-                    <a href="#inicio" onClick={(e) => handleNavClick(e, '#inicio')} className="flex items-center gap-2 text-gray-900">
-                        <span className="text-xl font-semibold leading-none">
-                            Noctua
-                        </span>
-                    </a>
+                    <span className="text-xl font-semibold leading-none text-gray-900">
+                        Noctua
+                    </span>
 
                     <nav className="hidden items-center gap-2 lg:flex" aria-label="Atalhos principais">
                         {shortcuts.map((shortcut) => (
@@ -49,7 +52,7 @@ export default function LandingPageHeader() {
                                 key={shortcut.href}
                                 href={shortcut.href}
                                 onClick={(e) => handleNavClick(e, shortcut.href)}
-                                className="px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+                                className="px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 focus:outline-none focus:font-bold focus:text-secondary"
                             >
                                 {shortcut.label}
                             </a>
@@ -60,7 +63,7 @@ export default function LandingPageHeader() {
                 <div className="hidden shrink-0 items-center gap-3 lg:flex">
                     <Link
                         to="/login"
-                        className="px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+                        className="px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 focus:outline-none focus:font-bold focus:text-secondary"
                     >
                         Entrar
                     </Link>
@@ -71,7 +74,7 @@ export default function LandingPageHeader() {
 
                 <button
                     type="button"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-950 lg:hidden"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-950 lg:hidden focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2"
                     onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
                     aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
                     aria-expanded={isMenuOpen}
@@ -88,7 +91,7 @@ export default function LandingPageHeader() {
                                 key={shortcut.href}
                                 href={shortcut.href}
                                 onClick={(e) => handleNavClick(e, shortcut.href)}
-                                className="rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-950"
+                                className="rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-950 focus:outline-none focus:bg-gray-50 focus:font-bold focus:text-secondary"
                             >
                                 {shortcut.label}
                             </a>
@@ -96,13 +99,13 @@ export default function LandingPageHeader() {
                     </nav>
 
                     <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-4 px-3">
-                        <Link
-                            to="/login"
-                            className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-gray-200 px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-950"
-                            onClick={() => setIsMenuOpen(false)}
+                        <Button
+                            className="h-9 flex-1 justify-center px-3 py-0 text-sm"
+                            onClick={handleLogin}
+                            variant="outline"
                         >
                             Entrar
-                        </Link>
+                        </Button>
                         <Button onClick={handleRegister} className="h-9 flex-1 justify-center px-3 py-0 text-sm">
                             Criar conta
                         </Button>

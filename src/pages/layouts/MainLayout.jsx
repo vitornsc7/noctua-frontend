@@ -54,7 +54,7 @@ const MainLayout = () => {
                                         'relative text-sm border-b-2 focus:outline-none pt-1 pb-0.5 transition-colors',
                                         isActive
                                             ? 'border-primary text-gray-800 font-medium'
-                                            : 'border-transparent  focus:border-secondary focus:text-secondary text-gray-600 hover:text-gray-800',
+                                            : 'border-transparent focus:border-secondary focus:text-secondary text-gray-600 hover:text-gray-800',
                                     ].join(' ')}
                                 >
                                     <span aria-hidden className="invisible font-medium">{item.label}</span>
@@ -88,7 +88,7 @@ const MainLayout = () => {
                                             to={item.to}
                                             onClick={closeMenu}
                                             className={[
-                                                'rounded-lg px-3 py-2 text-sm transition-colors hover:bg-gray-50 hover:text-secondary',
+                                                'rounded-lg px-3 py-2 text-sm transition-colors hover:bg-gray-50 hover:text-secondary focus:outline-none focus:bg-gray-50 focus:text-secondary',
                                                 isActive ? 'bg-gray-50 text-primary' : 'text-gray-700',
                                             ].join(' ')}
                                         >
@@ -103,7 +103,7 @@ const MainLayout = () => {
                             <button
                                 type="button"
                                 onClick={() => { handleLogout(); closeMenu(); }}
-                                className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                                className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-3 rounded p-1 py-0.5"
                                 aria-label="Sair"
                             >
                                 <i className="pi pi-sign-out text-xs"></i>

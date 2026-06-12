@@ -82,12 +82,12 @@ const AlunosTab = ({ turma }) => {
             <div className='space-y-4'>
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-700">Alunos</h2>
-                    <p
-                        className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition hover:cursor-pointer"
+                    <button
+                        className="text-sm text-gray-600 underline underline-offset-4 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
                         onClick={() => setIsAddModalOpen(true)}
                     >
                         Adicionar aluno
-                    </p>
+                    </button>
                 </div>
 
                 <div className='space-y-2'>
@@ -139,21 +139,25 @@ const AlunosTab = ({ turma }) => {
                 </Table>
             </div>
 
-            <AddAlunoModal
-                isOpen={isAddModalOpen}
-                isLoading={isSaving}
-                onClose={() => setIsAddModalOpen(false)}
-                onSave={handleSave}
-            />
+            {isAddModalOpen && (
+                <AddAlunoModal
+                    isOpen={isAddModalOpen}
+                    isLoading={isSaving}
+                    onClose={() => setIsAddModalOpen(false)}
+                    onSave={handleSave}
+                />
+            )}
 
-            <AddAlunoModal
-                isOpen={Boolean(editingAluno)}
-                isEditing
-                isLoading={isSaving}
-                initialData={editingAluno}
-                onClose={() => setEditingAluno(null)}
-                onSave={handleSaveEdit}
-            />
+            {Boolean(editingAluno) && (
+                <AddAlunoModal
+                    isOpen={Boolean(editingAluno)}
+                    isEditing
+                    isLoading={isSaving}
+                    initialData={editingAluno}
+                    onClose={() => setEditingAluno(null)}
+                    onSave={handleSaveEdit}
+                />
+            )}
         </>
     );
 };

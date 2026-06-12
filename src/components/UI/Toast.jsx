@@ -54,7 +54,7 @@ const Toast = ({
     const variantStyles = {
         success: {
             text: 'text-green-800',
-            icon: 'pi-check-circle',
+            icon: 'pi-check',
         },
         error: {
             text: 'text-red-800',

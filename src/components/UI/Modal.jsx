@@ -52,6 +52,69 @@ const Modal = ({
 			return undefined;
 		}
 
+		const panel = panelRef.current;
+		if (!panel) {
+			return undefined;
+		}
+
+		const FOCUSABLE = [
+			'a[href]',
+			'button:not([disabled])',
+			'input:not([disabled])',
+			'select:not([disabled])',
+			'textarea:not([disabled])',
+			'[tabindex]:not([tabindex="-1"])',
+		].join(', ');
+
+		const previouslyFocused = document.activeElement;
+
+		const getFocusable = () => Array.from(panel.querySelectorAll(FOCUSABLE));
+
+		const focusable = getFocusable();
+		if (focusable.length > 0) {
+			focusable[0].focus();
+		}
+
+		const handleTabTrap = (event) => {
+			if (event.key !== 'Tab') {
+				return;
+			}
+
+			const els = getFocusable();
+			if (els.length === 0) {
+				event.preventDefault();
+				return;
+			}
+
+			const first = els[0];
+			const last = els[els.length - 1];
+
+			if (event.shiftKey) {
+				if (document.activeElement === first) {
+					event.preventDefault();
+					last.focus();
+				}
+			} else {
+				if (document.activeElement === last) {
+					event.preventDefault();
+					first.focus();
+				}
+			}
+		};
+
+		document.addEventListener('keydown', handleTabTrap);
+
+		return () => {
+			document.removeEventListener('keydown', handleTabTrap);
+			previouslyFocused?.focus?.();
+		};
+	}, [isOpen]);
+
+	useEffect(() => {
+		if (!isOpen) {
+			return undefined;
+		}
+
 		const dragState = dragStateRef.current;
 
 		const scheduleTransformFrame = () => {
@@ -156,13 +219,13 @@ const Modal = ({
 									onPointerDown={handleHeaderPointerDown}
 									style={draggable ? { touchAction: 'none' } : undefined}
 								>
-									<div className="text-lg font-semibold text-gray-700">{title}</div>
+									<div className="text-lg font-medium text-gray-700">{title}</div>
 
 									{showCloseButton && (
 										<button
 											type="button"
 											onClick={onClose}
-											className="p-1 text-gray-500 transition-colors hover:text-gray-700"
+											className=" px-1 outline-none text-gray-500 focus:ring-2 focus:ring-gray-700 rounded"
 											aria-label="Fechar modal"
 										>
 											<i className="pi pi-times text-sm" aria-hidden="true"></i>

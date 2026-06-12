@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
                         <div className="flex gap-2 items-center justify-between">
                             <p className="text-sm text-gray-500 text-center m-0">
                                 Lembrou sua senha?{" "}
-                                <Link to="/login" className="underline">
+                                <Link to="/login" className="underline focus:outline-none focus:font-bold focus:text-secondary">
                                     Voltar ao login
                                 </Link>
                             </p>

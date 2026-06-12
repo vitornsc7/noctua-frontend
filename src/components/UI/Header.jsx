@@ -53,7 +53,7 @@ const Header = ({
                     {hasMobileMenu && (
                         <button
                             type="button"
-                            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-950 lg:hidden"
+                            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-950 lg:hidden focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2"
                             onClick={() => setIsMenuOpen((v) => !v)}
                             aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
                             aria-expanded={isMenuOpen}

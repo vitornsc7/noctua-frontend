@@ -107,7 +107,7 @@ export default function TwoFactorSetupPage() {
     return (
         <div className="space-y-6">
             <div>
-                <Link to="/configuracoes" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
+                <Link to="/configuracoes" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary">
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
                     <span>Configurações</span>
                 </Link>

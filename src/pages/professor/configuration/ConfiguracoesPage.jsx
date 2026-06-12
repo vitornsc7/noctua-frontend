@@ -30,23 +30,22 @@ const SettingCard = ({
                         <p className="text-sm text-gray-600">{description}</p>
                     </div>
                 </div>
-
-                <div className="xl:pt-2 text-sm text-primary underline underline-offset-4">
-                    {actionLabel}
-                </div>
             </div>
+            <button className="pt-2 text-sm text-primary underline underline-offset-4 focus:outline-none focus:font-bold focus:text-secondary">
+                {actionLabel}
+            </button>
         </Card>
     );
 
     if (onClick) {
         return (
-            <button
+            <div
                 type="button"
                 onClick={onClick}
-                className="block h-full w-full text-left"
+                className="block h-full w-full text-left "
             >
                 {content}
-            </button>
+            </div>
         );
     }
 
@@ -55,7 +54,7 @@ const SettingCard = ({
     }
 
     return (
-        <Link to={to} className="block h-full">
+        <Link to={to} className="block h-full" tabIndex={-1}>
             {content}
         </Link>
     );
@@ -108,17 +107,19 @@ const ConfiguracoesPage = () => {
                                 Nossa equipe de suporte está disponível para tirar qualquer dúvida sobre a plataforma.
                             </p>
                         </div>
-                        <a href="mailto:contato.noctua.br@gmail.com">
-                            <Button variant="outline">Falar com suporte</Button>
-                        </a>
+                        <Button variant="outline" as="a" href="mailto:contato.noctua.br@gmail.com">
+                            Falar com suporte
+                        </Button>
                     </div>
                 </Card>
             </div>
 
-            <DadosCadastraisModal
-                open={dadosModalAberto}
-                onClose={() => setDadosModalAberto(false)}
-            />
+            {dadosModalAberto && (
+                <DadosCadastraisModal
+                    open={dadosModalAberto}
+                    onClose={() => setDadosModalAberto(false)}
+                />
+            )}
         </>
     );
 };

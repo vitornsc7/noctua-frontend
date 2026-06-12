@@ -97,7 +97,7 @@ export default function ResetPasswordPage() {
                                 O link de redefinição de senha é inválido ou está incompleto.
                             </p>
 
-                            <Link to="/login" className="underline text-sm">
+                            <Link to="/login" className="underline text-sm focus:outline-none focus:font-bold focus:text-secondary">
                                 Voltar ao login
                             </Link>
                         </div>
@@ -134,7 +134,7 @@ export default function ResetPasswordPage() {
                     footer={
                         <div className="flex gap-2 items-center justify-between">
                             <p className="text-sm text-gray-500 text-center m-0">
-                                <Link to="/login" className="underline">
+                                <Link to="/login" className="underline focus:outline-none focus:font-bold focus:text-secondary">
                                     Voltar ao login
                                 </Link>
                             </p>

@@ -75,7 +75,7 @@ const DashboardPage = () => {
                     </p>
                     <Link
                         to="/turmas/"
-                        className="mt-2 text-sm text-primary underline underline-offset-4 hover:opacity-80 transition"
+                        className="mt-2 text-sm text-primary focus:outline-none focus:font-bold focus:text-secondary underline underline-offset-4 hover:opacity-80 transition"
                     >
                         Ir para turmas
                     </Link>
