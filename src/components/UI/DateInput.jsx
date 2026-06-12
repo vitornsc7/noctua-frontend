@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Calendar } from 'primereact/calendar';
 import { addLocale } from 'primereact/api';
@@ -44,13 +44,26 @@ const DateInput = ({
     ...rest
 }) => {
     const hasError = Boolean(error);
+    const calendarRef = useRef(null);
+
+    const handleWrapperKeyDown = (e) => {
+        if (e.key === 'Enter' && !disabled) {
+            e.preventDefault();
+            calendarRef.current?.show();
+        }
+    };
+
+    const handleWrapperClick = () => {
+        if (!disabled) calendarRef.current?.show();
+    };
 
     const handleChange = (e) => {
         onChange?.({ target: { value: e.value ? toISODate(e.value) : '' } });
     };
 
     const inputClass = [
-        'w-full pl-4 pr-10 py-2 rounded-lg border focus:outline-none bg-white text-sm text-gray-700 placeholder-gray-400',
+        'w-full pl-4 py-2 rounded-lg border focus:outline-none bg-white text-sm text-gray-700 placeholder-gray-400',
+        value ? 'pr-16' : 'pr-10',
         hasError ? 'border-red-300 focus:border-red-300' : 'border-gray-300 focus:border-primary',
         disabled ? 'bg-gray-100 opacity-60' : '',
     ].filter(Boolean).join(' ');
@@ -64,8 +77,9 @@ const DateInput = ({
                 </label>
             )}
 
-            <div className="relative">
+            <div className="relative" onKeyDown={handleWrapperKeyDown}>
                 <Calendar
+                    ref={calendarRef}
                     value={toDate(value)}
                     onChange={handleChange}
                     dateFormat="dd/mm/yy"
@@ -74,6 +88,8 @@ const DateInput = ({
                     disabled={disabled}
                     minDate={minDate}
                     maxDate={maxDate}
+                    showOnFocus={false}
+                    mask="99/99/9999"
                     inputClassName={inputClass}
                     inputStyle={{ boxShadow: 'none' }}
                     pt={{
@@ -89,8 +105,34 @@ const DateInput = ({
                     }}
                     {...rest}
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                    <i className="pi pi-calendar text-sm" aria-hidden="true" />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                    {value && !disabled && (
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            aria-label="Limpar data"
+                            className="text-gray-400 hover:text-gray-600 transition"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onChange?.({ target: { value: '' } });
+                            }}
+                        >
+                            <i className="pi pi-times text-xs" aria-hidden="true" />
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        tabIndex={-1}
+                        aria-label="Abrir calendário"
+                        className="text-gray-400 hover:text-gray-600 transition pointer-events-auto"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleWrapperClick();
+                        }}
+                        disabled={disabled}
+                    >
+                        <i className="pi pi-calendar text-sm" aria-hidden="true" />
+                    </button>
                 </div>
             </div>
 
