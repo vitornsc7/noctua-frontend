@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DateInput, Input, Modal, Select, Tooltip } from '../../../components/UI';
+import { Button, DateInput, Input, Modal, Select } from '../../../components/UI';
 
 const formatarDataParaInput = (data) => {
     if (!data) return '';
     return data.slice(0, 10);
+};
+
+const formatarDataDisplay = (data) => {
+    if (!data) return '-';
+    const iso = data.slice(0, 10);
+    const [year, month, day] = iso.split('-');
+    return `${day}/${month}/${year}`;
 };
 
 const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
@@ -26,35 +33,19 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
         }
     }, [isOpen, falta]);
 
-    const handleChange = (field) => (event) => {
-        setForm((current) => ({
-            ...current,
-            [field]: event.target.value,
-        }));
-    };
-
     const handlePeriodosFaltadosChange = (event) => {
         setForm((current) => ({ ...current, periodosFaltados: event.target.value }));
     };
 
     const qtdePeriodosTurma = Number(turma?.qtdePeriodos);
-
     const isTrimestral = qtdePeriodosTurma === 3;
-
-    const quantidadePeriodos = isTrimestral ? 3 : 4;
-
     const periodoLabel = isTrimestral ? 'Trimestre' : 'Bimestre';
-
-    const periodos = Array.from(
-        { length: quantidadePeriodos },
-        (_, index) => index + 1
-    );
 
     return (
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Editar falta"
+            title={`Editar falta (${formatarDataDisplay(form.dataFalta)})`}
             maxWidth="max-w-md"
             footer={
                 <div className="flex justify-end gap-2">
@@ -86,48 +77,10 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
             }
         >
             <div className="space-y-4">
-                <Select
-                    label="Aluno"
-                    required
-                    placeholder="Selecione o aluno"
-                    disabled
-                    value={form.alunoId}
-                    onChange={handleChange('alunoId')}
-                    fullWidth
-                >
-                    {(turma?.alunos || []).map((aluno) => (
-                        <Select.Option key={aluno.id} value={aluno.id}>
-                            {aluno.nome}
-                        </Select.Option>
-                    ))}
-                </Select>
-
-
-                <Select
-                    label={periodoLabel}
-                    required
-                    placeholder={`Selecione o ${periodoLabel.toLowerCase()}`}
-                    value={form.periodo}
-                    onChange={handleChange('periodo')}
-                    disabled
-                    fullWidth
-                    tooltip="O período só pode ser alterado na tela de lançamento de faltas."
-                >
-                    {periodos.map((periodo) => (
-                        <Select.Option key={periodo} value={periodo}>
-                            {periodo}º {periodoLabel}
-                        </Select.Option>
-                    ))}
-                </Select>
-
-                <DateInput
-                    label="Data da falta"
-                    required
-                    disabled
-                    value={form.dataFalta}
-                    onChange={handleChange('dataFalta')}
-                    fullWidth
-                />
+                <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Aluno</p>
+                    <p className="text-sm text-gray-700">{falta?.alunoNome ?? '-'}</p>
+                </div>
 
                 <Input
                     label="Períodos faltados"
