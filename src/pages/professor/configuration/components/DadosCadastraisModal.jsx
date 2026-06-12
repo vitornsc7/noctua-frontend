@@ -10,6 +10,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
 
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
+    const [loadingDados, setLoadingDados] = useState(false);
     const [confirmarExclusaoOpen, setConfirmarExclusaoOpen] = useState(false);
     const [excluindoConta, setExcluindoConta] = useState(false);
 
@@ -34,6 +35,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
 
         async function carregarUsuario() {
             try {
+                setLoadingDados(true);
                 const token = localStorage.getItem('token');
                 const data = await getMe(token);
 
@@ -45,6 +47,8 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                 setEmail(data.email || '');
             } catch (error) {
                 showError('Erro ao carregar dados do usuário', 'Tente novamente mais tarde.');
+            } finally {
+                setLoadingDados(false);
             }
         }
 
@@ -157,7 +161,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                             <Button
                                 type="submit"
                                 form="dados-cadastrais-form"
-                                disabled={loading}
+                                disabled={loading || loadingDados}
                                 isLoading={loading}
                             >
                                 Salvar
@@ -175,6 +179,9 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                         label="Nome"
                         type="text"
                         required
+                        placeholder="Digite seu nome"
+                        isLoading={loadingDados}
+                        disabled={loadingDados}
                         {...getFieldProps('nome')}
                     />
 
@@ -182,6 +189,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                         label="E-mail"
                         type="email"
                         value={email}
+                        placeholder="Digite seu e-mail"
                         disabled
                         tabIndex={-1}
                         tooltip="O e-mail não pode ser alterado."
@@ -191,6 +199,8 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                         label="Senha"
                         type="password"
                         placeholder="Digite uma nova senha"
+                        isLoading={loadingDados}
+                        disabled={loadingDados}
                         {...getFieldProps('senha')}
                     />
                 </form>
