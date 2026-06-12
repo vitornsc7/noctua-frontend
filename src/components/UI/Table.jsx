@@ -62,31 +62,40 @@ const Table = ({
         <div className="inline-flex items-center justify-end gap-3 whitespace-nowrap text-base">
             {onView && (
                 <Tooltip content={tooltips.view}>
-                    <i
-                        className="pi pi-eye cursor-pointer text-xs text-gray-600"
+                    <button
+                        type="button"
+                        className="cursor-pointer text-gray-600 focus:outline-none focus:text-secondary"
                         aria-label={`${tooltips.view} item`}
                         onClick={() => onView(row)}
-                    ></i>
+                    >
+                        <i className="pi pi-eye text-xs" aria-hidden="true"></i>
+                    </button>
                 </Tooltip>
             )}
 
             {onEdit && (
                 <Tooltip content={tooltips.edit}>
-                    <i
-                        className="pi pi-pencil cursor-pointer text-xs text-gray-600"
+                    <button
+                        type="button"
+                        className="cursor-pointer text-gray-600 focus:outline-none focus:text-secondary"
                         aria-label={`${tooltips.edit} item`}
                         onClick={() => onEdit(row)}
-                    ></i>
+                    >
+                        <i className="pi pi-pencil text-xs" aria-hidden="true"></i>
+                    </button>
                 </Tooltip>
             )}
 
             {onDelete && (
                 <Tooltip content={tooltips.delete}>
-                    <i
-                        className="pi pi-trash cursor-pointer text-xs text-red-500"
+                    <button
+                        type="button"
+                        className="cursor-pointer text-red-500 focus:outline-none focus:text-red-700"
                         aria-label={`${tooltips.delete} item`}
                         onClick={() => onDelete(row)}
-                    ></i>
+                    >
+                        <i className="pi pi-trash text-xs" aria-hidden="true"></i>
+                    </button>
                 </Tooltip>
             )}
         </div>
