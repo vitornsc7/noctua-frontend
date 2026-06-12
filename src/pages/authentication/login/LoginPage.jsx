@@ -131,9 +131,16 @@ export default function LoginPage() {
                                     </Link>
                                 </p>
                             ) : (
-                                <p className="text-sm text-gray-500 text-center m-0">
-                                    Digite o código gerado no Google Authenticator.
-                                </p>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setRequiresTwoFactor(false);
+                                        setCodigo2fa('');
+                                    }}
+                                    disabled={carregando}
+                                >
+                                    Voltar
+                                </Button>
                             )}
 
                             <Button
@@ -143,7 +150,7 @@ export default function LoginPage() {
                                 disabled={carregando}
                                 isLoading={carregando}
                             >
-                                {requiresTwoFactor ? 'Validar código' : 'Entrar'}
+                                {requiresTwoFactor ? 'Validar' : 'Entrar'}
                             </Button>
                         </div>
                     }
@@ -179,18 +186,6 @@ export default function LoginPage() {
                                 value={codigo2fa}
                                 onChange={(e) => setCodigo2fa(e.target.value)}
                             />
-
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                onClick={() => {
-                                    setRequiresTwoFactor(false);
-                                    setCodigo2fa('');
-                                }}
-                                disabled={carregando}
-                            >
-                                Voltar
-                            </Button>
                         </div>
                     )}
                 </Card>

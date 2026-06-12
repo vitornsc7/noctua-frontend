@@ -123,7 +123,6 @@ export default function TwoFactorSetupPage() {
 
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.8fr)_minmax(280px,1fr)]">
                 <Card
-                    variant="accent"
                     header={
                         <div>
                             <h2 className="text-lg font-medium text-gray-700">Configurar aplicativo autenticador</h2>
@@ -142,7 +141,8 @@ export default function TwoFactorSetupPage() {
 
                             <div className="flex justify-end gap-2 mt-2">
                                 <Button onClick={handleVerify} disabled={loading || code.length !== 6 || success}>
-                                    {loading ? 'Verificando...' : success ? 'Ativado' : 'Verificar e ativar'}
+                                    {loading && <i className="pi pi-spin pi-spinner text-xs"></i>}
+                                    Ativar
                                 </Button>
                             </div>
                         </div>
@@ -210,12 +210,6 @@ export default function TwoFactorSetupPage() {
                                     fullWidth
                                     error={error || undefined}
                                 />
-
-                                {success && (
-                                    <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                                        Autenticação em dois fatores ativada com sucesso.
-                                    </div>
-                                )}
                             </div>
                         </StepCard>
                     </div>
@@ -259,7 +253,7 @@ function StepCard({ number, title, description, children }) {
     return (
         <Card>
             <div className="flex gap-4">
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#EEF2FF] text-sm font-semibold text-[#4057C7]">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-secondary">
                     {number}
                 </div>
 

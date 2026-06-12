@@ -148,7 +148,7 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                         <button
                             type="button"
                             onClick={() => setConfirmarExclusaoOpen(true)}
-                            className="text-sm font-medium text-red-600 hover:underline"
+                            className="text-sm font-medium text-red-800 hover:underline focus:outline-none focus:font-bold focus:text-red-900"
                         >
                             Excluir minha conta
                         </button>
@@ -229,7 +229,6 @@ const DadosCadastraisModal = ({ open, onClose }) => {
                         <Button
                             onClick={excluirConta}
                             disabled={excluindoConta}
-                            className="bg-red-600 hover:bg-red-700"
                             isLoading={excluindoConta}
                         >
                             Excluir conta
