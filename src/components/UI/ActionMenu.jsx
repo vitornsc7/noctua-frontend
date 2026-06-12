@@ -17,12 +17,28 @@ const ActionMenu = ({
             }
         };
 
+        const handleFocusOut = (event) => {
+            if (!containerRef.current?.contains(event.relatedTarget)) {
+                setIsOpen(false);
+            }
+        };
+
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        };
+
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('keydown', handleKeyDown);
+            containerRef.current?.addEventListener('focusout', handleFocusOut);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
+            containerRef.current?.removeEventListener('focusout', handleFocusOut);
         };
     }, [isOpen]);
 
