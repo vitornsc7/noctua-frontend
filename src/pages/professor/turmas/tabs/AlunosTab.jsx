@@ -97,12 +97,12 @@ const AlunosTab = ({ turma }) => {
                             Filtros
                         </p>
                         {/* {temFiltroAtivo && (
-                            <p
+                            <button
                                 onClick={handleLimparFiltros}
-                                className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer"
+                                className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer focus:outline-none focus:font-semibold focus:text-secondary"
                             >
                                 Limpar filtros
-                            </p>
+                            </button>
                         )} */}
                     </div>
                     <div className="grid md:grid-cols-3 sm:grid-cols-1">

@@ -156,12 +156,12 @@ const FaltasTab = ({ turma }) => {
                             Filtros
                         </p>
                         {temFiltroAtivo && (
-                            <p
+                            <button
                                 onClick={handleLimparFiltros}
-                                className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer"
+                                className="text-xs text-gray-500 hover:text-gray-600 transition cursor-pointer focus:outline-none focus:font-semibold focus:text-secondary"
                             >
                                 Limpar filtros
-                            </p>
+                            </button>
                         )}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -203,7 +203,7 @@ const FaltasTab = ({ turma }) => {
                     data={faltas}
                     loading={loading}
                     emptyMessage="Nenhuma falta encontrada."
-                    onEdit={setFaltaSelecionada}
+                    onEdit={(falta) => setFaltaSelecionada({ ...falta, alunoNome: getNomeAluno(falta.alunoId) })}
                     onDelete={setFaltaParaExcluir}
                     actionTooltips={{
                         edit: 'Editar falta',
