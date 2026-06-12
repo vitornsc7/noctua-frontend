@@ -38,8 +38,12 @@ const AvaliacaoDetalhesPage = () => {
         setSavingNota(true);
         try {
             await atualizarNota(turmaId, avaliacaoId, notaEditando.id, payload);
-            const novasNotas = await listarNotasPorAvaliacao(turmaId, avaliacaoId);
+            const [novasNotas, avaliacaoAtualizada] = await Promise.all([
+                listarNotasPorAvaliacao(turmaId, avaliacaoId),
+                buscarAvaliacaoPorId(turmaId, avaliacaoId),
+            ]);
             setNotas(novasNotas);
+            setAvaliacao(avaliacaoAtualizada);
             setNotaEditando(null);
             showSuccess('Nota atualizada com sucesso.', 'A nota do aluno foi salva.');
         } catch (err) {
@@ -342,7 +346,7 @@ const AvaliacaoDetalhesPage = () => {
                             Cancelar
                         </Button>
                         <Button onClick={handleCriarChamada} disabled={criandoChamada} isLoading={criandoChamada}>
-                            Confirmar
+                            Salvar
                         </Button>
                     </div>
                 }
@@ -352,7 +356,7 @@ const AvaliacaoDetalhesPage = () => {
                         Apenas os alunos marcados como <span className="font-medium">não compareceu</span> irão para essa prova.
                     </p>
                     <DateInput
-                        label="Data da segunda aplicação"
+                        label="Data da aplicação"
                         value={dataSegundaChamada}
                         onChange={(e) => setDataSegundaChamada(e.target.value)}
                         minDate={(() => {
