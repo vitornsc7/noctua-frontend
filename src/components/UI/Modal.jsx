@@ -253,7 +253,7 @@ const Modal = ({
 												hover:bg-gray-100
 												hover:text-gray-700
 												transition-colors
-												outline-none 0 focus:ring-2 focus:ring-gray-300
+												outline-none 0 focus:ring-2 focus:ring-gray-700
 											"
 											aria-label="Fechar modal"
 											data-modal-close-btn
