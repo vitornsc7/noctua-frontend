@@ -157,7 +157,7 @@ const VisaoGeralTab = ({ turma }) => {
                         Classificação automática baseada na média final e frequência total dos alunos.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-5">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 xl:grid-cols-5">
                     {INTERVENCOES.map((item) => {
                         const c = INTERVENCAO_CARD_COLORS[item.color];
                         return (
