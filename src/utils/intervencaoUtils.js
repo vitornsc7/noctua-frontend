@@ -61,11 +61,41 @@ export const getIntervencao = (media, freq, limites, mediaMinima) => {
 };
 
 export const INTERVENCOES = [
-    { titulo: 'Não necessária', descricao: 'Notas e frequência adequados.', color: 'emerald', icon: 'pi pi-check', condicoes: [['alta', 'alta']] },
-    { titulo: 'Em monitoramento', descricao: 'Necessita de acompanhamento.', color: 'sky', icon: 'pi pi-eye', condicoes: [['media', 'alta'], ['alta', 'media']] },
-    { titulo: 'Psicossocial', descricao: 'Possíveis fatores sociais ou emocionais.', color: 'amber', icon: 'pi pi-users', condicoes: [['baixa', 'alta'], ['critica', 'alta']] },
-    { titulo: 'Pedagógica', descricao: 'Necessita reforço pedagógico.', color: 'orange', icon: 'pi pi-book', condicoes: [['baixa', 'media'], ['alta', 'baixa'], ['media', 'baixa']] },
-    { titulo: 'Urgente', descricao: 'Alto risco de evasão ou reprovação.', color: 'red', icon: 'pi pi-exclamation-triangle', condicoes: [['critica', 'media'], ['baixa', 'baixa'], ['critica', 'baixa']] },
+    {
+        titulo: 'Não necessária',
+        descricao: 'Desempenho acadêmico e frequência satisfatórios, sem necessidade de intervenção no momento.',
+        color: 'emerald',
+        icon: 'pi pi-check',
+        condicoes: [['alta', 'alta']]
+    },
+    {
+        titulo: 'Em monitoramento',
+        descricao: 'Situação estável, mas requer acompanhamento preventivo devido a sinais de atenção em desempenho ou frequência.',
+        color: 'sky',
+        icon: 'pi pi-eye',
+        condicoes: [['media', 'alta'], ['alta', 'media']]
+    },
+    {
+        titulo: 'Psicossocial',
+        descricao: 'Indícios de fatores sociais, emocionais ou familiares impactando a frequência, apesar do desempenho acadêmico adequado.',
+        color: 'amber',
+        icon: 'pi pi-users',
+        condicoes: [['baixa', 'alta'], ['critica', 'alta']]
+    },
+    {
+        titulo: 'Pedagógica',
+        descricao: 'Necessita de apoio pedagógico para melhoria do desempenho acadêmico, mesmo mantendo frequência adequada.',
+        color: 'orange',
+        icon: 'pi pi-book',
+        condicoes: [['baixa', 'media'], ['alta', 'baixa'], ['media', 'baixa']]
+    },
+    {
+        titulo: 'Urgente',
+        descricao: 'Situação crítica com elevado risco de reprovação, evasão ou comprometimento significativo da trajetória escolar.',
+        color: 'red',
+        icon: 'pi pi-exclamation-triangle',
+        condicoes: [['critica', 'media'], ['baixa', 'baixa'], ['critica', 'baixa']]
+    }
 ];
 
 export const fmtN = (n) => (n != null ? String(n).replace('.', ',') : '—');
