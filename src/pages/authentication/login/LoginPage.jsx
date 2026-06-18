@@ -112,7 +112,7 @@ export default function LoginPage() {
                         <img
                             src={corujinha}
                             alt="Logo Noctua"
-                            className="w-12 ml-2"
+                            className="w-10 ml-2"
                         />
                     </div>
                     <p className="mt-2 mb-5 text-sm text-gray-500 text-center">
@@ -121,6 +121,7 @@ export default function LoginPage() {
                 </div>
 
                 <Card
+                    className="max-w-[360px] mx-auto"
                     footer={
                         <div className="flex gap-2 items-center justify-between">
                             {!requiresTwoFactor ? (

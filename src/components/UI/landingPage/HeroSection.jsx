@@ -16,7 +16,7 @@ export default function HeroSection() {
                         <img
                             src={corujinha}
                             alt="Logo Noctua"
-                            className="w-12 object-contain"
+                            className="w-10 object-contain"
                         />
                     </div>
 

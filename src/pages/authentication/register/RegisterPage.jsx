@@ -83,6 +83,7 @@ export default function RegisterPage() {
                 </div>
 
                 <Card
+                    className="max-w-[380px] mx-auto"
                     header={
                         <h2 className="text-lg font-medium text-gray-700">
                             Criar conta
