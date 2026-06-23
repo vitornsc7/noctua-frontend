@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { buscarAvaliacaoPorId, listarNotasPorAvaliacao, atualizarNota } from '../../../api/turmaApi';
-import { Button, Checkbox, Input, useToast } from '../../../components/UI';
+import { Button, Checkbox, Input, Modal, useToast } from '../../../components/UI';
 import { TIPO_AVALIACAO_DISPLAY, displayLabel } from '../../../utils/displayMaps';
 
 const LancarNotasPage = () => {
@@ -16,6 +16,8 @@ const LancarNotasPage = () => {
     const [valores, setValores] = useState({});
     const [naoRealizadas, setNaoRealizadas] = useState({});
     const [errors, setErrors] = useState({});
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [alertas, setAlertas] = useState([]);
 
     useEffect(() => {
         Promise.all([
@@ -49,27 +51,7 @@ const LancarNotasPage = () => {
         }
     };
 
-    const validate = () => {
-        const newErrors = {};
-        notas.forEach((nota) => {
-            if (naoRealizadas[nota.id]) return;
-            const raw = (valores[nota.id] ?? '').trim().replace(',', '.');
-            if (!raw) {
-                newErrors[nota.id] = 'Informe a nota.';
-                return;
-            }
-            const num = parseFloat(raw);
-            if (Number.isNaN(num) || num < 0 || num > 10) {
-                newErrors[nota.id] = 'A nota deve estar entre 0 e 10.';
-            }
-        });
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSalvar = async () => {
-        if (!validate()) return;
-
+    const save = async () => {
         setSaving(true);
         try {
             await Promise.all(
@@ -82,7 +64,7 @@ const LancarNotasPage = () => {
                     }
                     const raw = (valores[nota.id] ?? '').trim().replace(',', '.');
                     return atualizarNota(turmaId, avaliacaoId, nota.id, {
-                        valor: parseFloat(raw),
+                        valor: raw !== '' ? parseFloat(raw) : null,
                         naoRealizada: false,
                     });
                 })
@@ -94,6 +76,42 @@ const LancarNotasPage = () => {
         } finally {
             setSaving(false);
         }
+    };
+
+    const handleSalvar = () => {
+        const algumPreenchido = notas.some((nota) => {
+            if (naoRealizadas[nota.id]) return true;
+            const raw = (valores[nota.id] ?? '').trim();
+            return raw !== '';
+        });
+
+        if (!algumPreenchido) {
+            showError('Erro ao lançar notas', 'Pelo menos uma nota deve ter valor ou estar marcada como "Não compareceu".');
+            return;
+        }
+
+        const notasSemValor = notas.filter((nota) => {
+            if (naoRealizadas[nota.id]) return false;
+            const raw = (valores[nota.id] ?? '').trim();
+            return raw === '';
+        });
+
+        if (notasSemValor.length > 0) {
+            setAlertas(
+                notasSemValor.map((nota) => ({
+                    nome: nota.alunoNome,
+                    motivo: 'sem valor informado',
+                }))
+            );
+            setConfirmModalOpen(true);
+        } else {
+            save();
+        }
+    };
+
+    const handleConfirmar = () => {
+        setConfirmModalOpen(false);
+        save();
     };
 
     if (loading) {
@@ -108,72 +126,92 @@ const LancarNotasPage = () => {
     const titulo = avaliacao ? `${tipoDisplay}: ${avaliacao.tema}` : '';
 
     return (
-        <div className="space-y-6">
-            <div>
-                <Link
-                    to={`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`}
-                    className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
-                >
-                    <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
-                    <span>{titulo}</span>
-                </Link>
-                <h1 className="text-3xl font-semibold text-gray-700">Lançar notas</h1>
-            </div>
-
-            {notas.length === 0 ? (
-                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                    <p className="text-gray-400 italic text-sm">Todos os alunos já possuem nota lançada.</p>
+        <div>
+            <div className="space-y-6">
+                <div>
+                    <Link
+                        to={`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`}
+                        className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition focus:outline-none focus:font-bold focus:text-secondary"
+                    >
+                        <i className="pi pi-chevron-left text-xs" aria-hidden="true" />
+                        <span>{titulo}</span>
+                    </Link>
+                    <h1 className="text-3xl font-semibold text-gray-700">Lançar notas</h1>
                 </div>
-            ) : (
-                <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
-                    {notas.map((nota) => (
-                        <div
-                            key={nota.id}
-                            className="flex items-center gap-4 px-4 py-3"
-                        >
-                            <span className="flex-1 text-sm text-gray-700 font-medium">
-                                {nota.alunoNome}
-                            </span>
-                            <Checkbox
-                                label="Não compareceu"
-                                checked={naoRealizadas[nota.id] ?? false}
-                                onChange={(e) => handleNaoRealizadaChange(nota.id, e.target.checked)}
-                            />
-                            <div className="w-36">
-                                <Input
-                                    placeholder="0 - 10"
-                                    numericOnly
-                                    min={0}
-                                    max={10}
-                                    step={0.01}
-                                    value={valores[nota.id] ?? ''}
-                                    onChange={(e) => handleChange(nota.id, e.target.value)}
-                                    error={errors[nota.id]}
-                                    fullWidth
-                                    disabled={naoRealizadas[nota.id] ?? false}
+                {notas.length === 0 ? (
+                    <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                        <p className="text-gray-400 italic text-sm">Todos os alunos já possuem nota lançada.</p>
+                    </div>
+                ) : (
+                    <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
+                        {notas.map((nota) => (
+                            <div
+                                key={nota.id}
+                                className="flex items-center gap-4 px-4 py-3"
+                            >
+                                <span className="flex-1 text-sm text-gray-700 font-medium">
+                                    {nota.alunoNome}
+                                </span>
+                                <Checkbox
+                                    label="Não compareceu"
+                                    checked={naoRealizadas[nota.id] ?? false}
+                                    onChange={(e) => handleNaoRealizadaChange(nota.id, e.target.checked)}
                                 />
+                                <div className="w-36">
+                                    <Input
+                                        placeholder="0 - 10"
+                                        numericOnly
+                                        min={0}
+                                        max={10}
+                                        step={0.01}
+                                        value={valores[nota.id] ?? ''}
+                                        onChange={(e) => handleChange(nota.id, e.target.value)}
+                                        error={errors[nota.id]}
+                                        fullWidth
+                                        disabled={naoRealizadas[nota.id] ?? false}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+                )}
+                <div className="flex justify-end gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`)}
+                        disabled={saving}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        onClick={handleSalvar}
+                        disabled={saving || notas.length === 0}
+                        isLoading={saving}
+                    >
+                        Lançar notas
+                    </Button>
                 </div>
-            )}
-
-            <div className="flex justify-end gap-3">
-                <Button
-                    variant="outline"
-                    onClick={() => navigate(`/turmas/${turmaId}/avaliacoes/${avaliacaoId}`)}
-                    disabled={saving}
-                >
-                    Cancelar
-                </Button>
-                <Button
-                    onClick={handleSalvar}
-                    disabled={saving || notas.length === 0}
-                    isLoading={saving}
-                >
-                    Lançar notas
-                </Button>
             </div>
+
+            <Modal
+                isOpen={confirmModalOpen}
+                onClose={() => setConfirmModalOpen(false)}
+                title="Há notas não preenchidas"
+                footer={
+                    <div className="flex justify-end gap-2">
+                        <Button variant="outline" onClick={() => setConfirmModalOpen(false)} disabled={saving}>
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleConfirmar} isLoading={saving} disabled={saving}>
+                            Salvar
+                        </Button>
+                    </div>
+                }
+            >
+                <p className="text-sm text-gray-500">
+                    Deseja confirmar o lançamento mesmo assim?
+                </p>
+            </Modal>
         </div>
     );
 };
