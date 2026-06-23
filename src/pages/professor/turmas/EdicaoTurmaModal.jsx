@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Modal, Input, Select, Button } from '../../../components/UI';
@@ -16,6 +16,7 @@ const extrairAno = (anoLetivo) => {
 };
 
 const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
+    const [isSaving, setIsSaving] = useState(false);
     const {
         watch,
         setValue,
@@ -60,19 +61,23 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
     });
 
     const handleSubmit = async () => {
-        const valid = await trigger();
-        if (!valid) return;
-
-        onSave({
-            nome: form.nome,
-            anoLetivo: `${form.anoLetivo}-01-01`,
-            qtdePeriodos: turma.qtdePeriodos,
-            qtdeAulasPrevistasPeriodo: Number(form.qtdeAulasPrevistasPeriodo),
-            turno: TURNO_TO_ENUM[form.turno] ?? form.turno,
-            mediaMinima: parseFloat(String(form.mediaMinima).replace(',', '.')),
-            disciplina: form.disciplina?.trim() || null,
-            instituicao: form.instituicao?.trim() || null,
-        });
+        setIsSaving(true);
+        try {
+            const valid = await trigger();
+            if (!valid) return;
+            await onSave({
+                nome: form.nome,
+                anoLetivo: `${form.anoLetivo}-01-01`,
+                qtdePeriodos: turma.qtdePeriodos,
+                qtdeAulasPrevistasPeriodo: Number(form.qtdeAulasPrevistasPeriodo),
+                turno: TURNO_TO_ENUM[form.turno] ?? form.turno,
+                mediaMinima: parseFloat(String(form.mediaMinima).replace(',', '.')),
+                disciplina: form.disciplina?.trim() || null,
+                instituicao: form.instituicao?.trim() || null,
+            });
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -86,7 +91,16 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                     <Button variant="outline" onClick={onClose}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit}>
+                    <Button variant="primary" onClick={handleSubmit} disabled={
+                        isSaving ||
+                        !form.nome ||
+                        !form.anoLetivo ||
+                        !form.turno ||
+                        !form.qtdeAulasPrevistasPeriodo ||
+                        !form.mediaMinima
+                    }
+                        isLoading={isSaving}
+                    >
                         Salvar
                     </Button>
                 </div>

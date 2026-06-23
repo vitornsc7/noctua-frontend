@@ -78,7 +78,7 @@ const EditarFaltaModal = ({ isOpen, onClose, onSave, falta, turma }) => {
         >
             <div className="space-y-4">
                 <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Aluno</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-1">Aluno</p>
                     <p className="text-sm text-gray-700">{falta?.alunoNome ?? '-'}</p>
                 </div>
 

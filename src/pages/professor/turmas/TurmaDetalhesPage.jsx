@@ -42,14 +42,15 @@ const TurmaDetalhesPage = () => {
             .finally(() => setLoadingTurma(false));
     }, [id, showError]);
 
-    const handleSalvarEdicao = (payload) => {
-        atualizarTurma(id, payload)
-            .then((atualizada) => {
-                setTurma(atualizada);
-                setEditModalOpen(false);
-                showSuccess('Turma atualizada com sucesso', 'As informações da turma foram salvas.');
-            })
-            .catch((err) => showError('Erro ao atualizar turma', err.message));
+    const handleSalvarEdicao = async (payload) => {
+        try {
+            const atualizada = await atualizarTurma(id, payload);
+            setTurma(atualizada);
+            setEditModalOpen(false);
+            showSuccess('Turma atualizada com sucesso', 'As informações da turma foram salvas.');
+        } catch (err) {
+            showError('Erro ao atualizar turma', err.message);
+        }
     };
 
     const handleOpenEditModal = () => {
