@@ -71,13 +71,7 @@ const VisaoGeralTab = ({ turma }) => {
     });
 
     const periodosVisiveis = periodos.filter((periodo) => {
-        if (periodo.numero === 1) return true;
-        const resumo = mediaPonderadaData?.resumoPorPeriodo?.[periodo.numero];
-        return resumo != null && (
-            resumo.mediaProva != null ||
-            resumo.mediaTrabalho != null ||
-            resumo.mediaAtividade != null
-        );
+        return true;
     });
 
     const rootAvaliacoes = avaliacoes.filter((av) => av.avaliacaoPaiId == null);
@@ -130,11 +124,11 @@ const VisaoGeralTab = ({ turma }) => {
 
                 <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
                     <Button onClick={() => navigate(`/turmas/${turma.id}/avaliacoes/nova`)}>
-                        <i className="pi pi-plus mr-2 text-xs" aria-hidden="true"></i>
+                        <i className="pi pi-plus text-xs" aria-hidden="true"></i>
                         Nova avaliação
                     </Button>
                     <Button variant="outline" onClick={() => navigate(`/turmas/${turma.id}/faltas/nova`)}>
-                        <i className="pi pi-plus mr-2 text-xs" aria-hidden="true"></i>
+                        <i className="pi pi-plus text-xs" aria-hidden="true"></i>
                         Nova falta
                     </Button>
                 </div>
