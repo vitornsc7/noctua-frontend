@@ -80,7 +80,7 @@ const Toast = ({
                 bg-white border-gray-200 ${styles.text}
                 border rounded-lg pr-12
                 ${hasDescription ? 'p-4' : 'px-4 py-3'}
-                min-w-[320px] max-w-md
+                min-w-[280px] max-w-sm
                 relative
             `}>
                 <div className={`flex gap-3 ${hasDescription ? 'items-start' : 'items-center'}`}>
