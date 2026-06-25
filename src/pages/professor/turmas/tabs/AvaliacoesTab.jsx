@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Pageable, Select, Tag, useToast } from '../../../../components/UI';
+import { Pageable, Select, Tag, Tooltip, useToast } from '../../../../components/UI';
 import { listarAvaliacoes } from '../../../../api/turmaApi';
 import { TIPO_AVALIACAO_DISPLAY, PERIODO_LABEL, displayLabel } from '../../../../utils/displayMaps';
 
@@ -156,10 +156,12 @@ const AvaliacoesTab = ({ turma }) => {
                                 to={`/turmas/${turma.id}/avaliacoes/${av.id}`}
                                 className="block bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                             >
-                                <div className="px-4 py-3 border-b border-gray-200 bg-gray-100 rounded-t-lg">
-                                    <p className="text-xs uppercase tracking-wide">
-                                        {displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}: {av.tema}{(av.numeroChamada ?? 1) > 1 ? ` - ${av.numeroChamada}ª Chamada` : ''}
-                                    </p>
+                                <div className="px-4 py-3 border-b border-gray-200 bg-gray-100 rounded-t-lg min-w-0">
+                                    <Tooltip content={av.tema} className="w-full">
+                                        <p className="text-xs uppercase tracking-wide truncate w-full">
+                                            <span className="font-semibold text-primary">{displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}:</span> {av.tema}{(av.numeroChamada ?? 1) > 1 ? ` - ${av.numeroChamada}ª Chamada` : ''}
+                                        </p>
+                                    </Tooltip>
                                 </div>
                                 <div className="px-4 py-3 space-y-2">
                                     <p className="text-sm text-gray-600">
