@@ -100,12 +100,13 @@ const VisaoGeralTab = ({ turma }) => {
         );
     }
 
+    const temAvaliacao = avaliacoes.length > 0;
     const temDadosAvaliacao = mediaPonderadaData?.resumoPorPeriodo != null &&
         Object.values(mediaPonderadaData.resumoPorPeriodo).some(
             (r) => r?.mediaProva != null || r?.mediaTrabalho != null || r?.mediaAtividade != null
         );
     const temDadosFalta = faltas.length > 0;
-    const semDados = !loading && !temDadosAvaliacao && !temDadosFalta;
+    const semDados = !loading && !temAvaliacao && !temDadosAvaliacao && !temDadosFalta;
 
     if (semDados) {
         return (
