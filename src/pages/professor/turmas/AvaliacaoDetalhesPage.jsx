@@ -226,7 +226,7 @@ const AvaliacaoDetalhesPage = () => {
                                         </button>
                                     )}
                                     {!temChamadaFilha && !concluida && (
-                                        <Tooltip className='w-full' content="A avaliação precisa estar CONCLUÍDA para criar uma nova chamada.">
+                                        <Tooltip className='w-full' content="A avaliação precisa estar concluída para criar uma nova chamada.">
                                             <button
                                                 type="button"
                                                 disabled
