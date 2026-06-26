@@ -158,9 +158,11 @@ const AvaliacoesTab = ({ turma }) => {
                             >
                                 <div className="px-4 py-3 border-b border-gray-200 bg-gray-100 rounded-t-lg min-w-0">
                                     <Tooltip content={av.tema} className="w-full">
-                                        <p className="text-xs uppercase tracking-wide truncate w-full">
-                                            <span className="font-semibold text-primary">{displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}:</span> {av.tema}{(av.numeroChamada ?? 1) > 1 ? ` - ${av.numeroChamada}ª Chamada` : ''}
-                                        </p>
+                                        <div className="flex flex-row text-xs uppercase tracking-wide w-full">
+                                            <span className="font-semibold text-primary">{displayLabel(TIPO_AVALIACAO_DISPLAY, av.tipo)}:</span>
+                                            <p className="truncate ml-1">{av.tema}</p>
+                                            <p className="text-xs text-gray-500 text-nowrap">{(av.numeroChamada ?? 1) > 1 ? ` - ${av.numeroChamada}ª Chamada` : ''}</p>
+                                        </div>
                                     </Tooltip>
                                 </div>
                                 <div className="px-4 py-3 space-y-2">
