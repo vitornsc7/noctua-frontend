@@ -152,7 +152,7 @@ const LimitesPage = () => {
             <div>
                 <Link
                     to="/configuracoes"
-                    className="mb-2 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition"
+                    className="mb-2 inline-flex items-center gap-2 text-sm focus:outline-none focus:text-secondary focus:font-semibold text-gray-500 hover:text-gray-700 transition"
                 >
                     <i className="pi pi-chevron-left text-xs" aria-hidden="true"></i>
                     <span>Configurações</span>
@@ -220,41 +220,6 @@ const LimitesPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className={`rounded-xl border border-gray-200 border-t-4 border-t-green-400 bg-white p-5`}>
-                        <p className="mb-3 text-sm font-semibold text-green-700">Alto</p>
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-                            <span className="shrink-0">Acima de</span>
-                            <div className="w-24 shrink-0">
-                                <Input
-                                    value={pontosAcima}
-                                    onChange={(e) => { setPontosAcima(e.target.value); setErrors((prev) => ({ ...prev, pontosAcima: undefined })); }}
-                                    numericOnly
-                                    maxIntegerDigits={2}
-                                    maxDecimalDigits={1}
-                                    step={0.1}
-                                    fullWidth
-                                    rightIcon={<span className="text-xs text-gray-400">pts</span>}
-                                    error={errors.pontosAcima ? ' ' : undefined}
-                                />
-                            </div>
-                            <span className="shrink-0">da média mínima</span>
-                        </div>
-                        {errors.pontosAcima && (
-                            <p className="mt-1 text-xs text-red-500">{errors.pontosAcima}</p>
-                        )}
-                    </div>
-
-                    <div className={`rounded-xl border border-gray-200 border-t-4 border-t-yellow-400 bg-white p-5`}>
-                        <p className="mb-3 text-sm font-semibold text-yellow-700">Médio</p>
-                        <p className="text-sm text-gray-500">
-                            Entre{' '}
-                            <span className="font-medium text-gray-700">{pontosAbaixo || '-'} abaixo</span>
-                            {' '}e{' '}
-                            <span className="font-medium text-gray-700">{pontosAcima || '-'} acima</span>
-                            {' '}da média mínima.
-                        </p>
-                    </div>
-
                     <div className={`rounded-xl border border-gray-200 border-t-4 border-t-red-400 bg-white p-5`}>
                         <p className="mb-3 text-sm font-semibold text-red-700">Baixo</p>
                         <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
@@ -276,6 +241,41 @@ const LimitesPage = () => {
                         </div>
                         {errors.pontosAbaixo && (
                             <p className="mt-1 text-xs text-red-500">{errors.pontosAbaixo}</p>
+                        )}
+                    </div>
+
+                    <div className={`rounded-xl border border-gray-200 border-t-4 border-t-yellow-400 bg-white p-5`}>
+                        <p className="mb-3 text-sm font-semibold text-yellow-700">Médio</p>
+                        <p className="text-sm text-gray-500">
+                            Entre{' '}
+                            <span className="font-medium text-gray-700">{pontosAbaixo || '-'} abaixo</span>
+                            {' '}e{' '}
+                            <span className="font-medium text-gray-700">{pontosAcima || '-'} acima</span>
+                            {' '}da média mínima.
+                        </p>
+                    </div>
+
+                    <div className={`rounded-xl border border-gray-200 border-t-4 border-t-green-400 bg-white p-5`}>
+                        <p className="mb-3 text-sm font-semibold text-green-700">Alto</p>
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                            <span className="shrink-0">Acima de</span>
+                            <div className="w-24 shrink-0">
+                                <Input
+                                    value={pontosAcima}
+                                    onChange={(e) => { setPontosAcima(e.target.value); setErrors((prev) => ({ ...prev, pontosAcima: undefined })); }}
+                                    numericOnly
+                                    maxIntegerDigits={2}
+                                    maxDecimalDigits={1}
+                                    step={0.1}
+                                    fullWidth
+                                    rightIcon={<span className="text-xs text-gray-400">pts</span>}
+                                    error={errors.pontosAcima ? ' ' : undefined}
+                                />
+                            </div>
+                            <span className="shrink-0">da média mínima</span>
+                        </div>
+                        {errors.pontosAcima && (
+                            <p className="mt-1 text-xs text-red-500">{errors.pontosAcima}</p>
                         )}
                     </div>
                 </div>
