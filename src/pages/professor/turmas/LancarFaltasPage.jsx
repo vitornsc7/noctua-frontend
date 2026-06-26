@@ -150,10 +150,10 @@ const LancarFaltasPage = () => {
             });
 
             await Promise.all(operations);
-            showSuccess('Chamada salva com sucesso.', 'As faltas foram registradas.');
+            showSuccess('Faltas lançadas com sucesso.', 'As faltas foram registradas.');
             navigate(`/turmas/${turmaId}`, { state: { tab: 'faltas' } });
         } catch (err) {
-            showError('Erro ao salvar chamada', err.message);
+            showError('Erro ao salvar faltas', err.message);
         } finally {
             setSaving(false);
         }
