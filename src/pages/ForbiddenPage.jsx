@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import corujinha from '../assets/corujinha.png';
+import corujinha from '../assets/noctua.svg';
 import { useAuth } from '../context/AuthContext';
 
 export default function ForbiddenPage() {
@@ -9,14 +9,16 @@ export default function ForbiddenPage() {
 
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-[#f6f7f9] px-6 text-center">
-            <img
-                src={corujinha}
-                alt="Logo Noctua"
-                className="w-16 h-16 object-contain mb-4 opacity-40"
-            />
-            <h1 className="text-7xl font-semibold text-gray-200 tracking-tight leading-none select-none">
-                403
-            </h1>
+            <div className="flex flex-row items-center gap-2 justify-center">
+                <img
+                    src={corujinha}
+                    alt="Logo Noctua"
+                    className="w-14 h-14 object-contain opacity-40"
+                />
+                <h1 className="text-7xl font-semibold text-gray-200 tracking-tight leading-none select-none">
+                    403
+                </h1>
+            </div>
             <p className="mt-3 text-xl font-medium text-gray-700">
                 Você não tem permissão para acessar esta área.
             </p>
