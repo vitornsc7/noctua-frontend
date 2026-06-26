@@ -238,7 +238,7 @@ const AvaliacaoDetalhesPage = () => {
                                         </Tooltip>
                                     )}
                                     {!temChamadaFilha && concluida && temNotasPendentes && (
-                                        <Tooltip className='w-full' content="Há alunos com notas não preenchidas.">
+                                        <Tooltip className='w-full' content="Existem alunos com notas não preenchidas.">
                                             <button
                                                 type="button"
                                                 disabled

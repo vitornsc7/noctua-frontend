@@ -126,7 +126,7 @@ const EditarNotaModal = ({ isOpen, onClose, onSave, nota, saving, temChamadaFilh
 
                 <Checkbox
                     label="Aluno não compareceu na realização da prova"
-                    tooltip={checkboxDisabled ? "Há alunos associados à uma nova chamada." : undefined}
+                    tooltip={checkboxDisabled ? "Existem alunos associados à uma nova chamada." : undefined}
                     checked={naoRealizada}
                     onChange={handleNaoRealizadaChange}
                     disabled={checkboxDisabled}

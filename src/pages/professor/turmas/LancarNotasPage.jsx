@@ -196,7 +196,7 @@ const LancarNotasPage = () => {
             <Modal
                 isOpen={confirmModalOpen}
                 onClose={() => setConfirmModalOpen(false)}
-                title="Há notas não preenchidas"
+                title="Existem notas não preenchidas"
                 footer={
                     <div className="flex justify-end gap-2">
                         <Button variant="outline" onClick={() => setConfirmModalOpen(false)} disabled={saving}>
