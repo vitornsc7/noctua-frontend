@@ -31,7 +31,7 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
             footer={footer}
             header={<h2 className="text-lg font-medium text-gray-700">Informações gerais</h2>}
         >
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-y-2 gap-x-3 sm:grid-cols-2">
                 <Input
                     label="Nome da turma"
                     required
@@ -83,12 +83,13 @@ const InformacoesStep = ({ getTurmaFieldProps, isCloningTurma, isSubmitting, isE
                     {...getTurmaFieldProps('qtdeAulasPrevistasPeriodo')}
                     integerOnly
                     fullWidth
+                    tooltip="Quantidade de aulas previstas por período letivo (Bimestre ou trimestre). Utilizado para cálculo de frequência."
                 />
 
                 <Input
-                    label="Média mínima"
+                    label="Média mínima da instituição"
                     required
-                    tooltip="Média mínima da instituição, utilizada no cálculo da matriz de intervenção."
+                    tooltip="Utilizada no cálculo da matriz de intervenção."
                     placeholder="Ex: 7,00"
                     {...getTurmaFieldProps('mediaMinima')}
                     numericOnly

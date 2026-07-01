@@ -107,7 +107,7 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
             }
         >
             <div className="flex flex-col gap-2">
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-y-2 gap-x-3 sm:grid-cols-2">
                     <Input
                         label="Nome da turma"
                         required
@@ -145,18 +145,20 @@ const EdicaoTurmaModal = ({ isOpen, onClose, turma, onSave }) => {
                         min={1}
                         max={200}
                         fullWidth
+                        tooltip="Quantidade de aulas previstas por período letivo (Bimestre ou trimestre). Utilizado para cálculo de frequência."
                         {...getFieldProps('qtdeAulasPrevistasPeriodo')}
                     />
                     <Input
-                        label="Média mínima"
+                        label="Média mínima da instituição"
                         required
-                        tooltip="Média mínima da instituição, utilizada no cálculo da matriz de intervenção."
+                        tooltip="Utilizada no cálculo da matriz de intervenção."
                         placeholder="Ex: 7"
                         numericOnly
                         maxIntegerDigits={2}
                         maxDecimalDigits={2}
                         step={0.01}
                         min={0}
+                        max={10}
                         fullWidth
                         {...getFieldProps('mediaMinima')}
                     />
